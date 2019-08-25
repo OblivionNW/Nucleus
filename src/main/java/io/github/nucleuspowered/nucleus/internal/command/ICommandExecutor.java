@@ -1,6 +1,10 @@
+/*
+ * This file is part of Nucleus, licensed under the MIT License (MIT). See the LICENSE.txt file
+ * at the root of this project for more details.
+ */
 package io.github.nucleuspowered.nucleus.internal.command;
 
-import io.github.nucleuspowered.nucleus.internal.annotations.command.NucleusCommand;
+import io.github.nucleuspowered.nucleus.internal.command.annotation.NucleusCommand;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandElement;
 
@@ -20,7 +24,7 @@ public interface ICommandExecutor<C extends CommandSource> {
      *
      * @return The elements.
      */
-    default CommandElement[] arguments() {
+    default CommandElement[] parameters() {
         return new CommandElement[0];
     }
 
@@ -34,7 +38,7 @@ public interface ICommandExecutor<C extends CommandSource> {
      * @param context The {@link ICommandContext}
      * @return The result, if any
      */
-    default Optional<ICommandResult> preExecute(ICommandContext<C> context) {
+    default Optional<ICommandResult> preExecute(ICommandContext<? extends C> context) {
         return Optional.empty();
     }
 
@@ -44,6 +48,6 @@ public interface ICommandExecutor<C extends CommandSource> {
      * @param context The {@link ICommandContext}
      * @return The result of the command.
      */
-    ICommandResult execute(ICommandContext<C> context);
+    ICommandResult execute(ICommandContext<? extends C> context);
 
 }

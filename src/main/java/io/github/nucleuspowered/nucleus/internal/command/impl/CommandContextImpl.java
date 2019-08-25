@@ -1,8 +1,20 @@
+/*
+ * This file is part of Nucleus, licensed under the MIT License (MIT). See the LICENSE.txt file
+ * at the root of this project for more details.
+ */
 package io.github.nucleuspowered.nucleus.internal.command.impl;
 
+import com.google.common.collect.ImmutableList;
+import io.github.nucleuspowered.nucleus.Util;
 import io.github.nucleuspowered.nucleus.internal.command.ICommandContext;
 import io.github.nucleuspowered.nucleus.internal.command.ICommandResult;
+import io.github.nucleuspowered.nucleus.internal.command.config.CommandModifiersConfig;
+import io.github.nucleuspowered.nucleus.internal.command.control.CommandControl;
+import io.github.nucleuspowered.nucleus.internal.command.requirements.CommandModifiers;
+import io.github.nucleuspowered.nucleus.internal.command.requirements.ICommandModifier;
 import io.github.nucleuspowered.nucleus.services.INucleusServiceCollection;
+import io.github.nucleuspowered.storage.util.ThrownSupplier;
+import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.entity.living.player.Player;
@@ -10,9 +22,15 @@ import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.text.Text;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public abstract class CommandContextImpl<P extends CommandSource> implements ICommandContext.Mutable<P> {
 
@@ -21,14 +39,25 @@ public abstract class CommandContextImpl<P extends CommandSource> implements ICo
     private int cooldown = 0;
     private final Cause cause;
     private final CommandContext context;
-    private final P source;
+    private final ThrownSupplier<P, CommandException> source;
+    private final Set<ICommandModifier> modifiers = new HashSet<>();
+    private final ArrayList<Consumer<P>> failActions = new ArrayList<>();
 
-    CommandContextImpl(Cause cause, CommandContext context, INucleusServiceCollection serviceCollection, P source) {
+    CommandContextImpl(Cause cause,
+            CommandContext context,
+            INucleusServiceCollection serviceCollection,
+            ThrownSupplier<P, CommandException> source,
+            CommandControl control,
+            CommandModifiersConfig modifiersConfig) throws CommandException {
         this.cause = cause;
         this.context = context;
         this.source = source;
-        this.cost = 0;
-        this.cooldown = 0;
+        this.cost =
+                Util.getDoubleOptionFromSubject(source.get(), String.format("nucleus.%s.cost", control.getCommand().replace(" ", ".")))
+                        .orElse(modifiersConfig.getCost());
+        this.cooldown =
+                Util.getIntOptionFromSubject(source.get(), String.format("nucleus.%s.cooldown", control.getCommand().replace(" ", ".")))
+                        .orElse(modifiersConfig.getCooldown());
         this.serviceCollection = serviceCollection;
     }
 
@@ -38,8 +67,8 @@ public abstract class CommandContextImpl<P extends CommandSource> implements ICo
     }
 
     @Override
-    public P getCommandSource() {
-        return this.source;
+    public P getCommandSource() throws CommandException {
+        return this.source.get();
     }
 
     @Override
@@ -59,12 +88,24 @@ public abstract class CommandContextImpl<P extends CommandSource> implements ICo
 
     @Override
     public Player getPlayer(String key, String errorKey) throws NoSuchElementException {
-        return getOne(key, Player.class).orElseGet(() -> getIfPlayer(errorKey));
+        return getOne(key, Player.class).orElseGet(() -> {
+            try {
+                return getIfPlayer(errorKey);
+            } catch (CommandException e) {
+                throw new NoSuchElementException();
+            }
+        });
     }
 
     @Override
     public User getUser(String key, String errorKey) throws NoSuchElementException {
-        return getOne(key, User.class).orElseGet(() -> getIfPlayer(errorKey));
+        return getOne(key, User.class).orElseGet(() -> {
+            try {
+                return getIfPlayer(errorKey);
+            } catch (CommandException e) {
+                throw new NoSuchElementException();
+            }
+        });
     }
 
     @Override
@@ -119,16 +160,33 @@ public abstract class CommandContextImpl<P extends CommandSource> implements ICo
         return this.serviceCollection;
     }
 
-    protected abstract Player getIfPlayer(String key) throws NoSuchElementException;
+    protected abstract Player getIfPlayer(String key) throws NoSuchElementException, CommandException;
+
+    @Override public Collection<ICommandModifier> modifiers() {
+        return ImmutableList.copyOf(this.modifiers);
+    }
+
+    @Override public void applyModifier(ICommandModifier modifier) {
+        this.modifiers.add(modifier);
+    }
+
+    @Override public Collection<Consumer<P>> failActions() {
+        return ImmutableList.copyOf(this.failActions);
+    }
+
+    @Override public void addFailAction(Consumer<P> action) {
+        this.failActions.add(action);
+    }
 
     public static class Any extends CommandContextImpl<CommandSource> {
 
-        protected Any(Cause cause, CommandContext context, INucleusServiceCollection serviceCollection, CommandSource target) {
-            super(cause, context, serviceCollection, target);
+        public Any(Cause cause, CommandContext context, INucleusServiceCollection serviceCollection, CommandSource target,
+                CommandControl control, CommandModifiersConfig modifiersConfig) throws CommandException {
+            super(cause, context, serviceCollection, () -> target, control, modifiersConfig);
         }
 
         @Override
-        protected Player getIfPlayer(String key) throws NoSuchElementException {
+        protected Player getIfPlayer(String key) throws NoSuchElementException, CommandException {
             if (getCommandSource() instanceof Player) {
                 return (Player) getCommandSource();
             }
@@ -141,12 +199,14 @@ public abstract class CommandContextImpl<P extends CommandSource> implements ICo
 
     public static class PlayerSource extends CommandContextImpl<Player> {
 
-        protected PlayerSource(Cause cause, CommandContext context, INucleusServiceCollection serviceCollection, Player source) {
-            super(cause, context, serviceCollection, source);
+        public PlayerSource(Cause cause, CommandContext context, INucleusServiceCollection serviceCollection,
+                ThrownSupplier<Player, CommandException> source,
+                CommandControl control, CommandModifiersConfig modifiersConfig) throws CommandException {
+            super(cause, context, serviceCollection, source, control, modifiersConfig);
         }
 
         @Override
-        protected Player getIfPlayer(String key) {
+        protected Player getIfPlayer(String key) throws CommandException {
             return getCommandSource();
         }
     }
