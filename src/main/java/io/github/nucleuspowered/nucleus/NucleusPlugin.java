@@ -14,6 +14,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.typesafe.config.ConfigException;
 import io.github.nucleuspowered.nucleus.api.NucleusAPITokens;
@@ -31,13 +32,13 @@ import io.github.nucleuspowered.nucleus.dataservices.dataproviders.DataProviders
 import io.github.nucleuspowered.nucleus.internal.CatalogTypeFinalStaticProcessor;
 import io.github.nucleuspowered.nucleus.internal.CommandPermissionHandler;
 import io.github.nucleuspowered.nucleus.internal.EconHelper;
-import io.github.nucleuspowered.nucleus.internal.InternalServiceManager;
 import io.github.nucleuspowered.nucleus.internal.PermissionRegistry;
 import io.github.nucleuspowered.nucleus.internal.PreloadTasks;
 import io.github.nucleuspowered.nucleus.internal.TextFileController;
 import io.github.nucleuspowered.nucleus.internal.client.ClientMessageReciever;
 import io.github.nucleuspowered.nucleus.internal.docgen.DocGenCache;
 import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.messages.ConfigMessageProvider;
 import io.github.nucleuspowered.nucleus.internal.messages.MessageProvider;
 import io.github.nucleuspowered.nucleus.internal.messages.ResourceMessageProvider;
@@ -50,12 +51,13 @@ import io.github.nucleuspowered.nucleus.internal.qsml.QuickStartModuleConstructo
 import io.github.nucleuspowered.nucleus.internal.qsml.event.BaseModuleEvent;
 import io.github.nucleuspowered.nucleus.internal.qsml.module.StandardModule;
 import io.github.nucleuspowered.nucleus.internal.services.CommandRemapperService;
-import io.github.nucleuspowered.nucleus.internal.services.PermissionResolver;
+import io.github.nucleuspowered.nucleus.services.IPermissionCheckService;
 import io.github.nucleuspowered.nucleus.internal.services.PlayerOnlineService;
-import io.github.nucleuspowered.nucleus.internal.services.WarmupManager;
 import io.github.nucleuspowered.nucleus.internal.text.NucleusTokenServiceImpl;
 import io.github.nucleuspowered.nucleus.internal.text.TextParsingUtils;
-import io.github.nucleuspowered.nucleus.internal.userprefs.UserPreferenceService;
+import io.github.nucleuspowered.nucleus.services.impl.permissioncheck.PermissionCheckService;
+import io.github.nucleuspowered.nucleus.services.impl.reloadable.ReloadableService;
+import io.github.nucleuspowered.nucleus.services.impl.userprefs.UserPreferenceService;
 import io.github.nucleuspowered.nucleus.logging.DebugLogger;
 import io.github.nucleuspowered.nucleus.modules.core.CoreModule;
 import io.github.nucleuspowered.nucleus.modules.core.config.CoreConfig;
@@ -63,6 +65,11 @@ import io.github.nucleuspowered.nucleus.modules.core.config.CoreConfigAdapter;
 import io.github.nucleuspowered.nucleus.modules.core.config.WarmupConfig;
 import io.github.nucleuspowered.nucleus.modules.core.services.UUIDChangeService;
 import io.github.nucleuspowered.nucleus.modules.core.services.UniqueUserService;
+import io.github.nucleuspowered.nucleus.services.impl.NucleusServiceCollection;
+import io.github.nucleuspowered.nucleus.services.impl.cooldown.CooldownService;
+import io.github.nucleuspowered.nucleus.services.impl.economy.EconomyServiceProvider;
+import io.github.nucleuspowered.nucleus.services.impl.messageprovider.MessageProviderService;
+import io.github.nucleuspowered.nucleus.services.impl.warmup.WarmupService;
 import io.github.nucleuspowered.nucleus.storage.INucleusStorageManager;
 import io.github.nucleuspowered.nucleus.storage.NucleusStorageManager;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
@@ -127,8 +134,10 @@ public class NucleusPlugin extends Nucleus {
     private static final String divider = "+------------------------------------------------------------+";
     private static final int length = divider.length() - 2;
 
-    private final INucleusStorageManager storageManager;
+    private final INucleusStorageManager<JsonObject> storageManager = new NucleusStorageManager();
+    private final NucleusServiceCollection serviceCollection;
     private final PluginContainer pluginContainer;
+
     private Instant gameStartedTime = null;
     private boolean hasStarted = false;
     private Throwable isErrored = null;
@@ -139,21 +148,15 @@ public class NucleusPlugin extends Nucleus {
     private KitDataService kitDataService;
     private TextParsingUtils textParsingUtils;
     private NameUtil nameUtil;
-    private PermissionResolver permissionResolver = PermissionResolverImpl.INSTANCE;
-    private final List<Reloadable> reloadableList = Lists.newArrayList();
     private DocGenCache docGenCache = null;
     private NucleusTokenServiceImpl nucleusChatService;
-    private final UserPreferenceService userPreferenceService = new UserPreferenceService();
 
     private final List<Text> startupMessages = Lists.newArrayList();
 
-    private final InternalServiceManager serviceManager = new InternalServiceManager();
     private MessageProvider messageProvider = new ResourceMessageProvider(ResourceMessageProvider.messagesBundle);
     private MessageProvider commandMessageProvider = new ResourceMessageProvider(ResourceMessageProvider.commandMessagesBundle);
 
-    private WarmupManager warmupManager;
     private final EconHelper econHelper = new EconHelper();
-    private final PermissionRegistry permissionRegistry = new PermissionRegistry();
 
     private DiscoveryModuleHolder<StandardModule, StandardModule> moduleContainer;
 
@@ -238,7 +241,17 @@ public class NucleusPlugin extends Nucleus {
 
         this.dataDir = sp;
         this.pluginContainer = container;
-        this.storageManager = new NucleusStorageManager();
+        this.serviceCollection = new NucleusServiceCollection(
+                new MessageProviderService(),
+                new EconomyServiceProvider(),
+                new WarmupService(),
+                new CooldownService(),
+                new UserPreferenceService(),
+                new PermissionCheckService(),
+                new ReloadableService(),
+                container,
+                logger
+        );
     }
 
     @Listener(order = Order.FIRST)
@@ -309,7 +322,6 @@ public class NucleusPlugin extends Nucleus {
             this.kitDataService = new KitDataService(d.getKitsDataProvider());
             this.nameBanService = new NameBanService(d.getNameBanDataProvider());
             this.userCacheService = new UserCacheService(d.getUserCacheDataProvider());
-            this.warmupManager = new WarmupManager();
             this.textParsingUtils = new TextParsingUtils();
             registerReloadable(this.textParsingUtils);
 
@@ -329,16 +341,14 @@ public class NucleusPlugin extends Nucleus {
 
         // We register the ModuleService NOW so that others can hook into it.
         game.getServiceManager().setProvider(this, NucleusModuleService.class, new ModuleRegistrationProxyService());
-        game.getServiceManager().setProvider(this, NucleusWarmupManagerService.class, this.warmupManager);
-        this.serviceManager.registerService(WarmupManager.class, this.warmupManager);
-        this.serviceManager.registerService(UserPreferenceService.class, this.userPreferenceService);
-        Sponge.getServiceManager().setProvider(this, NucleusUserPreferenceService.class, this.userPreferenceService);
+        game.getServiceManager().setProvider(this, NucleusWarmupManagerService.class, this.serviceCollection.warmupService());
+        Sponge.getServiceManager().setProvider(this, NucleusUserPreferenceService.class, this.serviceCollection.userPreferenceService());
 
         this.nucleusChatService = new NucleusTokenServiceImpl(this);
-        this.serviceManager.registerService(NucleusTokenServiceImpl.class, this.nucleusChatService);
+        this.serviceCollection.registerService(NucleusTokenServiceImpl.class, this.nucleusChatService);
         Sponge.getServiceManager().setProvider(this, NucleusMessageTokenService.class, this.nucleusChatService);
-        this.serviceManager.registerService(CommandRemapperService.class, new CommandRemapperService());
-        this.serviceManager.registerService(PlayerOnlineService.class, PlayerOnlineService.DEFAULT);
+        this.serviceCollection.registerService(CommandRemapperService.class, new CommandRemapperService());
+        this.serviceCollection.registerService(PlayerOnlineService.class, PlayerOnlineService.DEFAULT);
 
         try {
             final String he = this.messageProvider.getMessageWithFormat("config.main-header", PluginInfo.VERSION);
@@ -497,14 +507,15 @@ public class NucleusPlugin extends Nucleus {
         }
 
         // Register a reloadable.
+        // TODO: Remove?
         CommandPermissionHandler.onReload();
-        registerReloadable(CommandPermissionHandler::onReload);
+        registerReloadable(serviceCollection -> CommandPermissionHandler.onReload());
         getDocGenCache().ifPresent(x -> x.addTokenDocs(this.nucleusChatService.getNucleusTokenParser().getTokenNames()));
 
         logMessageDefault();
         this.logger.info(this.messageProvider.getMessageWithFormat("startup.moduleloaded", PluginInfo.NAME));
         PermissionResolverImpl.INSTANCE.registerPermissions();
-        registerReloadable(this::reloadPerm);
+        registerReloadable(s -> this.reloadPerm());
         this.reloadPerm();
         Sponge.getEventManager().post(new BaseModuleEvent.Complete(this));
 
@@ -563,9 +574,9 @@ public class NucleusPlugin extends Nucleus {
     public void onGameStarted(GameStartedServerEvent event) {
         if (this.isErrored == null) {
             try {
-                getInternalServiceManager().getServiceUnchecked(UniqueUserService.class).resetUniqueUserCount();
-                getInternalServiceManager().getServiceUnchecked(UUIDChangeService.class).setStateAndReload();
-                getInternalServiceManager().getServiceUnchecked(CommandRemapperService.class).activate();
+                this.serviceCollection.getServiceUnchecked(UniqueUserService.class).resetUniqueUserCount();
+                this.serviceCollection.getServiceUnchecked(UUIDChangeService.class).setStateAndReload();
+                this.serviceCollection.getServiceUnchecked(CommandRemapperService.class).activate();
 
                 // Save any additions.
                 this.moduleContainer.refreshSystemConfig();
@@ -580,7 +591,7 @@ public class NucleusPlugin extends Nucleus {
             this.hasStarted = true;
             Sponge.getScheduler().createSyncExecutor(this).submit(() -> this.gameStartedTime = Instant.now());
 
-            if (this.getInternalServiceManager().getService(CoreConfigAdapter.class).get().getNodeOrDefault().isWarningOnStartup()) {
+            if (this.serviceCollection.getServiceUnchecked(CoreConfigAdapter.class).getNodeOrDefault().isWarningOnStartup()) {
                 // What about perms and econ?
                 List<Text> lt = Lists.newArrayList();
                 if (ServiceChangeListener.isOpOnly()) {
@@ -630,7 +641,7 @@ public class NucleusPlugin extends Nucleus {
             this.gameStartedTime = null;
             this.logger.info(this.messageProvider.getMessageWithFormat("startup.stopped", PluginInfo.NAME));
             saveData();
-            getInternalServiceManager().getServiceUnchecked(CommandRemapperService.class).deactivate();
+            this.serviceCollection.getServiceUnchecked(CommandRemapperService.class).deactivate();
         }
     }
 
@@ -725,7 +736,7 @@ public class NucleusPlugin extends Nucleus {
             this.itemDataService.load();
             this.warmupConfig = null;
 
-            CoreConfig coreConfig = this.getInternalServiceManager().getService(CoreConfigAdapter.class).get().getNodeOrDefault();
+            CoreConfig coreConfig = this.serviceCollection.getServiceUnchecked(CoreConfigAdapter.class).getNodeOrDefault();
             this.isDebugMode = coreConfig.isDebugmode();
             this.isConsoleBypass = coreConfig.isConsoleOverride();
             this.isTraceUserCreations = coreConfig.traceUserCreations();
@@ -744,23 +755,22 @@ public class NucleusPlugin extends Nucleus {
     }
 
     private void fireReloadables() throws Exception {
-        for (Reloadable r : this.reloadableList) {
-            r.onReload();
-        }
+        this.serviceCollection.reloadableService().fireReloadables(this.serviceCollection);
     }
 
     private void reloadPerm() {
-        if (getInternalServiceManager().getServiceUnchecked(CoreConfigAdapter.class).getNodeOrDefault().isUseParentPerms()) {
-            this.permissionResolver = PermissionResolverImpl.INSTANCE;
+        IPermissionCheckService permissionResolver = PermissionResolverImpl.INSTANCE;
+        if (this.serviceCollection.getServiceUnchecked(CoreConfigAdapter.class).getNodeOrDefault().isUseParentPerms()) {
+            permissionResolver = PermissionResolverImpl.INSTANCE;
         } else {
-            this.permissionResolver = PermissionResolver.SIMPLE;
+            permissionResolver = IPermissionCheckService.SIMPLE;
         }
     }
 
     @Override
     public boolean reloadMessages() {
         boolean r = true;
-        CoreConfig config = getInternalServiceManager().getServiceUnchecked(CoreConfigAdapter.class).getNodeOrDefault();
+        CoreConfig config = this.serviceCollection.getServiceUnchecked(CoreConfigAdapter.class).getNodeOrDefault();
         // Get the language
         String language = config.getServerLocale();
         if (language == null) {
@@ -815,11 +825,6 @@ public class NucleusPlugin extends Nucleus {
         this.logger.info(this.messageProvider.getMessageWithFormat("language.set", this.messageProvider.getLocale().toLanguageTag()));
     }
 
-    @Override
-    public WarmupManager getWarmupManager() {
-        return this.warmupManager;
-    }
-
     @Override public WarmupConfig getWarmupConfig() {
         if (this.warmupConfig == null) {
             this.warmupConfig = getConfigValue(CoreModule.ID, CoreConfigAdapter.class, CoreConfig::getWarmupConfig).orElseGet(WarmupConfig::new);
@@ -831,11 +836,6 @@ public class NucleusPlugin extends Nucleus {
     @Override
     public EconHelper getEconHelper() {
         return this.econHelper;
-    }
-
-    @Override
-    public PermissionRegistry getPermissionRegistry() {
-        return this.permissionRegistry;
     }
 
     @Override
@@ -858,11 +858,6 @@ public class NucleusPlugin extends Nucleus {
         } catch (NoModuleException | IncorrectAdapterTypeException e) {
             return Optional.empty();
         }
-    }
-
-    @Override
-    public InternalServiceManager getInternalServiceManager() {
-        return this.serviceManager;
     }
 
     @Override public Optional<Instant> getGameStartedTime() {
@@ -935,7 +930,7 @@ public class NucleusPlugin extends Nucleus {
     }
 
     @Override public void registerReloadable(Reloadable reloadable) {
-        this.reloadableList.add(reloadable);
+        this.serviceCollection.reloadableService().registerReloadable(reloadable);
     }
 
     @Override public Optional<DocGenCache> getDocGenCache() {
@@ -968,8 +963,8 @@ public class NucleusPlugin extends Nucleus {
     }
 
     @Override
-    public PermissionResolver getPermissionResolver() {
-        return this.permissionResolver;
+    public IPermissionCheckService getPermissionResolver() {
+        return this.serviceCollection.permissionCheck();
     }
 
     @Override
@@ -985,7 +980,7 @@ public class NucleusPlugin extends Nucleus {
         return this.savesandloads;
     }
 
-    @Override public INucleusStorageManager getStorageManager() {
+    @Override public INucleusStorageManager<JsonObject> getStorageManager() {
         return this.storageManager;
     }
 
@@ -998,7 +993,7 @@ public class NucleusPlugin extends Nucleus {
         Sponge.getEventManager().unregisterPluginListeners(this);
         Sponge.getCommandManager().getOwnedBy(this).forEach(Sponge.getCommandManager()::removeMapping);
         Sponge.getScheduler().getScheduledTasks(this).forEach(Task::cancel);
-        getInternalServiceManager().getService(CommandRemapperService.class).ifPresent(CommandRemapperService::deactivate);
+        this.serviceCollection.getService(CommandRemapperService.class).ifPresent(CommandRemapperService::deactivate);
 
         // Re-register this to warn people about the error.
         Sponge.getEventManager().registerListener(this, GameStartedServerEvent.class, e -> errorOnStartup());

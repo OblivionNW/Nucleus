@@ -14,7 +14,7 @@ import io.github.nucleuspowered.nucleus.internal.command.AbstractCommand;
 import io.github.nucleuspowered.nucleus.internal.command.NucleusParameters;
 import io.github.nucleuspowered.nucleus.internal.command.ReturnMessageException;
 import io.github.nucleuspowered.nucleus.internal.docgen.annotations.EssentialsEquivalent;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.permissions.PermissionInformation;
 import io.github.nucleuspowered.nucleus.internal.permissions.SuggestedLevel;
 import io.github.nucleuspowered.nucleus.modules.environment.EnvironmentKeys;
@@ -42,7 +42,7 @@ import java.util.Optional;
 @RegisterCommand("weather")
 @NonnullByDefault
 @EssentialsEquivalent({"thunder", "sun", "weather", "sky", "storm", "rain"})
-public class WeatherCommand extends AbstractCommand<CommandSource> implements Reloadable {
+public class WeatherCommand extends AbstractCommand<CommandSource> implements SimpleReloadable {
 
     private final String weather = "weather";
 

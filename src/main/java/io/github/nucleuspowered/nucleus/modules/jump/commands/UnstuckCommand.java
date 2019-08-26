@@ -10,7 +10,7 @@ import io.github.nucleuspowered.nucleus.internal.annotations.command.Permissions
 import io.github.nucleuspowered.nucleus.internal.annotations.command.RegisterCommand;
 import io.github.nucleuspowered.nucleus.internal.command.AbstractCommand;
 import io.github.nucleuspowered.nucleus.internal.command.ReturnMessageException;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.permissions.SuggestedLevel;
 import io.github.nucleuspowered.nucleus.modules.core.services.SafeTeleportService;
 import io.github.nucleuspowered.nucleus.modules.jump.JumpModule;
@@ -32,7 +32,7 @@ import java.util.function.Function;
 @Permissions(suggestedLevel = SuggestedLevel.ADMIN)
 @NonnullByDefault
 @RegisterCommand("unstuck")
-public class UnstuckCommand extends AbstractCommand<Player> implements Reloadable {
+public class UnstuckCommand extends AbstractCommand<Player> implements SimpleReloadable {
 
     private int radius = 1;
     private int height = 1;

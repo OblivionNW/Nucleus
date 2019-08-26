@@ -5,13 +5,13 @@
 package io.github.nucleuspowered.nucleus.modules.commandlogger.services;
 
 import io.github.nucleuspowered.nucleus.Nucleus;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.interfaces.ServiceBase;
 import io.github.nucleuspowered.nucleus.logging.AbstractLoggingHandler;
 import io.github.nucleuspowered.nucleus.modules.commandlogger.config.CommandLoggerConfig;
 import io.github.nucleuspowered.nucleus.modules.commandlogger.config.CommandLoggerConfigAdapter;
 
-public class CommandLoggerHandler extends AbstractLoggingHandler implements Reloadable, ServiceBase {
+public class CommandLoggerHandler extends AbstractLoggingHandler implements SimpleReloadable, ServiceBase {
 
     private CommandLoggerConfig config;
     private final CommandLoggerConfigAdapter clca;

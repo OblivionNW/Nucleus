@@ -15,7 +15,7 @@ import io.github.nucleuspowered.nucleus.internal.command.ContinueMode;
 import io.github.nucleuspowered.nucleus.internal.command.NucleusParameters;
 import io.github.nucleuspowered.nucleus.internal.command.ReturnMessageException;
 import io.github.nucleuspowered.nucleus.internal.docgen.annotations.EssentialsEquivalent;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.permissions.PermissionInformation;
 import io.github.nucleuspowered.nucleus.internal.permissions.SuggestedLevel;
 import io.github.nucleuspowered.nucleus.modules.teleport.config.TeleportConfigAdapter;
@@ -33,7 +33,6 @@ import org.spongepowered.api.util.annotation.NonnullByDefault;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.function.Consumer;
 
 /**
@@ -46,7 +45,7 @@ import java.util.function.Consumer;
 @EssentialsEquivalent({"tpa", "call", "tpask"})
 @NotifyIfAFK(NucleusParameters.Keys.PLAYER)
 @SetCooldownManually
-public class TeleportAskCommand extends AbstractCommand<Player> implements Reloadable {
+public class TeleportAskCommand extends AbstractCommand<Player> implements SimpleReloadable {
 
     private boolean isCooldownOnAsk = false;
     private final PlayerTeleporterService playerTeleporterService = getServiceUnchecked(PlayerTeleporterService.class);

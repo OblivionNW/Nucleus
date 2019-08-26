@@ -11,7 +11,7 @@ import io.github.nucleuspowered.nucleus.internal.annotations.command.Permissions
 import io.github.nucleuspowered.nucleus.internal.annotations.command.RegisterCommand;
 import io.github.nucleuspowered.nucleus.internal.command.AbstractCommand;
 import io.github.nucleuspowered.nucleus.internal.command.ReturnMessageException;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.permissions.SuggestedLevel;
 import io.github.nucleuspowered.nucleus.modules.world.config.WorldConfigAdapter;
 import org.spongepowered.api.CatalogType;
@@ -67,7 +67,7 @@ import javax.annotation.Nullable;
 @Permissions(prefix = "world", suggestedLevel = SuggestedLevel.ADMIN)
 @RegisterCommand(value = {"create"}, subcommandOf = WorldCommand.class)
 @NonnullByDefault
-public class CreateWorldCommand extends AbstractCommand<CommandSource> implements Reloadable {
+public class CreateWorldCommand extends AbstractCommand<CommandSource> implements SimpleReloadable {
 
     private final DataQuery uuidLeast = DataQuery.of("SpongeData", "UUIDLeast");
     private final DataQuery uuidMost = DataQuery.of("SpongeData", "UUIDMost");

@@ -13,7 +13,7 @@ import io.github.nucleuspowered.nucleus.api.teleport.TeleportResult;
 import io.github.nucleuspowered.nucleus.api.teleport.TeleportResults;
 import io.github.nucleuspowered.nucleus.api.teleport.TeleportScanner;
 import io.github.nucleuspowered.nucleus.internal.annotations.APIService;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.interfaces.ServiceBase;
 import io.github.nucleuspowered.nucleus.modules.core.config.CoreConfigAdapter;
 import io.github.nucleuspowered.nucleus.modules.core.config.SafeTeleportConfig;
@@ -40,7 +40,7 @@ import javax.inject.Singleton;
 
 @Singleton
 @APIService(NucleusSafeTeleportService.class)
-public class SafeTeleportService implements NucleusSafeTeleportService, Reloadable, ServiceBase {
+public class SafeTeleportService implements NucleusSafeTeleportService, SimpleReloadable, ServiceBase {
 
     private static final AutoCloseable DUMMY = () -> {};
     private SafeTeleportConfig config = new SafeTeleportConfig();

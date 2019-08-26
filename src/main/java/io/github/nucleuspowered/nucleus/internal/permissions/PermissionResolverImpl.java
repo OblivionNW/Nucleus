@@ -6,8 +6,8 @@ package io.github.nucleuspowered.nucleus.internal.permissions;
 
 import com.google.common.base.Preconditions;
 import io.github.nucleuspowered.nucleus.Nucleus;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
-import io.github.nucleuspowered.nucleus.internal.services.PermissionResolver;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
+import io.github.nucleuspowered.nucleus.services.IPermissionCheckService;
 import io.github.nucleuspowered.nucleus.modules.core.config.CoreConfigAdapter;
 import io.github.nucleuspowered.nucleus.util.PrettyPrinter;
 import org.slf4j.event.Level;
@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
 import javax.inject.Singleton;
 
 @Singleton
-public class PermissionResolverImpl implements PermissionResolver, Reloadable {
+public class PermissionResolverImpl implements IPermissionCheckService, SimpleReloadable {
 
     public final static PermissionResolverImpl INSTANCE = new PermissionResolverImpl();
 

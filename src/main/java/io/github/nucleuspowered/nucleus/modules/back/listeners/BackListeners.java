@@ -9,7 +9,7 @@ import io.github.nucleuspowered.nucleus.api.NucleusAPI;
 import io.github.nucleuspowered.nucleus.api.service.NucleusJailService;
 import io.github.nucleuspowered.nucleus.internal.CommandPermissionHandler;
 import io.github.nucleuspowered.nucleus.internal.interfaces.ListenerBase;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.modules.back.commands.BackCommand;
 import io.github.nucleuspowered.nucleus.modules.back.config.BackConfig;
 import io.github.nucleuspowered.nucleus.modules.back.config.BackConfigAdapter;
@@ -24,7 +24,7 @@ import org.spongepowered.api.event.filter.type.Exclude;
 
 import javax.annotation.Nullable;
 
-public class BackListeners implements Reloadable, ListenerBase {
+public class BackListeners implements SimpleReloadable, ListenerBase {
 
     public static final String ON_TELEPORT = "targets.teleport";
     public static final String ON_DEATH = "targets.death";

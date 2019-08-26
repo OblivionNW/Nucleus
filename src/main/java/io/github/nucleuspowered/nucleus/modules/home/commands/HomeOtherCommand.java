@@ -12,7 +12,7 @@ import io.github.nucleuspowered.nucleus.internal.annotations.command.Permissions
 import io.github.nucleuspowered.nucleus.internal.annotations.command.RegisterCommand;
 import io.github.nucleuspowered.nucleus.internal.command.AbstractCommand;
 import io.github.nucleuspowered.nucleus.internal.command.ReturnMessageException;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.permissions.PermissionInformation;
 import io.github.nucleuspowered.nucleus.internal.permissions.SuggestedLevel;
 import io.github.nucleuspowered.nucleus.modules.home.config.HomeConfigAdapter;
@@ -32,7 +32,7 @@ import java.util.Map;
 @NonnullByDefault
 @Permissions(prefix = "home", mainOverride = "other", suggestedLevel = SuggestedLevel.MOD)
 @RegisterCommand(value = "other", subcommandOf = HomeCommand.class, rootAliasRegister = "homeother")
-public class HomeOtherCommand extends AbstractCommand<Player> implements Reloadable {
+public class HomeOtherCommand extends AbstractCommand<Player> implements SimpleReloadable {
 
     private final String home = "home";
     public static final String OTHER_EXEMPT_PERM_SUFFIX = "exempt.target";

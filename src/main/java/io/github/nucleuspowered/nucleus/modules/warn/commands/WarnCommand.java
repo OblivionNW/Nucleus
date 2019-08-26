@@ -12,7 +12,7 @@ import io.github.nucleuspowered.nucleus.internal.annotations.command.RegisterCom
 import io.github.nucleuspowered.nucleus.internal.command.AbstractCommand;
 import io.github.nucleuspowered.nucleus.internal.command.NucleusParameters;
 import io.github.nucleuspowered.nucleus.internal.command.ReturnMessageException;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.permissions.PermissionInformation;
 import io.github.nucleuspowered.nucleus.internal.permissions.SuggestedLevel;
 import io.github.nucleuspowered.nucleus.modules.warn.config.WarnConfig;
@@ -42,7 +42,7 @@ import java.util.UUID;
 @NoModifiers
 @NonnullByDefault
 @RegisterCommand({"warn", "warning", "addwarning"})
-public class WarnCommand extends AbstractCommand<CommandSource> implements Reloadable {
+public class WarnCommand extends AbstractCommand<CommandSource> implements SimpleReloadable {
 
     private final WarnHandler handler = getServiceUnchecked(WarnHandler.class);
 

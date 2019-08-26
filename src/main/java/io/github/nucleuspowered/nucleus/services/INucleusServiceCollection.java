@@ -5,7 +5,11 @@
 package io.github.nucleuspowered.nucleus.services;
 
 import org.slf4j.Logger;
+import org.spongepowered.api.plugin.PluginContainer;
 
+import javax.inject.Singleton;
+
+@Singleton
 public interface INucleusServiceCollection {
 
     IMessageProviderService messageProvider();
@@ -18,8 +22,12 @@ public interface INucleusServiceCollection {
 
     ICooldownService cooldownService();
 
-    IPlayerOnlineService playerOnlineService();
+    IUserPreferenceService userPreferenceService();
 
-    Logger getLogger();
+    IReloadableService reloadableService();
+
+    PluginContainer pluginContainer();
+
+    Logger logger();
 
 }

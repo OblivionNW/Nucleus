@@ -15,7 +15,7 @@ import io.github.nucleuspowered.nucleus.internal.annotations.command.RegisterCom
 import io.github.nucleuspowered.nucleus.internal.command.AbstractCommand;
 import io.github.nucleuspowered.nucleus.internal.command.NucleusParameters;
 import io.github.nucleuspowered.nucleus.internal.command.ReturnMessageException;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.modules.nameban.config.NameBanConfigAdapter;
 import io.github.nucleuspowered.nucleus.modules.nameban.services.NameBanHandler;
 import io.github.nucleuspowered.nucleus.util.CauseStackHelper;
@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 @NoModifiers
 @NonnullByDefault
 @RegisterCommand("nameban")
-public class NameBanCommand extends AbstractCommand<CommandSource> implements Reloadable {
+public class NameBanCommand extends AbstractCommand<CommandSource> implements SimpleReloadable {
 
     private final String nameKey = "name";
 

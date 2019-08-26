@@ -13,7 +13,7 @@ import io.github.nucleuspowered.nucleus.api.teleport.TeleportScanners;
 import io.github.nucleuspowered.nucleus.configurate.datatypes.LocationNode;
 import io.github.nucleuspowered.nucleus.internal.PermissionRegistry;
 import io.github.nucleuspowered.nucleus.internal.interfaces.ListenerBase;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.permissions.PermissionInformation;
 import io.github.nucleuspowered.nucleus.internal.permissions.SuggestedLevel;
 import io.github.nucleuspowered.nucleus.internal.traits.IDataManagerTrait;
@@ -49,7 +49,7 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-public class SpawnListener implements Reloadable, ListenerBase, MessageProviderTrait, IDataManagerTrait {
+public class SpawnListener implements SimpleReloadable, ListenerBase, MessageProviderTrait, IDataManagerTrait {
 
     private SpawnConfig spawnConfig;
 

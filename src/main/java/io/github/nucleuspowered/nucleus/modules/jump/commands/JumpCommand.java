@@ -12,7 +12,7 @@ import io.github.nucleuspowered.nucleus.internal.annotations.command.RegisterCom
 import io.github.nucleuspowered.nucleus.internal.command.AbstractCommand;
 import io.github.nucleuspowered.nucleus.internal.command.ReturnMessageException;
 import io.github.nucleuspowered.nucleus.internal.docgen.annotations.EssentialsEquivalent;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.modules.core.services.SafeTeleportService;
 import io.github.nucleuspowered.nucleus.modules.jump.config.JumpConfigAdapter;
 import org.spongepowered.api.block.BlockTypes;
@@ -36,7 +36,7 @@ import javax.annotation.Nullable;
 @RegisterCommand({"jump", "j", "jmp"})
 @EssentialsEquivalent({"jump", "j", "jumpto"})
 @NonnullByDefault
-public class JumpCommand extends AbstractCommand<Player> implements Reloadable {
+public class JumpCommand extends AbstractCommand<Player> implements SimpleReloadable {
 
     private int maxJump = 20;
 

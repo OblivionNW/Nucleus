@@ -11,7 +11,7 @@ import io.github.nucleuspowered.nucleus.configurate.datatypes.LocationNode;
 import io.github.nucleuspowered.nucleus.internal.annotations.command.Permissions;
 import io.github.nucleuspowered.nucleus.internal.annotations.command.RegisterCommand;
 import io.github.nucleuspowered.nucleus.internal.command.AbstractCommand;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.permissions.SuggestedLevel;
 import io.github.nucleuspowered.nucleus.modules.core.services.SafeTeleportService;
 import io.github.nucleuspowered.nucleus.modules.spawn.SpawnKeys;
@@ -29,7 +29,7 @@ import java.util.Optional;
 @Permissions(suggestedLevel = SuggestedLevel.USER)
 @RegisterCommand("firstspawn")
 @NonnullByDefault
-public class FirstSpawnCommand extends AbstractCommand<Player> implements Reloadable {
+public class FirstSpawnCommand extends AbstractCommand<Player> implements SimpleReloadable {
 
     private boolean isSafeTeleport = true;
 

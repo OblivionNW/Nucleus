@@ -5,9 +5,9 @@
 package io.github.nucleuspowered.nucleus.modules.staffchat;
 
 import io.github.nucleuspowered.nucleus.Nucleus;
-import io.github.nucleuspowered.nucleus.internal.userprefs.NucleusKeysProvider;
-import io.github.nucleuspowered.nucleus.internal.userprefs.PreferenceKeyImpl;
-import io.github.nucleuspowered.nucleus.internal.userprefs.UserPrefKeys;
+import io.github.nucleuspowered.nucleus.services.impl.userprefs.NucleusKeysProvider;
+import io.github.nucleuspowered.nucleus.services.impl.userprefs.PreferenceKeyImpl;
+import io.github.nucleuspowered.nucleus.services.impl.userprefs.UserPrefKeys;
 import io.github.nucleuspowered.nucleus.modules.staffchat.commands.StaffChatCommand;
 
 public class StaffChatUserPrefKeys implements UserPrefKeys {

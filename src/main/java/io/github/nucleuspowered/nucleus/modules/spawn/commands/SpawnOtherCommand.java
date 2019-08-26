@@ -13,7 +13,7 @@ import io.github.nucleuspowered.nucleus.internal.annotations.command.Permissions
 import io.github.nucleuspowered.nucleus.internal.annotations.command.RegisterCommand;
 import io.github.nucleuspowered.nucleus.internal.command.AbstractCommand;
 import io.github.nucleuspowered.nucleus.internal.command.ReturnMessageException;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.permissions.PermissionInformation;
 import io.github.nucleuspowered.nucleus.internal.permissions.SuggestedLevel;
 import io.github.nucleuspowered.nucleus.modules.core.services.SafeTeleportService;
@@ -47,7 +47,7 @@ import java.util.Map;
 @NonnullByDefault
 @Permissions(prefix = "spawn", suggestedLevel = SuggestedLevel.ADMIN)
 @RegisterCommand(value = "other", subcommandOf = SpawnCommand.class)
-public class SpawnOtherCommand extends AbstractCommand<CommandSource> implements Reloadable {
+public class SpawnOtherCommand extends AbstractCommand<CommandSource> implements SimpleReloadable {
 
     private final String otherKey = "subject";
     private final String worldKey = "world";

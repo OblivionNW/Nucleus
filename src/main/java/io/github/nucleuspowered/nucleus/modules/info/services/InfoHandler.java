@@ -9,7 +9,7 @@ import com.google.common.collect.Maps;
 import io.github.nucleuspowered.nucleus.Nucleus;
 import io.github.nucleuspowered.nucleus.NucleusPlugin;
 import io.github.nucleuspowered.nucleus.internal.TextFileController;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.interfaces.ServiceBase;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.asset.AssetManager;
@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class InfoHandler implements Reloadable, ServiceBase {
+public class InfoHandler implements SimpleReloadable, ServiceBase {
 
     private final Map<String, TextFileController> infoFiles = Maps.newHashMap();
     private final Nucleus plugin = Nucleus.getNucleus();

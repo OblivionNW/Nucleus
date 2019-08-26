@@ -7,6 +7,7 @@ package io.github.nucleuspowered.nucleus.internal.command.control;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import io.github.nucleuspowered.nucleus.Util;
 import io.github.nucleuspowered.nucleus.internal.command.ICommandContext;
 import io.github.nucleuspowered.nucleus.internal.command.ICommandResult;
 import io.github.nucleuspowered.nucleus.internal.command.annotation.CommandModifier;
@@ -31,7 +32,6 @@ import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.args.parsing.InputTokenizer;
 import org.spongepowered.api.command.source.CommandBlockSource;
 import org.spongepowered.api.command.source.ConsoleSource;
-import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.text.Text;
@@ -246,7 +246,7 @@ public class CommandControl implements CommandCallable {
         try {
             source = contextSource.getCommandSource();
         } catch (CommandException ex) {
-            this.serviceCollection.getLogger().warn("Could not get command source, cancelling command execution (did the player disconnect?)", ex);
+            this.serviceCollection.logger().warn("Could not get command source, cancelling command execution (did the player disconnect?)", ex);
             return;
         }
 
@@ -256,7 +256,7 @@ public class CommandControl implements CommandCallable {
             // If we are here, then we're handling the command ourselves.
             Text message = ex.getText() == null ? Text.of(TextColors.RED, "Unknown error!") : ex.getText();
             onFail(contextSource, message);
-            this.serviceCollection.getLogger().warn("Error executing command {}", this.command, ex);
+            this.serviceCollection.logger().warn("Error executing command {}", this.command, ex);
         }
     }
 
@@ -287,7 +287,7 @@ public class CommandControl implements CommandCallable {
         return CommandResult.success();
     }
 
-    private CommandResult onFail(ICommandContext<? extends CommandSource> source, @Nullable Text errorMessage) {
+    public CommandResult onFail(ICommandContext<? extends CommandSource> source, @Nullable Text errorMessage) {
         // Run any fail actions.
         runFailActions(source);
         return CommandResult.empty();
@@ -316,13 +316,32 @@ public class CommandControl implements CommandCallable {
     @Override
     @NonNull
     public Optional<Text> getShortDescription(@NonNull CommandSource source) {
-        return Optional.empty();
+        return Optional.of(this.serviceCollection
+                .messageProvider()
+                .getMessageFor(source, this.metadata.getCommandAnnotation().commandDescriptionKey() + ".desc"));
     }
 
     @Override
     @NonNull
     public Optional<Text> getHelp(@NonNull CommandSource source) {
-        return Optional.empty();
+        final Text extended;
+        Text r;
+        try {
+            r = this.serviceCollection
+                    .messageProvider()
+                    .getMessageFor(source, this.metadata.getCommandAnnotation().commandDescriptionKey() + ".extended");
+        } catch (Exception e) {
+            r = null;
+        }
+        extended = r;
+
+        if (extended == null) {
+            return getShortDescription(source);
+        } else {
+            return getShortDescription(source)
+                    .map(text -> Optional.of(Text.of(text, Text.NEW_LINE, Util.SPACE, Text.NEW_LINE, extended)))
+                    .orElseGet(() -> Optional.of(extended));
+        }
     }
 
     @Override

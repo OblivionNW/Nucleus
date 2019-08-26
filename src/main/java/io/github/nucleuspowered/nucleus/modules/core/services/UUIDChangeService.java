@@ -8,7 +8,7 @@ import com.google.common.collect.ImmutableMap;
 import io.github.nucleuspowered.nucleus.Nucleus;
 import io.github.nucleuspowered.nucleus.api.service.NucleusWorldUUIDChangeService;
 import io.github.nucleuspowered.nucleus.internal.annotations.APIService;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.interfaces.ServiceBase;
 import io.github.nucleuspowered.nucleus.internal.traits.InternalServiceManagerTrait;
 import io.github.nucleuspowered.nucleus.modules.core.config.CoreConfigAdapter;
@@ -20,7 +20,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @APIService(NucleusWorldUUIDChangeService.class)
-public class UUIDChangeService implements Reloadable, InternalServiceManagerTrait, NucleusWorldUUIDChangeService, ServiceBase {
+public class UUIDChangeService implements SimpleReloadable, InternalServiceManagerTrait, NucleusWorldUUIDChangeService, ServiceBase {
 
     private Map<UUID, UUID> mapping = ImmutableMap.of();
     private boolean canLoad = false;

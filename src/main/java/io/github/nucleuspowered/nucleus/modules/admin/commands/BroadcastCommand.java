@@ -13,7 +13,7 @@ import io.github.nucleuspowered.nucleus.internal.annotations.command.RegisterCom
 import io.github.nucleuspowered.nucleus.internal.command.AbstractCommand;
 import io.github.nucleuspowered.nucleus.internal.command.NucleusParameters;
 import io.github.nucleuspowered.nucleus.internal.docgen.annotations.EssentialsEquivalent;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.text.NucleusTextTemplateFactory;
 import io.github.nucleuspowered.nucleus.internal.text.NucleusTextTemplateMessageSender;
 import io.github.nucleuspowered.nucleus.modules.admin.AdminModule;
@@ -34,7 +34,7 @@ import org.spongepowered.api.util.annotation.NonnullByDefault;
 @RegisterCommand({ "broadcast", "bcast", "bc" })
 @EssentialsEquivalent({"broadcast", "bcast"})
 @NonnullByDefault
-public class BroadcastCommand extends AbstractCommand<CommandSource> implements Reloadable {
+public class BroadcastCommand extends AbstractCommand<CommandSource> implements SimpleReloadable {
     private BroadcastConfig bc = new BroadcastConfig();
 
     @Override

@@ -9,9 +9,9 @@ import io.github.nucleuspowered.nucleus.Nucleus;
 import io.github.nucleuspowered.nucleus.Util;
 import io.github.nucleuspowered.nucleus.internal.CommandPermissionHandler;
 import io.github.nucleuspowered.nucleus.internal.interfaces.ListenerBase;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.text.TextParsingUtils;
-import io.github.nucleuspowered.nucleus.internal.userprefs.UserPreferenceService;
+import io.github.nucleuspowered.nucleus.services.impl.userprefs.UserPreferenceService;
 import io.github.nucleuspowered.nucleus.modules.commandspy.CommandSpyModule;
 import io.github.nucleuspowered.nucleus.modules.commandspy.CommandSpyUserPrefKeys;
 import io.github.nucleuspowered.nucleus.modules.commandspy.commands.CommandSpyCommand;
@@ -31,7 +31,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class CommandSpyListener implements Reloadable, ListenerBase.Conditional {
+public class CommandSpyListener implements SimpleReloadable, ListenerBase.Conditional {
 
     private final String basePermission;
     private final String exemptTarget;

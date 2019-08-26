@@ -6,8 +6,8 @@ package io.github.nucleuspowered.nucleus.modules.vanish.listener;
 
 import io.github.nucleuspowered.nucleus.Nucleus;
 import io.github.nucleuspowered.nucleus.internal.interfaces.ListenerBase;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
-import io.github.nucleuspowered.nucleus.internal.userprefs.UserPreferenceService;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
+import io.github.nucleuspowered.nucleus.services.impl.userprefs.UserPreferenceService;
 import io.github.nucleuspowered.nucleus.modules.vanish.VanishKeys;
 import io.github.nucleuspowered.nucleus.modules.vanish.VanishUserPrefKeys;
 import io.github.nucleuspowered.nucleus.modules.vanish.commands.VanishCommand;
@@ -27,7 +27,7 @@ import org.spongepowered.api.text.action.TextActions;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public class VanishListener implements Reloadable, ListenerBase {
+public class VanishListener implements SimpleReloadable, ListenerBase {
 
     private VanishConfig vanishConfig = new VanishConfig();
     private VanishService service = getServiceUnchecked(VanishService.class);

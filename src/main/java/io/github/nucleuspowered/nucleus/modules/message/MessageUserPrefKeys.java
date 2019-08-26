@@ -5,11 +5,11 @@
 package io.github.nucleuspowered.nucleus.modules.message;
 
 import io.github.nucleuspowered.nucleus.Nucleus;
-import io.github.nucleuspowered.nucleus.internal.services.PermissionResolver;
-import io.github.nucleuspowered.nucleus.internal.userprefs.NucleusKeysProvider;
-import io.github.nucleuspowered.nucleus.internal.userprefs.PreferenceKeyImpl;
-import io.github.nucleuspowered.nucleus.internal.userprefs.PreferenceKeyImpl.BooleanKey;
-import io.github.nucleuspowered.nucleus.internal.userprefs.UserPrefKeys;
+import io.github.nucleuspowered.nucleus.services.IPermissionCheckService;
+import io.github.nucleuspowered.nucleus.services.impl.userprefs.NucleusKeysProvider;
+import io.github.nucleuspowered.nucleus.services.impl.userprefs.PreferenceKeyImpl;
+import io.github.nucleuspowered.nucleus.services.impl.userprefs.PreferenceKeyImpl.BooleanKey;
+import io.github.nucleuspowered.nucleus.services.impl.userprefs.UserPrefKeys;
 import io.github.nucleuspowered.nucleus.modules.message.commands.MsgToggleCommand;
 import io.github.nucleuspowered.nucleus.modules.message.commands.SocialSpyCommand;
 
@@ -26,7 +26,7 @@ public class MessageUserPrefKeys implements UserPrefKeys {
             NucleusKeysProvider.SOCIAL_SPY_KEY,
             true,
             user -> {
-                PermissionResolver resolver = Nucleus.getNucleus().getPermissionResolver();
+                IPermissionCheckService resolver = Nucleus.getNucleus().getPermissionResolver();
                 return resolver.hasPermission(user, SOCIAL_SPY_BASE) && !resolver.hasPermission(user, SOCIAL_SPY_FORCE);
             },
             "userpref.socialspy"

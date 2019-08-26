@@ -6,19 +6,22 @@ package io.github.nucleuspowered.nucleus.internal.command.requirements;
 
 import io.github.nucleuspowered.nucleus.Util;
 import io.github.nucleuspowered.nucleus.internal.command.ICommandContext;
+import io.github.nucleuspowered.nucleus.internal.command.ICommandResult;
 import io.github.nucleuspowered.nucleus.internal.command.control.CommandControl;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.services.IEconomyServiceProvider;
 import io.github.nucleuspowered.nucleus.services.INucleusServiceCollection;
+import io.github.nucleuspowered.nucleus.services.IWarmupService;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.util.Identifiable;
 
+import java.time.Duration;
 import java.util.Optional;
 
-public enum CommandModifiers implements ICommandModifier, Reloadable {
+public enum CommandModifiers implements ICommandModifier, SimpleReloadable {
 
     /**
      * Command requires an economy plugin
@@ -56,7 +59,7 @@ public enum CommandModifiers implements ICommandModifier, Reloadable {
             control.getCommandModifiersConfig().setCostEnable(true);
         }
 
-        @Override public boolean canExecute(INucleusServiceCollection serviceCollection, ICommandContext<? extends CommandSource> source) throws CommandException {
+        @Override public boolean canExecuteModifier(INucleusServiceCollection serviceCollection, ICommandContext<? extends CommandSource> source) throws CommandException {
             return serviceCollection.economyServiceProvider().serviceExists() && source.getCommandSource() instanceof Player;
         }
 
@@ -80,7 +83,7 @@ public enum CommandModifiers implements ICommandModifier, Reloadable {
             control.getCommandModifiersConfig().setCooldownEnable(true);
         }
 
-        @Override public boolean canExecute(INucleusServiceCollection serviceCollection, ICommandContext<? extends CommandSource> source) throws CommandException {
+        @Override public boolean canExecuteModifier(INucleusServiceCollection serviceCollection, ICommandContext<? extends CommandSource> source) throws CommandException {
             return source.getCommandSource() instanceof Player;
         }
 
@@ -102,8 +105,27 @@ public enum CommandModifiers implements ICommandModifier, Reloadable {
             control.getCommandModifiersConfig().setWarmupEnable(true);
         }
 
-        @Override public boolean canExecute(INucleusServiceCollection serviceCollection, ICommandContext<? extends CommandSource> source) throws CommandException {
+        @Override public boolean canExecuteModifier(INucleusServiceCollection serviceCollection, ICommandContext<? extends CommandSource> source) throws CommandException {
             return source.getCommandSource() instanceof Player;
+        }
+
+        @Override public Optional<ICommandResult> preExecute(ICommandContext<? extends CommandSource> source, CommandControl control,
+                INucleusServiceCollection serviceCollection) {
+            // If the player had an exemption earlier, this would not be in the list. Therefore, we have a warmup.
+            // We also know we have a player.
+            Player player = source.getCommandSourceAsPlayerUnchecked();
+            serviceCollection.warmupService().cancel(player);
+            serviceCollection.warmupService().executeAfter(player, Duration.ofSeconds(source.getWarmup()), new IWarmupService.WarmupTask() {
+                @Override public void run() {
+                    control.startExecute(source);
+                }
+
+                @Override public void onCancel() {
+                    control.onFail(source, null); // TODO: Warmup message?
+                }
+            });
+
+            return Optional.of(ICommandResult.willContinueLater());
         }
     }
 }

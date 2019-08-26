@@ -12,7 +12,7 @@ import io.github.nucleuspowered.nucleus.internal.annotations.command.NoModifiers
 import io.github.nucleuspowered.nucleus.internal.annotations.command.RegisterCommand;
 import io.github.nucleuspowered.nucleus.internal.command.AbstractCommand;
 import io.github.nucleuspowered.nucleus.internal.command.ReturnMessageException;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.messages.MessageProvider;
 import io.github.nucleuspowered.nucleus.internal.text.NucleusTextTemplateImpl;
 import io.github.nucleuspowered.nucleus.modules.serverlist.config.ServerListConfig;
@@ -34,7 +34,7 @@ import java.util.List;
 @RunAsync
 @NonnullByDefault
 @RegisterCommand(value = {"serverlist", "sl"})
-public class ServerListCommand extends AbstractCommand<CommandSource> implements Reloadable {
+public class ServerListCommand extends AbstractCommand<CommandSource> implements SimpleReloadable {
 
     private ServerListConfig slc = new ServerListConfig();
 

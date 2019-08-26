@@ -5,7 +5,7 @@
 package io.github.nucleuspowered.nucleus.modules.vanish.services;
 
 import io.github.nucleuspowered.nucleus.Nucleus;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.interfaces.ServiceBase;
 import io.github.nucleuspowered.nucleus.internal.traits.PermissionTrait;
 import io.github.nucleuspowered.nucleus.modules.vanish.VanishKeys;
@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-public class VanishService implements Reloadable, PermissionTrait, ServiceBase {
+public class VanishService implements SimpleReloadable, PermissionTrait, ServiceBase {
 
     private static final String CAN_SEE_PERM = Nucleus.getNucleus().getPermissionRegistry()
             .getPermissionsForNucleusCommand(VanishCommand.class).getPermissionWithSuffix("see");

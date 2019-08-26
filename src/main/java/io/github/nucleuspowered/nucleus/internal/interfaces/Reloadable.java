@@ -1,11 +1,9 @@
-/*
- * This file is part of Nucleus, licensed under the MIT License (MIT). See the LICENSE.txt file
- * at the root of this project for more details.
- */
 package io.github.nucleuspowered.nucleus.internal.interfaces;
 
-@FunctionalInterface
+import io.github.nucleuspowered.nucleus.services.INucleusServiceCollection;
+
 public interface Reloadable {
 
-    void onReload() throws Exception;
+    void onReload(INucleusServiceCollection serviceCollection);
+
 }

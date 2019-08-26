@@ -16,7 +16,7 @@ import io.github.nucleuspowered.nucleus.internal.annotations.command.SetCooldown
 import io.github.nucleuspowered.nucleus.internal.command.AbstractCommand;
 import io.github.nucleuspowered.nucleus.internal.command.NucleusParameters;
 import io.github.nucleuspowered.nucleus.internal.command.ReturnMessageException;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.permissions.PermissionInformation;
 import io.github.nucleuspowered.nucleus.internal.permissions.SuggestedLevel;
 import io.github.nucleuspowered.nucleus.modules.core.services.SafeTeleportService;
@@ -51,7 +51,7 @@ import java.util.WeakHashMap;
 @NonnullByDefault
 @Permissions(supportsOthers = true)
 @RegisterCommand({"rtp", "randomteleport", "rteleport"})
-public class RandomTeleportCommand extends AbstractCommand.SimpleTargetOtherPlayer implements Reloadable {
+public class RandomTeleportCommand extends AbstractCommand.SimpleTargetOtherPlayer implements SimpleReloadable {
 
     private RTPConfig rc = new RTPConfig();
     private final Map<Task, UUID> cachedTasks = new WeakHashMap<>();

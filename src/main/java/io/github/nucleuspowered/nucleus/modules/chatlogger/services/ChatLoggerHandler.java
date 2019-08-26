@@ -5,12 +5,12 @@
 package io.github.nucleuspowered.nucleus.modules.chatlogger.services;
 
 import io.github.nucleuspowered.nucleus.Nucleus;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.interfaces.ServiceBase;
 import io.github.nucleuspowered.nucleus.logging.AbstractLoggingHandler;
 import io.github.nucleuspowered.nucleus.modules.chatlogger.config.ChatLoggingConfigAdapter;
 
-public class ChatLoggerHandler extends AbstractLoggingHandler implements Reloadable, ServiceBase {
+public class ChatLoggerHandler extends AbstractLoggingHandler implements SimpleReloadable, ServiceBase {
 
     private boolean enabled = false;
 

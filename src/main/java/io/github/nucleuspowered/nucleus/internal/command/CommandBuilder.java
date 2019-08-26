@@ -9,7 +9,7 @@ import io.github.nucleuspowered.nucleus.Nucleus;
 import io.github.nucleuspowered.nucleus.NucleusPlugin;
 import io.github.nucleuspowered.nucleus.PluginInfo;
 import io.github.nucleuspowered.nucleus.internal.annotations.SkipOnError;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.commented.SimpleCommentedConfigurationNode;
@@ -97,8 +97,8 @@ public class CommandBuilder {
                     }
                 }
 
-                if (c instanceof Reloadable) {
-                    this.plugin.registerReloadable(((Reloadable) c));
+                if (c instanceof SimpleReloadable) {
+                    this.plugin.registerReloadable(((SimpleReloadable) c));
                 }
             } catch (Exception e) {
                 throw new IllegalStateException(this.plugin.getMessageProvider().getMessageWithFormat("startup.commandfailiure", c.getAliases()[0],

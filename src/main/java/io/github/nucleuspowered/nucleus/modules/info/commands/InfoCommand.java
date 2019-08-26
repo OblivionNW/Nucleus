@@ -16,7 +16,7 @@ import io.github.nucleuspowered.nucleus.internal.annotations.command.RegisterCom
 import io.github.nucleuspowered.nucleus.internal.command.AbstractCommand;
 import io.github.nucleuspowered.nucleus.internal.command.ReturnMessageException;
 import io.github.nucleuspowered.nucleus.internal.docgen.annotations.EssentialsEquivalent;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.permissions.PermissionInformation;
 import io.github.nucleuspowered.nucleus.internal.permissions.SuggestedLevel;
 import io.github.nucleuspowered.nucleus.modules.info.config.InfoConfig;
@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
 @NonnullByDefault
 @RegisterCommand({"info", "einfo"})
 @EssentialsEquivalent({"info", "ifo", "news", "about", "inform"})
-public class InfoCommand extends AbstractCommand<CommandSource> implements Reloadable {
+public class InfoCommand extends AbstractCommand<CommandSource> implements SimpleReloadable {
 
     private final InfoHandler infoHandler = Nucleus.getNucleus().getInternalServiceManager().getServiceUnchecked(InfoHandler.class);
     private InfoConfig infoConfig = new InfoConfig();

@@ -5,9 +5,9 @@
 package io.github.nucleuspowered.nucleus.modules.powertool;
 
 import io.github.nucleuspowered.nucleus.Nucleus;
-import io.github.nucleuspowered.nucleus.internal.userprefs.NucleusKeysProvider;
-import io.github.nucleuspowered.nucleus.internal.userprefs.PreferenceKeyImpl;
-import io.github.nucleuspowered.nucleus.internal.userprefs.UserPrefKeys;
+import io.github.nucleuspowered.nucleus.services.impl.userprefs.NucleusKeysProvider;
+import io.github.nucleuspowered.nucleus.services.impl.userprefs.PreferenceKeyImpl;
+import io.github.nucleuspowered.nucleus.services.impl.userprefs.UserPrefKeys;
 import io.github.nucleuspowered.nucleus.modules.powertool.commands.TogglePowertoolCommand;
 
 public class PowertoolUserPreferenceKeys implements UserPrefKeys {

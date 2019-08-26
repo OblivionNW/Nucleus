@@ -9,7 +9,7 @@ import io.github.nucleuspowered.nucleus.Nucleus;
 import io.github.nucleuspowered.nucleus.api.nucleusdata.Warp;
 import io.github.nucleuspowered.nucleus.api.service.NucleusWarpService;
 import io.github.nucleuspowered.nucleus.internal.PermissionRegistry;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.traits.InternalServiceManagerTrait;
 import io.github.nucleuspowered.nucleus.internal.traits.PermissionTrait;
 import io.github.nucleuspowered.nucleus.modules.warp.config.WarpConfigAdapter;
@@ -33,7 +33,7 @@ import javax.annotation.Nullable;
  */
 @NonnullByDefault
 @SuppressWarnings("all")
-public class WarpArgument extends CommandElement implements Reloadable, InternalServiceManagerTrait, PermissionTrait {
+public class WarpArgument extends CommandElement implements SimpleReloadable, InternalServiceManagerTrait, PermissionTrait {
 
     private NucleusWarpService service;
     private final boolean permissionCheck;

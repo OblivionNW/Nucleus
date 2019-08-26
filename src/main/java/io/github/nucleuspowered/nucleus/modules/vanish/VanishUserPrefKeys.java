@@ -4,9 +4,9 @@
  */
 package io.github.nucleuspowered.nucleus.modules.vanish;
 
-import io.github.nucleuspowered.nucleus.internal.userprefs.NucleusKeysProvider;
-import io.github.nucleuspowered.nucleus.internal.userprefs.PreferenceKeyImpl;
-import io.github.nucleuspowered.nucleus.internal.userprefs.UserPrefKeys;
+import io.github.nucleuspowered.nucleus.services.impl.userprefs.NucleusKeysProvider;
+import io.github.nucleuspowered.nucleus.services.impl.userprefs.PreferenceKeyImpl;
+import io.github.nucleuspowered.nucleus.services.impl.userprefs.UserPrefKeys;
 import io.github.nucleuspowered.nucleus.modules.vanish.listener.VanishListener;
 
 public class VanishUserPrefKeys implements UserPrefKeys {

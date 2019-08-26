@@ -7,7 +7,7 @@ package io.github.nucleuspowered.nucleus.modules.core.listeners;
 import io.github.nucleuspowered.nucleus.Nucleus;
 import io.github.nucleuspowered.nucleus.api.service.NucleusWarmupManagerService;
 import io.github.nucleuspowered.nucleus.internal.interfaces.ListenerBase;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.modules.core.config.WarmupConfig;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
@@ -17,7 +17,7 @@ import org.spongepowered.api.event.entity.MoveEntityEvent;
 import org.spongepowered.api.event.filter.cause.Root;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 
-public class WarmupListener implements Reloadable, ListenerBase {
+public class WarmupListener implements SimpleReloadable, ListenerBase {
 
     private NucleusWarmupManagerService service = Nucleus.getNucleus().getWarmupManager();
     private WarmupConfig warmupConfig = Nucleus.getNucleus().getWarmupConfig();

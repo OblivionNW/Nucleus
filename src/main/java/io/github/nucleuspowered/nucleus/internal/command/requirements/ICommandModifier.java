@@ -7,7 +7,7 @@ package io.github.nucleuspowered.nucleus.internal.command.requirements;
 import io.github.nucleuspowered.nucleus.internal.command.ICommandContext;
 import io.github.nucleuspowered.nucleus.internal.command.ICommandResult;
 import io.github.nucleuspowered.nucleus.internal.command.control.CommandControl;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.services.INucleusServiceCollection;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandSource;
@@ -15,7 +15,7 @@ import org.spongepowered.api.text.Text;
 
 import java.util.Optional;
 
-public interface ICommandModifier extends Reloadable {
+public interface ICommandModifier extends SimpleReloadable {
 
     default void setupCommand(CommandControl control) { }
 
@@ -24,7 +24,7 @@ public interface ICommandModifier extends Reloadable {
      *
      * @return if so.
      */
-    default boolean canExecute(INucleusServiceCollection serviceCollection, ICommandContext<? extends CommandSource> source) throws CommandException {
+    default boolean canExecuteModifier(INucleusServiceCollection serviceCollection, ICommandContext<? extends CommandSource> source) throws CommandException {
         return true;
     }
 

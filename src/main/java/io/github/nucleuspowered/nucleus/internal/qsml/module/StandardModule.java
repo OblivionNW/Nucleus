@@ -26,7 +26,7 @@ import io.github.nucleuspowered.nucleus.internal.command.CommandBuilder;
 import io.github.nucleuspowered.nucleus.internal.command.ICommandInterceptor;
 import io.github.nucleuspowered.nucleus.internal.docgen.DocGenCache;
 import io.github.nucleuspowered.nucleus.internal.interfaces.ListenerBase;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.interfaces.ServiceBase;
 import io.github.nucleuspowered.nucleus.internal.interfaces.TaskBase;
 import io.github.nucleuspowered.nucleus.internal.permissions.ServiceChangeListener;
@@ -35,9 +35,9 @@ import io.github.nucleuspowered.nucleus.internal.services.CommandRemapperService
 import io.github.nucleuspowered.nucleus.internal.text.Tokens;
 import io.github.nucleuspowered.nucleus.internal.traits.InternalServiceManagerTrait;
 import io.github.nucleuspowered.nucleus.internal.traits.MessageProviderTrait;
-import io.github.nucleuspowered.nucleus.internal.userprefs.PreferenceKeyImpl;
-import io.github.nucleuspowered.nucleus.internal.userprefs.UserPrefKeys;
-import io.github.nucleuspowered.nucleus.internal.userprefs.UserPreferenceService;
+import io.github.nucleuspowered.nucleus.services.impl.userprefs.PreferenceKeyImpl;
+import io.github.nucleuspowered.nucleus.services.impl.userprefs.UserPrefKeys;
+import io.github.nucleuspowered.nucleus.services.impl.userprefs.UserPreferenceService;
 import io.github.nucleuspowered.nucleus.modules.playerinfo.misc.BasicSeenInformationProvider;
 import io.github.nucleuspowered.nucleus.modules.playerinfo.services.SeenHandler;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
@@ -166,8 +166,8 @@ public abstract class StandardModule implements Module, InternalServiceManagerTr
             }
         }
 
-        if (serviceImpl instanceof Reloadable) {
-            Reloadable reloadable = (Reloadable) serviceImpl;
+        if (serviceImpl instanceof SimpleReloadable) {
+            SimpleReloadable reloadable = (SimpleReloadable) serviceImpl;
             Nucleus.getNucleus().registerReloadable(reloadable);
             reloadable.onReload();
         }
@@ -201,8 +201,8 @@ public abstract class StandardModule implements Module, InternalServiceManagerTr
                     throw new IllegalStateException(error, e);
                 }
 
-                if (impl instanceof Reloadable) {
-                    Reloadable reloadable = (Reloadable) impl;
+                if (impl instanceof SimpleReloadable) {
+                    SimpleReloadable reloadable = (SimpleReloadable) impl;
                     Nucleus.getNucleus().registerReloadable(reloadable);
                     reloadable.onReload();
                 }
@@ -292,10 +292,10 @@ public abstract class StandardModule implements Module, InternalServiceManagerTr
 
             if (c instanceof ListenerBase.Conditional) {
                 // Add reloadable to load in the listener dynamically if required.
-                Reloadable tae = () -> {
+                SimpleReloadable tae = () -> {
                     Sponge.getEventManager().unregisterListeners(c);
-                    if (c instanceof Reloadable) {
-                        ((Reloadable) c).onReload();
+                    if (c instanceof SimpleReloadable) {
+                        ((SimpleReloadable) c).onReload();
                     }
 
                     if (((ListenerBase.Conditional) c).shouldEnable()) {
@@ -309,8 +309,8 @@ public abstract class StandardModule implements Module, InternalServiceManagerTr
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            } else if (c instanceof Reloadable) {
-                this.plugin.registerReloadable(((Reloadable) c));
+            } else if (c instanceof SimpleReloadable) {
+                this.plugin.registerReloadable(((SimpleReloadable) c));
                 Sponge.getEventManager().registerListeners(this.plugin, c);
             } else {
                 Sponge.getEventManager().registerListeners(this.plugin, c);
@@ -348,10 +348,10 @@ public abstract class StandardModule implements Module, InternalServiceManagerTr
 
             tb.submit(this.plugin);
 
-            if (c instanceof Reloadable) {
-                this.plugin.registerReloadable((Reloadable) c);
+            if (c instanceof SimpleReloadable) {
+                this.plugin.registerReloadable((SimpleReloadable) c);
                 try {
-                    ((Reloadable) c).onReload();
+                    ((SimpleReloadable) c).onReload();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

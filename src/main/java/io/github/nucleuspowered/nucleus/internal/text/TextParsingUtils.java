@@ -8,7 +8,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import io.github.nucleuspowered.nucleus.Nucleus;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.traits.InternalServiceManagerTrait;
 import io.github.nucleuspowered.nucleus.internal.traits.MessageProviderTrait;
 import io.github.nucleuspowered.nucleus.modules.core.config.CoreConfigAdapter;
@@ -42,7 +42,7 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
 
-public class TextParsingUtils implements Reloadable, MessageProviderTrait, InternalServiceManagerTrait {
+public class TextParsingUtils implements SimpleReloadable, MessageProviderTrait, InternalServiceManagerTrait {
 
     private static final Pattern colours = Pattern.compile(".*?(?<colour>(&[0-9a-flmnrok])+)$");
 

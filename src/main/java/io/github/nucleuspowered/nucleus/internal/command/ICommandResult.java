@@ -20,6 +20,10 @@ public interface ICommandResult {
         return CommandResultImpl.FAILURE;
     }
 
+    static ICommandResult willContinueLater() {
+        return CommandResultImpl.WILL_CONTINUE;
+    }
+
     static ICommandResult error(String key, Text... args) {
         return new CommandResultImpl(false, key, args);
     }

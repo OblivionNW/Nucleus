@@ -7,7 +7,7 @@ package io.github.nucleuspowered.nucleus.modules.commandlogger.listeners;
 import com.google.common.collect.ImmutableSet;
 import io.github.nucleuspowered.nucleus.Nucleus;
 import io.github.nucleuspowered.nucleus.internal.interfaces.ListenerBase;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.modules.commandlogger.config.CommandLoggerConfig;
 import io.github.nucleuspowered.nucleus.modules.commandlogger.config.CommandLoggerConfigAdapter;
 import io.github.nucleuspowered.nucleus.modules.commandlogger.services.CommandLoggerHandler;
@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-public class CommandLoggingListener implements Reloadable, ListenerBase {
+public class CommandLoggingListener implements SimpleReloadable, ListenerBase {
 
     private final CommandLoggerHandler handler = Nucleus.getNucleus().getInternalServiceManager().getServiceUnchecked(CommandLoggerHandler.class);
     private CommandLoggerConfig c = new CommandLoggerConfig();

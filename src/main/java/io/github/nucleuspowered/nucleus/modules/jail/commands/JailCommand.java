@@ -14,7 +14,7 @@ import io.github.nucleuspowered.nucleus.internal.command.AbstractCommand;
 import io.github.nucleuspowered.nucleus.internal.command.NucleusParameters;
 import io.github.nucleuspowered.nucleus.internal.command.ReturnMessageException;
 import io.github.nucleuspowered.nucleus.internal.docgen.annotations.EssentialsEquivalent;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.permissions.PermissionInformation;
 import io.github.nucleuspowered.nucleus.internal.permissions.SuggestedLevel;
 import io.github.nucleuspowered.nucleus.modules.jail.JailParameters;
@@ -46,7 +46,7 @@ import java.util.Optional;
 @NoModifiers
 @RegisterCommand({"jail", "unjail", "togglejail"})
 @EssentialsEquivalent({"togglejail", "tjail", "unjail", "jail"})
-public class JailCommand extends AbstractCommand<CommandSource> implements Reloadable {
+public class JailCommand extends AbstractCommand<CommandSource> implements SimpleReloadable {
 
     private final JailHandler handler = Nucleus.getNucleus().getInternalServiceManager().getServiceUnchecked(JailHandler.class);
 

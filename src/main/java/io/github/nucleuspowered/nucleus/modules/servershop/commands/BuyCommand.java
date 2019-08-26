@@ -18,7 +18,7 @@ import io.github.nucleuspowered.nucleus.internal.annotations.command.Permissions
 import io.github.nucleuspowered.nucleus.internal.annotations.command.RegisterCommand;
 import io.github.nucleuspowered.nucleus.internal.command.AbstractCommand;
 import io.github.nucleuspowered.nucleus.internal.docgen.annotations.EssentialsEquivalent;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.permissions.SuggestedLevel;
 import io.github.nucleuspowered.nucleus.modules.servershop.config.ServerShopConfigAdapter;
 import org.spongepowered.api.CatalogType;
@@ -49,7 +49,7 @@ import java.util.function.Consumer;
 @RegisterCommand({"itembuy", "buy"})
 @EssentialsEquivalent("buy")
 @NonnullByDefault
-public class BuyCommand extends AbstractCommand<Player> implements Reloadable {
+public class BuyCommand extends AbstractCommand<Player> implements SimpleReloadable {
 
     private final ItemDataService itemDataService = Nucleus.getNucleus().getItemDataService();
     private final EconHelper econHelper = Nucleus.getNucleus().getEconHelper();

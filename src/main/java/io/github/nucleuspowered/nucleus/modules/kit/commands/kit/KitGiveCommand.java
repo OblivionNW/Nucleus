@@ -14,7 +14,7 @@ import io.github.nucleuspowered.nucleus.internal.annotations.command.Permissions
 import io.github.nucleuspowered.nucleus.internal.annotations.command.RegisterCommand;
 import io.github.nucleuspowered.nucleus.internal.command.NucleusParameters;
 import io.github.nucleuspowered.nucleus.internal.command.ReturnMessageException;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.permissions.PermissionInformation;
 import io.github.nucleuspowered.nucleus.internal.permissions.SuggestedLevel;
 import io.github.nucleuspowered.nucleus.modules.kit.commands.KitFallbackBase;
@@ -37,7 +37,7 @@ import java.util.Map;
 @Permissions(prefix = "kit")
 @RegisterCommand(value = "give", subcommandOf = KitCommand.class)
 @NonnullByDefault
-public class KitGiveCommand extends KitFallbackBase<CommandSource> implements Reloadable {
+public class KitGiveCommand extends KitFallbackBase<CommandSource> implements SimpleReloadable {
 
     private boolean mustGetAll;
     private boolean isDrop;

@@ -4,8 +4,6 @@
  */
 package io.github.nucleuspowered.nucleus.internal.command.annotation;
 
-import io.github.nucleuspowered.nucleus.internal.command.requirements.CommandModifiers;
-
 public @interface NucleusCommand {
 
     /**
@@ -42,5 +40,14 @@ public @interface NucleusCommand {
      * @return Whether it has one
      */
     boolean hasHelpCommand() default true;
+
+    /**
+     * The basic command description key. Must have a corresponding
+     * <code>[key].desc</code> entry in <code>commands.properties</code>,
+     * optionally having a <code>[key].extended</code>.
+     *
+     * @return The root of the key
+     */
+    String commandDescriptionKey();
 
 }

@@ -6,7 +6,7 @@ package io.github.nucleuspowered.nucleus.modules.mob.listeners;
 
 import io.github.nucleuspowered.nucleus.Nucleus;
 import io.github.nucleuspowered.nucleus.internal.interfaces.ListenerBase;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.modules.mob.MobModule;
 import io.github.nucleuspowered.nucleus.modules.mob.config.BlockSpawnsConfig;
 import io.github.nucleuspowered.nucleus.modules.mob.config.MobConfig;
@@ -28,7 +28,7 @@ import org.spongepowered.api.world.World;
 import java.util.List;
 import java.util.Optional;
 
-public class BlockLivingSpawnListener implements Reloadable, ListenerBase.Conditional {
+public class BlockLivingSpawnListener implements SimpleReloadable, ListenerBase.Conditional {
 
     private MobConfig config = new MobConfig();
 

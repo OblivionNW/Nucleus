@@ -12,7 +12,7 @@ import io.github.nucleuspowered.nucleus.internal.annotations.command.RegisterCom
 import io.github.nucleuspowered.nucleus.internal.command.AbstractCommand;
 import io.github.nucleuspowered.nucleus.internal.command.ReturnMessageException;
 import io.github.nucleuspowered.nucleus.internal.docgen.annotations.EssentialsEquivalent;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.messages.MessageProvider;
 import io.github.nucleuspowered.nucleus.internal.permissions.PermissionInformation;
 import io.github.nucleuspowered.nucleus.internal.permissions.SuggestedLevel;
@@ -42,7 +42,7 @@ import java.util.Optional;
 @RegisterCommand({"spawnmob", "spawnentity", "mobspawn"})
 @EssentialsEquivalent({"spawnmob", "mob"})
 @NonnullByDefault
-public class SpawnMobCommand extends AbstractCommand.SimpleTargetOtherPlayer implements Reloadable {
+public class SpawnMobCommand extends AbstractCommand.SimpleTargetOtherPlayer implements SimpleReloadable {
 
     private final String amountKey = "amount";
     private final String mobTypeKey = "mob";

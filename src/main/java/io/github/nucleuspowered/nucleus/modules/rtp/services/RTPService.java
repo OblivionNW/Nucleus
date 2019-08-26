@@ -7,7 +7,7 @@ package io.github.nucleuspowered.nucleus.modules.rtp.services;
 import io.github.nucleuspowered.nucleus.api.rtp.RTPKernel;
 import io.github.nucleuspowered.nucleus.api.service.NucleusRTPService;
 import io.github.nucleuspowered.nucleus.internal.annotations.APIService;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.interfaces.ServiceBase;
 import io.github.nucleuspowered.nucleus.internal.traits.InternalServiceManagerTrait;
 import io.github.nucleuspowered.nucleus.modules.rtp.config.RTPConfig;
@@ -19,7 +19,7 @@ import org.spongepowered.api.world.storage.WorldProperties;
 import javax.annotation.Nullable;
 
 @APIService(NucleusRTPService.class)
-public class RTPService implements NucleusRTPService, Reloadable, InternalServiceManagerTrait, ServiceBase {
+public class RTPService implements NucleusRTPService, SimpleReloadable, InternalServiceManagerTrait, ServiceBase {
 
     private RTPConfig config = new RTPConfig();
 

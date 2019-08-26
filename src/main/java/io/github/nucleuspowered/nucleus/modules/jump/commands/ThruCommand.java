@@ -11,7 +11,7 @@ import io.github.nucleuspowered.nucleus.internal.annotations.command.Permissions
 import io.github.nucleuspowered.nucleus.internal.annotations.command.RegisterCommand;
 import io.github.nucleuspowered.nucleus.internal.command.AbstractCommand;
 import io.github.nucleuspowered.nucleus.internal.command.ReturnMessageException;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.modules.core.services.SafeTeleportService;
 import io.github.nucleuspowered.nucleus.modules.jump.config.JumpConfigAdapter;
 import org.spongepowered.api.block.BlockTypes;
@@ -27,7 +27,7 @@ import org.spongepowered.api.world.World;
 @Permissions
 @RegisterCommand({"thru", "through"})
 @NonnullByDefault
-public class ThruCommand extends AbstractCommand<Player> implements Reloadable {
+public class ThruCommand extends AbstractCommand<Player> implements SimpleReloadable {
 
     private int maxThru = 20;
 

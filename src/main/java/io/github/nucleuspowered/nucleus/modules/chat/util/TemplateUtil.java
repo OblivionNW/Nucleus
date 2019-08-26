@@ -6,7 +6,7 @@ package io.github.nucleuspowered.nucleus.modules.chat.util;
 
 import io.github.nucleuspowered.nucleus.Nucleus;
 import io.github.nucleuspowered.nucleus.Util;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.interfaces.ServiceBase;
 import io.github.nucleuspowered.nucleus.modules.chat.config.ChatConfig;
 import io.github.nucleuspowered.nucleus.modules.chat.config.ChatConfigAdapter;
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 /**
  * Contains the logic for caching templates and the template selection logic.
  */
-public class TemplateUtil implements Reloadable, ServiceBase {
+public class TemplateUtil implements SimpleReloadable, ServiceBase {
 
     private final AtomicBoolean currentlyReloading = new AtomicBoolean(false);
     private LinkedHashMap<String, WeightedChatTemplateConfig> cachedTemplates = null;

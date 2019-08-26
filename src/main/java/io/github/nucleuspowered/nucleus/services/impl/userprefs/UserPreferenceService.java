@@ -2,12 +2,13 @@
  * This file is part of Nucleus, licensed under the MIT License (MIT). See the LICENSE.txt file
  * at the root of this project for more details.
  */
-package io.github.nucleuspowered.nucleus.internal.userprefs;
+package io.github.nucleuspowered.nucleus.services.impl.userprefs;
 
 import com.google.common.collect.ImmutableList;
 import io.github.nucleuspowered.nucleus.Nucleus;
 import io.github.nucleuspowered.nucleus.api.service.NucleusUserPreferenceService;
 import io.github.nucleuspowered.nucleus.internal.command.NucleusParameters;
+import io.github.nucleuspowered.nucleus.services.IUserPreferenceService;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.*;
 import org.spongepowered.api.entity.living.player.Player;
@@ -18,7 +19,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class UserPreferenceService implements NucleusUserPreferenceService {
+public class UserPreferenceService implements IUserPreferenceService {
 
     private final NucleusKeysProvider provider = new NucleusKeysProvider();
 

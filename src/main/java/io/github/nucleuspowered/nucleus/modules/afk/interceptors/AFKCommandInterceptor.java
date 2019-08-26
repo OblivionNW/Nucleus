@@ -9,7 +9,7 @@ import io.github.nucleuspowered.nucleus.api.text.NucleusTextTemplate;
 import io.github.nucleuspowered.nucleus.internal.annotations.command.NotifyIfAFK;
 import io.github.nucleuspowered.nucleus.internal.command.AbstractCommand;
 import io.github.nucleuspowered.nucleus.internal.command.ICommandInterceptor;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.modules.afk.config.AFKConfig;
 import io.github.nucleuspowered.nucleus.modules.afk.config.AFKConfigAdapter;
 import io.github.nucleuspowered.nucleus.modules.afk.events.AFKEvents;
@@ -27,7 +27,7 @@ import java.util.Objects;
 
 import javax.annotation.Nullable;
 
-public class AFKCommandInterceptor implements ICommandInterceptor, Reloadable {
+public class AFKCommandInterceptor implements ICommandInterceptor, SimpleReloadable {
 
     private final AFKHandler handler = Nucleus.getNucleus().getInternalServiceManager().getServiceUnchecked(AFKHandler.class);
     @Nullable private NucleusTextTemplate message = null;

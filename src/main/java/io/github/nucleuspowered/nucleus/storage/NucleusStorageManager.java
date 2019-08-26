@@ -5,7 +5,7 @@
 package io.github.nucleuspowered.nucleus.storage;
 
 import com.google.gson.JsonObject;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.storage.dataaccess.IConfigurateBackedDataTranslator;
 import io.github.nucleuspowered.nucleus.storage.dataobjects.modular.GeneralDataObject;
 import io.github.nucleuspowered.nucleus.storage.dataobjects.modular.IGeneralDataObject;
@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
 import javax.inject.Singleton;
 
 @Singleton
-public final class NucleusStorageManager implements INucleusStorageManager<JsonObject>, Reloadable {
+public final class NucleusStorageManager implements INucleusStorageManager<JsonObject>, SimpleReloadable {
 
     @Nullable
     private IStorageRepository.Keyed<UUID, IUserQueryObject, JsonObject> userRepository;

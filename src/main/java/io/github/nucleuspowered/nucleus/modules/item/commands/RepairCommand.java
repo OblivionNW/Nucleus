@@ -10,7 +10,7 @@ import io.github.nucleuspowered.nucleus.internal.annotations.command.RegisterCom
 import io.github.nucleuspowered.nucleus.internal.command.AbstractCommand;
 import io.github.nucleuspowered.nucleus.internal.command.ReturnMessageException;
 import io.github.nucleuspowered.nucleus.internal.docgen.annotations.EssentialsEquivalent;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.permissions.PermissionInformation;
 import io.github.nucleuspowered.nucleus.internal.permissions.SuggestedLevel;
 import io.github.nucleuspowered.nucleus.modules.item.config.ItemConfigAdapter;
@@ -44,7 +44,7 @@ import java.util.Map;
 @Permissions(supportsOthers = true)
 @RegisterCommand({"repair", "mend"})
 @EssentialsEquivalent({"repair", "fix"})
-public class RepairCommand extends AbstractCommand<Player> implements Reloadable {
+public class RepairCommand extends AbstractCommand<Player> implements SimpleReloadable {
 
     private boolean whitelist = false;
     private List<ItemType> restrictions = new ArrayList<>();

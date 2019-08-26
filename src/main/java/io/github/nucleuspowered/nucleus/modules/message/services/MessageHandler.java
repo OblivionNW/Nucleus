@@ -12,13 +12,13 @@ import io.github.nucleuspowered.nucleus.Util;
 import io.github.nucleuspowered.nucleus.api.service.NucleusPrivateMessagingService;
 import io.github.nucleuspowered.nucleus.internal.CommandPermissionHandler;
 import io.github.nucleuspowered.nucleus.internal.annotations.APIService;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.interfaces.ServiceBase;
 import io.github.nucleuspowered.nucleus.internal.text.NucleusTextTemplateFactory;
 import io.github.nucleuspowered.nucleus.internal.text.NucleusTextTemplateImpl;
 import io.github.nucleuspowered.nucleus.internal.text.TextParsingUtils;
 import io.github.nucleuspowered.nucleus.internal.traits.PermissionTrait;
-import io.github.nucleuspowered.nucleus.internal.userprefs.UserPreferenceService;
+import io.github.nucleuspowered.nucleus.services.impl.userprefs.UserPreferenceService;
 import io.github.nucleuspowered.nucleus.modules.message.MessageModule;
 import io.github.nucleuspowered.nucleus.modules.message.MessageUserPrefKeys;
 import io.github.nucleuspowered.nucleus.modules.message.commands.MessageCommand;
@@ -53,7 +53,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 @APIService(NucleusPrivateMessagingService.class)
-public class MessageHandler implements NucleusPrivateMessagingService, Reloadable, PermissionTrait, ServiceBase {
+public class MessageHandler implements NucleusPrivateMessagingService, SimpleReloadable, PermissionTrait, ServiceBase {
 
     private final MessageConfigAdapter mca;
     private final TextParsingUtils textParsingUtils;

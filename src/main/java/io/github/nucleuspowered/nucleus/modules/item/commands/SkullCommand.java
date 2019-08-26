@@ -12,7 +12,7 @@ import io.github.nucleuspowered.nucleus.internal.annotations.command.RegisterCom
 import io.github.nucleuspowered.nucleus.internal.command.AbstractCommand;
 import io.github.nucleuspowered.nucleus.internal.command.ReturnMessageException;
 import io.github.nucleuspowered.nucleus.internal.docgen.annotations.EssentialsEquivalent;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.permissions.PermissionInformation;
 import io.github.nucleuspowered.nucleus.internal.permissions.SuggestedLevel;
 import io.github.nucleuspowered.nucleus.modules.item.config.ItemConfigAdapter;
@@ -46,7 +46,7 @@ import java.util.Map;
 @RegisterCommand({"skull"})
 @Permissions(supportsOthers = true)
 @EssentialsEquivalent({"skull", "playerskull", "head"})
-public class SkullCommand extends AbstractCommand<Player> implements Reloadable {
+public class SkullCommand extends AbstractCommand<Player> implements SimpleReloadable {
 
     private final String limitExemptPermission = Nucleus.getNucleus().getPermissionRegistry()
             .getPermissionsForNucleusCommand(SkullCommand.class)

@@ -13,11 +13,11 @@ import io.github.nucleuspowered.nucleus.api.chat.NucleusNoFormatChannel;
 import io.github.nucleuspowered.nucleus.api.service.NucleusMessageTokenService;
 import io.github.nucleuspowered.nucleus.internal.PermissionRegistry;
 import io.github.nucleuspowered.nucleus.internal.interfaces.ListenerBase;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.messages.MessageProvider;
 import io.github.nucleuspowered.nucleus.internal.permissions.PermissionInformation;
 import io.github.nucleuspowered.nucleus.internal.permissions.SuggestedLevel;
-import io.github.nucleuspowered.nucleus.internal.services.PermissionResolver;
+import io.github.nucleuspowered.nucleus.services.IPermissionCheckService;
 import io.github.nucleuspowered.nucleus.internal.text.TextParsingUtils;
 import io.github.nucleuspowered.nucleus.modules.chat.ChatModule;
 import io.github.nucleuspowered.nucleus.modules.chat.config.ChatConfig;
@@ -51,7 +51,7 @@ import javax.annotation.Nullable;
  * {@link NucleusMessageTokenService}, which
  * should be used if tokens need to be registered.
  */
-public class ChatListener implements Reloadable, ListenerBase.Conditional {
+public class ChatListener implements SimpleReloadable, ListenerBase.Conditional {
 
     private static final String prefix = PermissionRegistry.PERMISSIONS_PREFIX + "chat.";
 
@@ -97,7 +97,7 @@ public class ChatListener implements Reloadable, ListenerBase.Conditional {
     public static String stripPermissionless(Subject source, String message) {
         if (message.contains("&")) {
             String m = message.toLowerCase();
-            PermissionResolver resolver = Nucleus.getNucleus().getPermissionResolver();
+            IPermissionCheckService resolver = Nucleus.getNucleus().getPermissionResolver();
             for (Map.Entry<String, Tuple<String[], Function<String, String>>> r : replacements.entrySet()) {
                 if (m.contains(r.getKey()) && Arrays.stream(r.getValue().getFirst()).noneMatch(x -> resolver.hasPermission(source, x))) {
                     message = r.getValue().getSecond().apply(message);

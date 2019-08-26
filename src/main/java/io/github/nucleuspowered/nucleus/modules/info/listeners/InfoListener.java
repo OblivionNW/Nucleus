@@ -7,7 +7,7 @@ package io.github.nucleuspowered.nucleus.modules.info.listeners;
 import com.google.common.collect.Maps;
 import io.github.nucleuspowered.nucleus.Nucleus;
 import io.github.nucleuspowered.nucleus.internal.interfaces.ListenerBase;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.permissions.PermissionInformation;
 import io.github.nucleuspowered.nucleus.internal.permissions.SuggestedLevel;
 import io.github.nucleuspowered.nucleus.modules.info.InfoModule;
@@ -27,7 +27,7 @@ import uk.co.drnaylor.quickstart.exceptions.NoModuleException;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class InfoListener implements Reloadable, ListenerBase.Conditional {
+public class InfoListener implements SimpleReloadable, ListenerBase.Conditional {
 
     private final String motdPerm = Nucleus.getNucleus().getPermissionRegistry()
             .getPermissionsForNucleusCommand(MotdCommand.class).getPermissionWithSuffix("login");

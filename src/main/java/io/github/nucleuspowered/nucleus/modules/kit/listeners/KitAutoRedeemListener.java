@@ -10,7 +10,7 @@ import io.github.nucleuspowered.nucleus.api.nucleusdata.Kit;
 import io.github.nucleuspowered.nucleus.dataservices.KitDataService;
 import io.github.nucleuspowered.nucleus.internal.PermissionRegistry;
 import io.github.nucleuspowered.nucleus.internal.interfaces.ListenerBase;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.traits.InternalServiceManagerTrait;
 import io.github.nucleuspowered.nucleus.modules.kit.config.KitConfig;
 import io.github.nucleuspowered.nucleus.modules.kit.config.KitConfigAdapter;
@@ -23,7 +23,7 @@ import org.spongepowered.api.event.network.ClientConnectionEvent;
 
 import java.util.List;
 
-public class KitAutoRedeemListener implements ListenerBase.Conditional, Reloadable, InternalServiceManagerTrait {
+public class KitAutoRedeemListener implements ListenerBase.Conditional, SimpleReloadable, InternalServiceManagerTrait {
 
     private final KitHandler handler = getServiceUnchecked(KitHandler.class);
     private final KitDataService gds = Nucleus.getNucleus().getKitDataService();

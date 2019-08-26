@@ -6,7 +6,7 @@ package io.github.nucleuspowered.nucleus.modules.vanish.services;
 
 import io.github.nucleuspowered.nucleus.Nucleus;
 import io.github.nucleuspowered.nucleus.internal.annotations.ReregisterService;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.interfaces.ServiceBase;
 import io.github.nucleuspowered.nucleus.internal.services.PlayerOnlineService;
 import io.github.nucleuspowered.nucleus.internal.traits.InternalServiceManagerTrait;
@@ -22,7 +22,7 @@ import java.util.Optional;
 
 @ReregisterService(PlayerOnlineService.class)
 public class VanishPlayerOnlineService implements PlayerOnlineService, ServiceBase, PermissionTrait,
-        InternalServiceManagerTrait, Reloadable {
+        InternalServiceManagerTrait, SimpleReloadable {
 
     private boolean allCanSee = false;
 

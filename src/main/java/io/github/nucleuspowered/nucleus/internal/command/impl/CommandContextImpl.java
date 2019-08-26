@@ -98,6 +98,24 @@ public abstract class CommandContextImpl<P extends CommandSource> implements ICo
     }
 
     @Override
+    public CommandSource getCommandSourceUnchecked() {
+        try {
+            return this.source.get();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Player getCommandSourceAsPlayerUnchecked() {
+        try {
+            return (Player) this.source.get();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public User getUser(String key, String errorKey) throws NoSuchElementException {
         return getOne(key, User.class).orElseGet(() -> {
             try {

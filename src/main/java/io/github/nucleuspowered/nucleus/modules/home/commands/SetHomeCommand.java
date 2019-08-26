@@ -13,7 +13,7 @@ import io.github.nucleuspowered.nucleus.internal.annotations.command.RegisterCom
 import io.github.nucleuspowered.nucleus.internal.command.AbstractCommand;
 import io.github.nucleuspowered.nucleus.internal.command.ReturnMessageException;
 import io.github.nucleuspowered.nucleus.internal.docgen.annotations.EssentialsEquivalent;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.permissions.PermissionInformation;
 import io.github.nucleuspowered.nucleus.internal.permissions.SuggestedLevel;
 import io.github.nucleuspowered.nucleus.modules.home.config.HomeConfigAdapter;
@@ -37,7 +37,7 @@ import java.util.Optional;
 @RegisterCommand(value = "set", subcommandOf = HomeCommand.class, rootAliasRegister = {"homeset", "sethome"})
 @EssentialsEquivalent({"sethome", "createhome"})
 @NonnullByDefault
-public class SetHomeCommand extends AbstractCommand<Player> implements Reloadable {
+public class SetHomeCommand extends AbstractCommand<Player> implements SimpleReloadable {
 
     private final String homeKey = "home";
 

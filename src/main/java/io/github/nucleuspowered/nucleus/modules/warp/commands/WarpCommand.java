@@ -22,7 +22,7 @@ import io.github.nucleuspowered.nucleus.internal.command.ContinueMode;
 import io.github.nucleuspowered.nucleus.internal.command.NucleusParameters;
 import io.github.nucleuspowered.nucleus.internal.command.ReturnMessageException;
 import io.github.nucleuspowered.nucleus.internal.docgen.annotations.EssentialsEquivalent;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.permissions.PermissionInformation;
 import io.github.nucleuspowered.nucleus.internal.permissions.SuggestedLevel;
 import io.github.nucleuspowered.nucleus.modules.core.services.SafeTeleportService;
@@ -69,7 +69,7 @@ import java.util.stream.Collectors;
 @RegisterCommand(value = "warp")
 @NoCost
 @EssentialsEquivalent(value = {"warp", "warps"}, isExact = false, notes = "Use '/warp' for warping, '/warps' to list warps.")
-public class WarpCommand extends AbstractCommand<CommandSource> implements Reloadable {
+public class WarpCommand extends AbstractCommand<CommandSource> implements SimpleReloadable {
 
     private boolean isSafeTeleport = true;
     private double defaultCost = 0;

@@ -13,7 +13,7 @@ import io.github.nucleuspowered.nucleus.Util;
 import io.github.nucleuspowered.nucleus.api.nucleusdata.Warning;
 import io.github.nucleuspowered.nucleus.api.service.NucleusWarningService;
 import io.github.nucleuspowered.nucleus.internal.annotations.APIService;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.interfaces.ServiceBase;
 import io.github.nucleuspowered.nucleus.modules.warn.WarnKeys;
 import io.github.nucleuspowered.nucleus.modules.warn.WarnModule;
@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Optional;
 
 @APIService(NucleusWarningService.class)
-public class WarnHandler implements NucleusWarningService, Reloadable, ServiceBase {
+public class WarnHandler implements NucleusWarningService, SimpleReloadable, ServiceBase {
 
     private boolean expireWarnings = false;
 

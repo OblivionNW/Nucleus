@@ -9,7 +9,7 @@ import io.github.nucleuspowered.nucleus.Util;
 import io.github.nucleuspowered.nucleus.api.events.NucleusMessageEvent;
 import io.github.nucleuspowered.nucleus.internal.data.EndTimestamp;
 import io.github.nucleuspowered.nucleus.internal.interfaces.ListenerBase;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.modules.message.events.InternalNucleusHelpOpEvent;
 import io.github.nucleuspowered.nucleus.modules.mute.commands.MuteCommand;
 import io.github.nucleuspowered.nucleus.modules.mute.commands.VoiceCommand;
@@ -34,7 +34,7 @@ import org.spongepowered.api.text.serializer.TextSerializers;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-public class MuteListener implements Reloadable, ListenerBase {
+public class MuteListener implements SimpleReloadable, ListenerBase {
 
     private final MuteHandler handler = getServiceUnchecked(MuteHandler.class);
     private MuteConfig muteConfig = new MuteConfig();

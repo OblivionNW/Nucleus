@@ -6,7 +6,7 @@ package io.github.nucleuspowered.nucleus.modules.protection.listeners;
 
 import io.github.nucleuspowered.nucleus.Nucleus;
 import io.github.nucleuspowered.nucleus.internal.interfaces.ListenerBase;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.modules.protection.ProtectionModule;
 import io.github.nucleuspowered.nucleus.modules.protection.config.ProtectionConfig;
 import io.github.nucleuspowered.nucleus.modules.protection.config.ProtectionConfigAdapter;
@@ -18,7 +18,7 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.filter.cause.Root;
 
-public class CropTrampleListener implements Reloadable, ListenerBase.Conditional {
+public class CropTrampleListener implements SimpleReloadable, ListenerBase.Conditional {
 
     private boolean cropentity = false;
     private boolean cropplayer = false;

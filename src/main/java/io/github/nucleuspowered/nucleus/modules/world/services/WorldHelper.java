@@ -8,7 +8,7 @@ import com.flowpowered.math.GenericMath;
 import com.google.common.collect.Maps;
 import io.github.nucleuspowered.nucleus.Nucleus;
 import io.github.nucleuspowered.nucleus.NucleusPlugin;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.interfaces.ServiceBase;
 import io.github.nucleuspowered.nucleus.modules.world.WorldKeys;
 import io.github.nucleuspowered.nucleus.modules.world.WorldModule;
@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public class WorldHelper implements Reloadable, ServiceBase {
+public class WorldHelper implements SimpleReloadable, ServiceBase {
 
     private boolean notify = false;
     private boolean display = true;

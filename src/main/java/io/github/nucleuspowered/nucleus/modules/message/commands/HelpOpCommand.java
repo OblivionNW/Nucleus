@@ -11,7 +11,7 @@ import io.github.nucleuspowered.nucleus.internal.annotations.command.RegisterCom
 import io.github.nucleuspowered.nucleus.internal.command.AbstractCommand;
 import io.github.nucleuspowered.nucleus.internal.command.NucleusParameters;
 import io.github.nucleuspowered.nucleus.internal.docgen.annotations.EssentialsEquivalent;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.permissions.PermissionInformation;
 import io.github.nucleuspowered.nucleus.internal.permissions.SuggestedLevel;
 import io.github.nucleuspowered.nucleus.internal.text.NucleusTextTemplateImpl;
@@ -38,7 +38,7 @@ import javax.annotation.Nullable;
 @RegisterCommand({"helpop"})
 @EssentialsEquivalent({"helpop", "amsg", "ac"})
 @NonnullByDefault
-public class HelpOpCommand extends AbstractCommand<Player> implements Reloadable {
+public class HelpOpCommand extends AbstractCommand<Player> implements SimpleReloadable {
 
     @Nullable private NucleusTextTemplateImpl prefix = null;
 

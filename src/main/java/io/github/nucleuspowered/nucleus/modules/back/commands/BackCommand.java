@@ -14,7 +14,7 @@ import io.github.nucleuspowered.nucleus.internal.annotations.command.RegisterCom
 import io.github.nucleuspowered.nucleus.internal.command.AbstractCommand;
 import io.github.nucleuspowered.nucleus.internal.command.ReturnMessageException;
 import io.github.nucleuspowered.nucleus.internal.docgen.annotations.EssentialsEquivalent;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.permissions.PermissionInformation;
 import io.github.nucleuspowered.nucleus.internal.permissions.SuggestedLevel;
 import io.github.nucleuspowered.nucleus.modules.back.config.BackConfigAdapter;
@@ -38,7 +38,7 @@ import java.util.Optional;
 @RegisterCommand({"back", "return"})
 @EssentialsEquivalent({"back", "return"})
 @NonnullByDefault
-public class BackCommand extends AbstractCommand<Player> implements Reloadable {
+public class BackCommand extends AbstractCommand<Player> implements SimpleReloadable {
 
     private final BackHandler handler = Nucleus.getNucleus().getInternalServiceManager().getServiceUnchecked(BackHandler.class);
     private boolean sameDimensionCheck = false;

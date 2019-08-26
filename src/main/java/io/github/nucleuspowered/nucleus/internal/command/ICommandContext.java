@@ -32,7 +32,18 @@ public interface ICommandContext<C extends CommandSource> {
 
     void setCost(double cost);
 
+    int getWarmup();
+
+    /**
+     * Sets the warmup in seconds.
+     *
+     * @param warmup The warmup in seconds
+     */
+    void setWarmup(int warmup);
+
     Player getPlayer(String key, String errorKey) throws NoSuchElementException, CommandException;
+
+    Player getCommandSourceAsPlayerUnchecked();
 
     User getUser(String key, String errorKey) throws NoSuchElementException, CommandException;
 
@@ -55,6 +66,8 @@ public interface ICommandContext<C extends CommandSource> {
     Collection<Consumer<C>> failActions();
 
     interface Mutable<C extends CommandSource> extends ICommandContext<C> {
+
+        CommandSource getCommandSourceUnchecked();
 
         <T> void put(String name, Class<T> clazz, T obj);
 

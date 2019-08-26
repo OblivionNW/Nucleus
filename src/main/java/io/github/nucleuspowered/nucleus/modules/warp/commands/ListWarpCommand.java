@@ -13,7 +13,7 @@ import io.github.nucleuspowered.nucleus.internal.annotations.RunAsync;
 import io.github.nucleuspowered.nucleus.internal.annotations.command.Permissions;
 import io.github.nucleuspowered.nucleus.internal.annotations.command.RegisterCommand;
 import io.github.nucleuspowered.nucleus.internal.command.AbstractCommand;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.messages.MessageProvider;
 import io.github.nucleuspowered.nucleus.internal.permissions.SuggestedLevel;
 import io.github.nucleuspowered.nucleus.modules.warp.config.WarpConfig;
@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
 @RunAsync
 @NonnullByDefault
 @RegisterCommand(value = {"list"}, subcommandOf = WarpCommand.class, rootAliasRegister = "warps")
-public class ListWarpCommand extends AbstractCommand<CommandSource> implements Reloadable {
+public class ListWarpCommand extends AbstractCommand<CommandSource> implements SimpleReloadable {
 
     private final WarpService service = getServiceUnchecked(WarpService.class);
     private boolean isDescriptionInList = true;

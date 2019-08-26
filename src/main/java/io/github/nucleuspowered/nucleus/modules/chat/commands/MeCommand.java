@@ -14,7 +14,7 @@ import io.github.nucleuspowered.nucleus.internal.command.AbstractCommand;
 import io.github.nucleuspowered.nucleus.internal.command.NucleusParameters;
 import io.github.nucleuspowered.nucleus.internal.command.ReturnMessageException;
 import io.github.nucleuspowered.nucleus.internal.docgen.annotations.EssentialsEquivalent;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.permissions.SuggestedLevel;
 import io.github.nucleuspowered.nucleus.internal.text.TextParsingUtils;
 import io.github.nucleuspowered.nucleus.modules.chat.config.ChatConfig;
@@ -45,7 +45,7 @@ import javax.annotation.Nonnull;
 @RegisterCommand({"me", "action"})
 @Permissions(suggestedLevel = SuggestedLevel.USER)
 @EssentialsEquivalent({"me", "action", "describe"})
-public class MeCommand extends AbstractCommand<CommandSource> implements Reloadable {
+public class MeCommand extends AbstractCommand<CommandSource> implements SimpleReloadable {
 
     private ChatConfig config = null;
     private final MeChannel channel = new MeChannel();

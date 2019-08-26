@@ -4,10 +4,14 @@
  */
 package io.github.nucleuspowered.nucleus.services;
 
+import io.github.nucleuspowered.nucleus.services.impl.permissioncheck.PermissionCheckService;
 import org.spongepowered.api.service.permission.Subject;
 
+@FunctionalInterface
 public interface IPermissionCheckService {
 
-    boolean hasPermission(Subject permissionSubject, String permission);
+    IPermissionCheckService SIMPLE = new PermissionCheckService();
+
+    boolean hasPermission(Subject subject, String permission);
 
 }

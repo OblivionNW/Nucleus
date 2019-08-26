@@ -10,7 +10,7 @@ import io.github.nucleuspowered.nucleus.internal.annotations.command.Permissions
 import io.github.nucleuspowered.nucleus.internal.annotations.command.RegisterCommand;
 import io.github.nucleuspowered.nucleus.internal.command.AbstractCommand;
 import io.github.nucleuspowered.nucleus.internal.docgen.annotations.EssentialsEquivalent;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.permissions.PermissionInformation;
 import io.github.nucleuspowered.nucleus.internal.permissions.SuggestedLevel;
 import io.github.nucleuspowered.nucleus.modules.misc.config.MiscConfigAdapter;
@@ -36,7 +36,7 @@ import java.util.Map;
 @Permissions(supportsOthers = true)
 @EssentialsEquivalent(value = {"speed", "flyspeed", "walkspeed", "fspeed", "wspeed"}, isExact = false,
     notes = "This command either uses your current state or a specified argument to determine whether to alter fly or walk speed.")
-public class SpeedCommand extends AbstractCommand.SimpleTargetOtherPlayer implements Reloadable {
+public class SpeedCommand extends AbstractCommand.SimpleTargetOtherPlayer implements SimpleReloadable {
 
     private final String speedKey = "speed";
     private final String resetKey = "reset";

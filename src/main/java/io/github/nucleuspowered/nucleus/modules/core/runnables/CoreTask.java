@@ -5,7 +5,7 @@
 package io.github.nucleuspowered.nucleus.modules.core.runnables;
 
 import io.github.nucleuspowered.nucleus.Nucleus;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.interfaces.TaskBase;
 import io.github.nucleuspowered.nucleus.modules.core.CoreModule;
 import io.github.nucleuspowered.nucleus.modules.core.config.CoreConfig;
@@ -20,7 +20,7 @@ import java.time.temporal.ChronoUnit;
  * Core tasks. No module, must always run.
  */
 @NonnullByDefault
-public class CoreTask implements TaskBase, Reloadable {
+public class CoreTask implements TaskBase, SimpleReloadable {
 
     private boolean printSave = false;
 

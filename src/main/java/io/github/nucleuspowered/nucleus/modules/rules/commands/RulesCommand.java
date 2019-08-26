@@ -12,7 +12,7 @@ import io.github.nucleuspowered.nucleus.internal.annotations.command.RegisterCom
 import io.github.nucleuspowered.nucleus.internal.command.AbstractCommand;
 import io.github.nucleuspowered.nucleus.internal.command.ReturnMessageException;
 import io.github.nucleuspowered.nucleus.internal.docgen.annotations.EssentialsEquivalent;
-import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.permissions.SuggestedLevel;
 import io.github.nucleuspowered.nucleus.modules.rules.RulesModule;
 import io.github.nucleuspowered.nucleus.modules.rules.config.RulesConfig;
@@ -31,7 +31,7 @@ import org.spongepowered.api.util.annotation.NonnullByDefault;
 @NoModifiers
 @NonnullByDefault
 @EssentialsEquivalent("rules")
-public class RulesCommand extends AbstractCommand<CommandSource> implements Reloadable {
+public class RulesCommand extends AbstractCommand<CommandSource> implements SimpleReloadable {
 
     private Text title = Text.EMPTY;
 
