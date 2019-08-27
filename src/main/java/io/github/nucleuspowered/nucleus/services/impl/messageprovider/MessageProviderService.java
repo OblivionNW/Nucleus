@@ -6,6 +6,9 @@ import org.spongepowered.api.text.Text;
 
 import java.util.Locale;
 
+import javax.inject.Singleton;
+
+@Singleton
 public class MessageProviderService implements IMessageProviderService {
 
     @Override

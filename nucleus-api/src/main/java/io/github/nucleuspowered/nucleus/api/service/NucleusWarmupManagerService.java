@@ -5,10 +5,8 @@
 package io.github.nucleuspowered.nucleus.api.service;
 
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.scheduler.Task;
 
 import java.time.Duration;
-import java.util.UUID;
 
 /**
  * Manages the warmups.
@@ -37,7 +35,6 @@ public interface NucleusWarmupManagerService {
      * Cancels a task by {@link Player}
      *
      * @param player The player that this task is attached to.
-     * @return Whether there was a task to cancel.
      */
     boolean cancel(Player player);
 

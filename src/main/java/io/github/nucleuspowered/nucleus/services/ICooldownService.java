@@ -4,6 +4,8 @@
  */
 package io.github.nucleuspowered.nucleus.services;
 
+import com.google.inject.ImplementedBy;
+import io.github.nucleuspowered.nucleus.services.impl.cooldown.CooldownService;
 import org.spongepowered.api.util.Identifiable;
 
 import java.time.Duration;
@@ -12,6 +14,7 @@ import java.util.Optional;
 /**
  * A service that contains information about cooldowns.
  */
+@ImplementedBy(CooldownService.class)
 public interface ICooldownService {
 
     /**

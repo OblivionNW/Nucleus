@@ -4,6 +4,8 @@
  */
 package io.github.nucleuspowered.nucleus.services;
 
+import com.google.inject.ImplementedBy;
+import io.github.nucleuspowered.nucleus.services.impl.messageprovider.MessageProviderService;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
@@ -11,6 +13,7 @@ import org.spongepowered.api.text.serializer.TextSerializers;
 import java.util.Arrays;
 import java.util.Locale;
 
+@ImplementedBy(MessageProviderService.class)
 public interface IMessageProviderService {
 
     Locale getDefaultLocale();

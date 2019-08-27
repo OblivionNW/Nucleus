@@ -17,6 +17,10 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
 public class NucleusServiceCollection implements INucleusServiceCollection {
 
     private final Map<Class<?>, Object> instances = new HashMap<>();
@@ -32,6 +36,7 @@ public class NucleusServiceCollection implements INucleusServiceCollection {
     private final IPermissionCheckService permissionCheckService;
     private final IReloadableService reloadableService;
 
+    @Inject
     public NucleusServiceCollection(
             IMessageProviderService messageProviderService,
             IEconomyServiceProvider economyServiceProvider,

@@ -16,6 +16,7 @@ import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import com.google.inject.Injector;
 import com.typesafe.config.ConfigException;
 import io.github.nucleuspowered.nucleus.api.NucleusAPITokens;
 import io.github.nucleuspowered.nucleus.api.service.NucleusMessageTokenService;
@@ -29,16 +30,15 @@ import io.github.nucleuspowered.nucleus.dataservices.KitDataService;
 import io.github.nucleuspowered.nucleus.dataservices.NameBanService;
 import io.github.nucleuspowered.nucleus.dataservices.UserCacheService;
 import io.github.nucleuspowered.nucleus.dataservices.dataproviders.DataProviders;
+import io.github.nucleuspowered.nucleus.guice.NucleusInjectorModule;
 import io.github.nucleuspowered.nucleus.internal.CatalogTypeFinalStaticProcessor;
 import io.github.nucleuspowered.nucleus.internal.CommandPermissionHandler;
 import io.github.nucleuspowered.nucleus.internal.EconHelper;
-import io.github.nucleuspowered.nucleus.internal.PermissionRegistry;
 import io.github.nucleuspowered.nucleus.internal.PreloadTasks;
 import io.github.nucleuspowered.nucleus.internal.TextFileController;
 import io.github.nucleuspowered.nucleus.internal.client.ClientMessageReciever;
 import io.github.nucleuspowered.nucleus.internal.docgen.DocGenCache;
 import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
-import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.messages.ConfigMessageProvider;
 import io.github.nucleuspowered.nucleus.internal.messages.MessageProvider;
 import io.github.nucleuspowered.nucleus.internal.messages.ResourceMessageProvider;
@@ -51,6 +51,7 @@ import io.github.nucleuspowered.nucleus.internal.qsml.QuickStartModuleConstructo
 import io.github.nucleuspowered.nucleus.internal.qsml.event.BaseModuleEvent;
 import io.github.nucleuspowered.nucleus.internal.qsml.module.StandardModule;
 import io.github.nucleuspowered.nucleus.internal.services.CommandRemapperService;
+import io.github.nucleuspowered.nucleus.services.INucleusServiceCollection;
 import io.github.nucleuspowered.nucleus.services.IPermissionCheckService;
 import io.github.nucleuspowered.nucleus.internal.services.PlayerOnlineService;
 import io.github.nucleuspowered.nucleus.internal.text.NucleusTokenServiceImpl;
@@ -135,8 +136,9 @@ public class NucleusPlugin extends Nucleus {
     private static final int length = divider.length() - 2;
 
     private final INucleusStorageManager<JsonObject> storageManager = new NucleusStorageManager();
-    private final NucleusServiceCollection serviceCollection;
+    private final INucleusServiceCollection serviceCollection;
     private final PluginContainer pluginContainer;
+    private final Injector baseInjector;
 
     private Instant gameStartedTime = null;
     private boolean hasStarted = false;
@@ -226,7 +228,11 @@ public class NucleusPlugin extends Nucleus {
 
     // We inject this into the constructor so we can build the config path ourselves.
     @Inject
-    public NucleusPlugin(@ConfigDir(sharedRoot = true) Path configDir, Logger logger, PluginContainer container) {
+    public NucleusPlugin(
+            @ConfigDir(sharedRoot = true) Path configDir,
+            Logger logger,
+            PluginContainer container,
+            Injector injector) {
         Nucleus.setNucleus(this);
         this.logger = new DebugLogger(logger);
         this.configDir = configDir.resolve(PluginInfo.ID);
@@ -241,17 +247,8 @@ public class NucleusPlugin extends Nucleus {
 
         this.dataDir = sp;
         this.pluginContainer = container;
-        this.serviceCollection = new NucleusServiceCollection(
-                new MessageProviderService(),
-                new EconomyServiceProvider(),
-                new WarmupService(),
-                new CooldownService(),
-                new UserPreferenceService(),
-                new PermissionCheckService(),
-                new ReloadableService(),
-                container,
-                logger
-        );
+        this.baseInjector = injector.createChildInjector(NucleusInjectorModule.INSTANCE);
+        this.serviceCollection = this.baseInjector.getInstance(INucleusServiceCollection.class);
     }
 
     @Listener(order = Order.FIRST)

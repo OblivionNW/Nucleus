@@ -6,6 +6,9 @@ import org.spongepowered.api.util.Identifiable;
 import java.time.Duration;
 import java.util.Optional;
 
+import javax.inject.Singleton;
+
+@Singleton
 public class CooldownService implements ICooldownService {
 
     @Override public boolean hasCooldown(String key, Identifiable identifiable) {

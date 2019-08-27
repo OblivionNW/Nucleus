@@ -4,12 +4,15 @@
  */
 package io.github.nucleuspowered.nucleus.services;
 
+import com.google.inject.ImplementedBy;
+import io.github.nucleuspowered.nucleus.services.impl.NucleusServiceCollection;
 import org.slf4j.Logger;
 import org.spongepowered.api.plugin.PluginContainer;
 
 import javax.inject.Singleton;
 
 @Singleton
+@ImplementedBy(NucleusServiceCollection.class)
 public interface INucleusServiceCollection {
 
     IMessageProviderService messageProvider();

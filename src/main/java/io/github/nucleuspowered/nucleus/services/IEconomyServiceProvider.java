@@ -4,16 +4,18 @@
  */
 package io.github.nucleuspowered.nucleus.services;
 
+import com.google.inject.ImplementedBy;
+import io.github.nucleuspowered.nucleus.services.impl.economy.EconomyServiceProvider;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.service.economy.EconomyService;
 
 import java.util.Optional;
 
+@ImplementedBy(EconomyServiceProvider.class)
 public interface IEconomyServiceProvider {
 
     boolean serviceExists();
-
 
     String getCurrencySymbol(double cost);
 

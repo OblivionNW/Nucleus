@@ -7,6 +7,9 @@ import io.github.nucleuspowered.nucleus.services.IReloadableService;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.inject.Singleton;
+
+@Singleton
 public class ReloadableService implements IReloadableService {
 
     private final Set<Reloadable> reloadables = new HashSet<>();

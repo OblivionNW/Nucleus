@@ -18,6 +18,9 @@ import org.spongepowered.api.service.economy.transaction.TransactionResult;
 import java.math.BigDecimal;
 import java.util.Optional;
 
+import javax.inject.Singleton;
+
+@Singleton
 public class EconomyServiceProvider implements IEconomyServiceProvider {
 
     @Override
