@@ -4,7 +4,7 @@
  */
 package io.github.nucleuspowered.nucleus.modules.item;
 
-import io.github.nucleuspowered.nucleus.internal.qsml.module.ConfigurableModule;
+import io.github.nucleuspowered.nucleus.quickstart.module.ConfigurableModule;
 import io.github.nucleuspowered.nucleus.modules.item.config.ItemConfigAdapter;
 import uk.co.drnaylor.quickstart.annotations.ModuleData;
 

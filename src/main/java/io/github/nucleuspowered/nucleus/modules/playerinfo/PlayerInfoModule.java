@@ -4,7 +4,7 @@
  */
 package io.github.nucleuspowered.nucleus.modules.playerinfo;
 
-import io.github.nucleuspowered.nucleus.internal.qsml.module.ConfigurableModule;
+import io.github.nucleuspowered.nucleus.quickstart.module.ConfigurableModule;
 import io.github.nucleuspowered.nucleus.modules.afk.AFKModule;
 import io.github.nucleuspowered.nucleus.modules.playerinfo.config.PlayerInfoConfigAdapter;
 import uk.co.drnaylor.quickstart.annotations.ModuleData;

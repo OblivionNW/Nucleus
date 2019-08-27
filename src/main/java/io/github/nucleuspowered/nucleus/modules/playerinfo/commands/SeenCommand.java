@@ -18,14 +18,14 @@ import io.github.nucleuspowered.nucleus.internal.command.NucleusParameters;
 import io.github.nucleuspowered.nucleus.internal.docgen.annotations.EssentialsEquivalent;
 import io.github.nucleuspowered.nucleus.internal.messages.MessageProvider;
 import io.github.nucleuspowered.nucleus.internal.permissions.PermissionInformation;
-import io.github.nucleuspowered.nucleus.internal.permissions.SuggestedLevel;
-import io.github.nucleuspowered.nucleus.internal.services.PlayerOnlineService;
+import io.github.nucleuspowered.nucleus.services.impl.permission.SuggestedLevel;
 import io.github.nucleuspowered.nucleus.modules.core.CoreKeys;
 import io.github.nucleuspowered.nucleus.modules.core.services.SafeTeleportService;
 import io.github.nucleuspowered.nucleus.modules.misc.commands.SpeedCommand;
 import io.github.nucleuspowered.nucleus.modules.playerinfo.services.SeenHandler;
 import io.github.nucleuspowered.nucleus.modules.teleport.commands.TeleportPositionCommand;
-import io.github.nucleuspowered.nucleus.storage.dataobjects.modular.IUserDataObject;
+import io.github.nucleuspowered.nucleus.services.IPlayerOnlineService;
+import io.github.nucleuspowered.nucleus.services.impl.storage.dataobjects.modular.IUserDataObject;
 import io.github.nucleuspowered.nucleus.util.TriFunction;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
@@ -235,7 +235,7 @@ public class SeenCommand extends AbstractCommand<CommandSource> {
         final MessageProvider messageProvider = Nucleus.getNucleus().getMessageProvider();
 
         // Everyone gets the last online time.
-        PlayerOnlineService playerOnlineService = getServiceManager().getServiceUnchecked(PlayerOnlineService.class);
+        IPlayerOnlineService playerOnlineService = getServiceManager().getServiceUnchecked(IPlayerOnlineService.class);
         if (playerOnlineService.isOnline(src, user)) {
             messages.add(messageProvider.getTextMessageWithFormat("command.seen.iscurrently.online", user.getName()));
             userDataObject.get(CoreKeys.LAST_LOGIN).ifPresent(x -> messages.add(

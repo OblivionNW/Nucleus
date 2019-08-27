@@ -7,7 +7,7 @@ package io.github.nucleuspowered.nucleus.modules.ban;
 import com.google.common.collect.Lists;
 import io.github.nucleuspowered.nucleus.NucleusPlugin;
 import io.github.nucleuspowered.nucleus.Util;
-import io.github.nucleuspowered.nucleus.internal.qsml.module.ConfigurableModule;
+import io.github.nucleuspowered.nucleus.quickstart.module.ConfigurableModule;
 import io.github.nucleuspowered.nucleus.modules.ban.commands.CheckBanCommand;
 import io.github.nucleuspowered.nucleus.modules.ban.config.BanConfigAdapter;
 import org.spongepowered.api.Sponge;

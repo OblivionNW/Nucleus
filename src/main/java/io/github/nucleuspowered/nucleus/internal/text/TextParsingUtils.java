@@ -9,7 +9,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import io.github.nucleuspowered.nucleus.Nucleus;
 import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
-import io.github.nucleuspowered.nucleus.internal.traits.InternalServiceManagerTrait;
 import io.github.nucleuspowered.nucleus.internal.traits.MessageProviderTrait;
 import io.github.nucleuspowered.nucleus.modules.core.config.CoreConfigAdapter;
 import io.github.nucleuspowered.nucleus.util.Tuples;
@@ -318,7 +317,8 @@ public class TextParsingUtils implements SimpleReloadable, MessageProviderTrait,
         Text last = null;
         for (Text n : texts) {
             if (last != null) {
-                getLastColourAndStyle(last, null).applyTo(x -> result.add(Text.of(x.colour, x.style, n)));
+                StyleTuple st = getLastColourAndStyle(last, null);
+                result.add(Text.of(st.colour, st.style, n));
             } else {
                 result.add(n);
             }
@@ -442,16 +442,16 @@ public class TextParsingUtils implements SimpleReloadable, MessageProviderTrait,
         public final TextColor colour;
         public final TextStyle style;
 
-        StyleTuple(TextColor colour, TextStyle style) {
+        public StyleTuple(TextColor colour, TextStyle style) {
             this.colour = colour;
             this.style = style;
         }
 
-        void applyTo(Consumer<StyleTuple> consumer) {
+        public void applyTo(Consumer<StyleTuple> consumer) {
             consumer.accept(this);
         }
 
-        Text getTextOf() {
+        public Text getTextOf() {
             Text.Builder tb = Text.builder();
             if (this.colour != TextColors.NONE) {
                 tb.color(this.colour);

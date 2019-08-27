@@ -23,7 +23,6 @@ import io.github.nucleuspowered.nucleus.api.service.NucleusPlayerMetadataService
 import io.github.nucleuspowered.nucleus.api.service.NucleusPrivateMessagingService;
 import io.github.nucleuspowered.nucleus.api.service.NucleusRTPService;
 import io.github.nucleuspowered.nucleus.api.service.NucleusSeenService;
-import io.github.nucleuspowered.nucleus.api.service.NucleusServerShopService;
 import io.github.nucleuspowered.nucleus.api.service.NucleusStaffChatService;
 import io.github.nucleuspowered.nucleus.api.service.NucleusUserPreferenceService;
 import io.github.nucleuspowered.nucleus.api.service.NucleusWarmupManagerService;

@@ -5,8 +5,8 @@
 package io.github.nucleuspowered.nucleus.modules.fly;
 
 import com.google.common.collect.ImmutableMap;
-import io.github.nucleuspowered.nucleus.internal.qsml.module.ConfigurableModule;
-import io.github.nucleuspowered.nucleus.internal.text.Tokens;
+import io.github.nucleuspowered.nucleus.quickstart.module.ConfigurableModule;
+import io.github.nucleuspowered.nucleus.services.impl.messagetoken.Tokens;
 import io.github.nucleuspowered.nucleus.modules.fly.config.FlyConfigAdapter;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.data.key.Keys;

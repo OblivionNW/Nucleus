@@ -4,9 +4,8 @@
  */
 package io.github.nucleuspowered.nucleus.modules.kit;
 
-import io.github.nucleuspowered.nucleus.internal.permissions.PermissionResolverImpl;
-import io.github.nucleuspowered.nucleus.internal.permissions.SuggestedLevel;
-import io.github.nucleuspowered.nucleus.internal.qsml.module.ConfigurableModule;
+import io.github.nucleuspowered.nucleus.services.impl.permission.SuggestedLevel;
+import io.github.nucleuspowered.nucleus.quickstart.module.ConfigurableModule;
 import io.github.nucleuspowered.nucleus.modules.kit.config.KitConfigAdapter;
 import uk.co.drnaylor.quickstart.annotations.ModuleData;
 

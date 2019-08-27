@@ -42,23 +42,18 @@ import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
 import io.github.nucleuspowered.nucleus.internal.messages.ConfigMessageProvider;
 import io.github.nucleuspowered.nucleus.internal.messages.MessageProvider;
 import io.github.nucleuspowered.nucleus.internal.messages.ResourceMessageProvider;
-import io.github.nucleuspowered.nucleus.internal.permissions.PermissionResolverImpl;
 import io.github.nucleuspowered.nucleus.internal.permissions.ServiceChangeListener;
-import io.github.nucleuspowered.nucleus.internal.qsml.ModuleRegistrationProxyService;
-import io.github.nucleuspowered.nucleus.internal.qsml.NucleusConfigAdapter;
-import io.github.nucleuspowered.nucleus.internal.qsml.NucleusLoggerProxy;
-import io.github.nucleuspowered.nucleus.internal.qsml.QuickStartModuleConstructor;
-import io.github.nucleuspowered.nucleus.internal.qsml.event.BaseModuleEvent;
-import io.github.nucleuspowered.nucleus.internal.qsml.module.StandardModule;
-import io.github.nucleuspowered.nucleus.internal.services.CommandRemapperService;
+import io.github.nucleuspowered.nucleus.quickstart.ModuleRegistrationProxyService;
+import io.github.nucleuspowered.nucleus.quickstart.NucleusConfigAdapter;
+import io.github.nucleuspowered.nucleus.quickstart.NucleusLoggerProxy;
+import io.github.nucleuspowered.nucleus.quickstart.QuickStartModuleConstructor;
+import io.github.nucleuspowered.nucleus.quickstart.event.BaseModuleEvent;
+import io.github.nucleuspowered.nucleus.quickstart.module.StandardModule;
+import io.github.nucleuspowered.nucleus.services.impl.commandremap.CommandRemapperService;
 import io.github.nucleuspowered.nucleus.services.INucleusServiceCollection;
-import io.github.nucleuspowered.nucleus.services.IPermissionCheckService;
-import io.github.nucleuspowered.nucleus.internal.services.PlayerOnlineService;
-import io.github.nucleuspowered.nucleus.internal.text.NucleusTokenServiceImpl;
+import io.github.nucleuspowered.nucleus.services.IPermissionService;
+import io.github.nucleuspowered.nucleus.services.impl.messagetoken.NucleusTokenServiceImpl;
 import io.github.nucleuspowered.nucleus.internal.text.TextParsingUtils;
-import io.github.nucleuspowered.nucleus.services.impl.permissioncheck.PermissionCheckService;
-import io.github.nucleuspowered.nucleus.services.impl.reloadable.ReloadableService;
-import io.github.nucleuspowered.nucleus.services.impl.userprefs.UserPreferenceService;
 import io.github.nucleuspowered.nucleus.logging.DebugLogger;
 import io.github.nucleuspowered.nucleus.modules.core.CoreModule;
 import io.github.nucleuspowered.nucleus.modules.core.config.CoreConfig;
@@ -66,13 +61,8 @@ import io.github.nucleuspowered.nucleus.modules.core.config.CoreConfigAdapter;
 import io.github.nucleuspowered.nucleus.modules.core.config.WarmupConfig;
 import io.github.nucleuspowered.nucleus.modules.core.services.UUIDChangeService;
 import io.github.nucleuspowered.nucleus.modules.core.services.UniqueUserService;
-import io.github.nucleuspowered.nucleus.services.impl.NucleusServiceCollection;
-import io.github.nucleuspowered.nucleus.services.impl.cooldown.CooldownService;
-import io.github.nucleuspowered.nucleus.services.impl.economy.EconomyServiceProvider;
-import io.github.nucleuspowered.nucleus.services.impl.messageprovider.MessageProviderService;
-import io.github.nucleuspowered.nucleus.services.impl.warmup.WarmupService;
-import io.github.nucleuspowered.nucleus.storage.INucleusStorageManager;
-import io.github.nucleuspowered.nucleus.storage.NucleusStorageManager;
+import io.github.nucleuspowered.nucleus.services.IStorageManager;
+import io.github.nucleuspowered.nucleus.services.impl.storage.StorageManager;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import org.slf4j.Logger;
@@ -135,10 +125,8 @@ public class NucleusPlugin extends Nucleus {
     private static final String divider = "+------------------------------------------------------------+";
     private static final int length = divider.length() - 2;
 
-    private final INucleusStorageManager<JsonObject> storageManager = new NucleusStorageManager();
+    private final IStorageManager<JsonObject> storageManager = new StorageManager();
     private final INucleusServiceCollection serviceCollection;
-    private final PluginContainer pluginContainer;
-    private final Injector baseInjector;
 
     private Instant gameStartedTime = null;
     private boolean hasStarted = false;
@@ -231,7 +219,6 @@ public class NucleusPlugin extends Nucleus {
     public NucleusPlugin(
             @ConfigDir(sharedRoot = true) Path configDir,
             Logger logger,
-            PluginContainer container,
             Injector injector) {
         Nucleus.setNucleus(this);
         this.logger = new DebugLogger(logger);
@@ -246,9 +233,8 @@ public class NucleusPlugin extends Nucleus {
         }
 
         this.dataDir = sp;
-        this.pluginContainer = container;
-        this.baseInjector = injector.createChildInjector(NucleusInjectorModule.INSTANCE);
-        this.serviceCollection = this.baseInjector.getInstance(INucleusServiceCollection.class);
+        Injector baseInjector = injector.createChildInjector(new NucleusInjectorModule(sp, configDir));
+        this.serviceCollection = baseInjector.getInstance(INucleusServiceCollection.class);
     }
 
     @Listener(order = Order.FIRST)
@@ -345,7 +331,6 @@ public class NucleusPlugin extends Nucleus {
         this.serviceCollection.registerService(NucleusTokenServiceImpl.class, this.nucleusChatService);
         Sponge.getServiceManager().setProvider(this, NucleusMessageTokenService.class, this.nucleusChatService);
         this.serviceCollection.registerService(CommandRemapperService.class, new CommandRemapperService());
-        this.serviceCollection.registerService(PlayerOnlineService.class, PlayerOnlineService.DEFAULT);
 
         try {
             final String he = this.messageProvider.getMessageWithFormat("config.main-header", PluginInfo.VERSION);
@@ -364,9 +349,9 @@ public class NucleusPlugin extends Nucleus {
                 }
 
                 db.setStrategy((string, classloader) -> sc)
-                        .setConstructor(new QuickStartModuleConstructor(m));
+                        .setConstructor(new QuickStartModuleConstructor(m, this.serviceCollection));
             } else {
-                db.setConstructor(new QuickStartModuleConstructor(null))
+                db.setConstructor(new QuickStartModuleConstructor(null, this.serviceCollection))
                         .setStrategy(Strategy.DEFAULT);
             }
 
@@ -756,11 +741,11 @@ public class NucleusPlugin extends Nucleus {
     }
 
     private void reloadPerm() {
-        IPermissionCheckService permissionResolver = PermissionResolverImpl.INSTANCE;
+        IPermissionService permissionResolver = PermissionResolverImpl.INSTANCE;
         if (this.serviceCollection.getServiceUnchecked(CoreConfigAdapter.class).getNodeOrDefault().isUseParentPerms()) {
             permissionResolver = PermissionResolverImpl.INSTANCE;
         } else {
-            permissionResolver = IPermissionCheckService.SIMPLE;
+            permissionResolver = IPermissionService.SIMPLE;
         }
     }
 
@@ -960,7 +945,7 @@ public class NucleusPlugin extends Nucleus {
     }
 
     @Override
-    public IPermissionCheckService getPermissionResolver() {
+    public IPermissionService getPermissionResolver() {
         return this.serviceCollection.permissionCheck();
     }
 
@@ -977,7 +962,7 @@ public class NucleusPlugin extends Nucleus {
         return this.savesandloads;
     }
 
-    @Override public INucleusStorageManager<JsonObject> getStorageManager() {
+    @Override public IStorageManager<JsonObject> getStorageManager() {
         return this.storageManager;
     }
 

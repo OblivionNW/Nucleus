@@ -4,7 +4,7 @@
  */
 package io.github.nucleuspowered.nucleus.internal.annotations.command;
 
-import io.github.nucleuspowered.nucleus.internal.permissions.SuggestedLevel;
+import io.github.nucleuspowered.nucleus.services.impl.permission.SuggestedLevel;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

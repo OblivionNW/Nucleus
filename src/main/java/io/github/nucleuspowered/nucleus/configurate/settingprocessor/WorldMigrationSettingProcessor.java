@@ -6,7 +6,6 @@ package io.github.nucleuspowered.nucleus.configurate.settingprocessor;
 
 import com.google.common.reflect.TypeToken;
 import io.github.nucleuspowered.neutrino.settingprocessor.SettingProcessor;
-import io.github.nucleuspowered.nucleus.internal.traits.InternalServiceManagerTrait;
 import io.github.nucleuspowered.nucleus.modules.core.services.UUIDChangeService;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;

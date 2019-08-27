@@ -13,9 +13,9 @@ import io.github.nucleuspowered.nucleus.internal.command.ReturnMessageException;
 import io.github.nucleuspowered.nucleus.internal.docgen.annotations.EssentialsEquivalent;
 import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.permissions.PermissionInformation;
-import io.github.nucleuspowered.nucleus.internal.permissions.SuggestedLevel;
-import io.github.nucleuspowered.nucleus.internal.services.PlayerOnlineService;
+import io.github.nucleuspowered.nucleus.services.impl.permission.SuggestedLevel;
 import io.github.nucleuspowered.nucleus.modules.playerinfo.config.PlayerInfoConfigAdapter;
+import io.github.nucleuspowered.nucleus.services.IPlayerOnlineService;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -95,7 +95,7 @@ public class NearCommand extends AbstractCommand.SimpleTargetOtherUser implement
             }
         }
 
-        final PlayerOnlineService playerOnlineService = getServiceManager().getServiceUnchecked(PlayerOnlineService.class);
+        final IPlayerOnlineService playerOnlineService = getServiceManager().getServiceUnchecked(IPlayerOnlineService.class);
         final List<Text> messagesToSend =
                 location.getExtent()
                         .getNearbyEntities(location.getPosition(), radius)

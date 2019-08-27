@@ -15,7 +15,7 @@ import io.github.nucleuspowered.nucleus.modules.world.WorldModule;
 import io.github.nucleuspowered.nucleus.modules.world.commands.border.GenerateChunksCommand;
 import io.github.nucleuspowered.nucleus.modules.world.config.WorldConfig;
 import io.github.nucleuspowered.nucleus.modules.world.config.WorldConfigAdapter;
-import io.github.nucleuspowered.nucleus.storage.dataobjects.modular.IWorldDataObject;
+import io.github.nucleuspowered.nucleus.services.impl.storage.dataobjects.modular.IWorldDataObject;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.spongepowered.api.event.world.ChunkPreGenerationEvent;
 import org.spongepowered.api.text.Text;

@@ -5,7 +5,7 @@
 package io.github.nucleuspowered.nucleus.modules.message;
 
 import io.github.nucleuspowered.nucleus.Nucleus;
-import io.github.nucleuspowered.nucleus.services.IPermissionCheckService;
+import io.github.nucleuspowered.nucleus.services.IPermissionService;
 import io.github.nucleuspowered.nucleus.services.impl.userprefs.NucleusKeysProvider;
 import io.github.nucleuspowered.nucleus.services.impl.userprefs.PreferenceKeyImpl;
 import io.github.nucleuspowered.nucleus.services.impl.userprefs.PreferenceKeyImpl.BooleanKey;
@@ -26,7 +26,7 @@ public class MessageUserPrefKeys implements UserPrefKeys {
             NucleusKeysProvider.SOCIAL_SPY_KEY,
             true,
             user -> {
-                IPermissionCheckService resolver = Nucleus.getNucleus().getPermissionResolver();
+                IPermissionService resolver = Nucleus.getNucleus().getPermissionResolver();
                 return resolver.hasPermission(user, SOCIAL_SPY_BASE) && !resolver.hasPermission(user, SOCIAL_SPY_FORCE);
             },
             "userpref.socialspy"

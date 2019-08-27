@@ -23,9 +23,9 @@ import io.github.nucleuspowered.nucleus.configurate.typeserialisers.WarpCategory
 import io.github.nucleuspowered.nucleus.configurate.typeserialisers.WarpSerialiser;
 import io.github.nucleuspowered.nucleus.configurate.wrappers.NucleusItemStackSnapshot;
 import io.github.nucleuspowered.nucleus.internal.TypeTokens;
-import io.github.nucleuspowered.nucleus.internal.text.NucleusTextTemplateImpl;
-import io.github.nucleuspowered.nucleus.storage.DataObjectTranslator;
-import io.github.nucleuspowered.nucleus.storage.dataobjects.configurate.AbstractConfigurateBackedDataObject;
+import io.github.nucleuspowered.nucleus.services.impl.messagetoken.NucleusTextTemplateImpl;
+import io.github.nucleuspowered.nucleus.services.impl.storage.DataObjectTranslator;
+import io.github.nucleuspowered.nucleus.services.impl.storage.dataobjects.configurate.AbstractConfigurateBackedDataObject;
 import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializerCollection;
 

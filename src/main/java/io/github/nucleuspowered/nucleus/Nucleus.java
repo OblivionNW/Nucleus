@@ -12,17 +12,16 @@ import io.github.nucleuspowered.nucleus.dataservices.KitDataService;
 import io.github.nucleuspowered.nucleus.dataservices.NameBanService;
 import io.github.nucleuspowered.nucleus.dataservices.UserCacheService;
 import io.github.nucleuspowered.nucleus.internal.EconHelper;
-import io.github.nucleuspowered.nucleus.internal.PermissionRegistry;
 import io.github.nucleuspowered.nucleus.internal.TextFileController;
 import io.github.nucleuspowered.nucleus.internal.docgen.DocGenCache;
 import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
 import io.github.nucleuspowered.nucleus.internal.messages.MessageProvider;
-import io.github.nucleuspowered.nucleus.internal.qsml.NucleusConfigAdapter;
-import io.github.nucleuspowered.nucleus.internal.qsml.module.StandardModule;
-import io.github.nucleuspowered.nucleus.services.IPermissionCheckService;
+import io.github.nucleuspowered.nucleus.quickstart.NucleusConfigAdapter;
+import io.github.nucleuspowered.nucleus.quickstart.module.StandardModule;
+import io.github.nucleuspowered.nucleus.services.IPermissionService;
 import io.github.nucleuspowered.nucleus.internal.text.TextParsingUtils;
 import io.github.nucleuspowered.nucleus.modules.core.config.WarmupConfig;
-import io.github.nucleuspowered.nucleus.storage.INucleusStorageManager;
+import io.github.nucleuspowered.nucleus.services.IStorageManager;
 import org.slf4j.Logger;
 import org.spongepowered.api.asset.Asset;
 import org.spongepowered.api.plugin.PluginContainer;
@@ -120,7 +119,7 @@ public abstract class Nucleus {
 
     public abstract void setSessionDebug(boolean debug);
 
-    public abstract IPermissionCheckService getPermissionResolver();
+    public abstract IPermissionService getPermissionResolver();
 
     public abstract boolean isServer();
 
@@ -128,7 +127,7 @@ public abstract class Nucleus {
 
     public abstract boolean isPrintingSavesAndLoads();
 
-    public abstract INucleusStorageManager<JsonObject> getStorageManager();
+    public abstract IStorageManager<JsonObject> getStorageManager();
 
     public abstract boolean isConsoleBypass();
 }

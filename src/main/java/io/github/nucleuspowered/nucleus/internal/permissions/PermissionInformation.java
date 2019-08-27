@@ -5,6 +5,7 @@
 package io.github.nucleuspowered.nucleus.internal.permissions;
 
 import io.github.nucleuspowered.nucleus.Nucleus;
+import io.github.nucleuspowered.nucleus.services.impl.permission.SuggestedLevel;
 import org.spongepowered.api.text.Text;
 
 public class PermissionInformation {

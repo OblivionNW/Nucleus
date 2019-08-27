@@ -16,8 +16,8 @@ import io.github.nucleuspowered.nucleus.internal.interfaces.ListenerBase;
 import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.messages.MessageProvider;
 import io.github.nucleuspowered.nucleus.internal.permissions.PermissionInformation;
-import io.github.nucleuspowered.nucleus.internal.permissions.SuggestedLevel;
-import io.github.nucleuspowered.nucleus.services.IPermissionCheckService;
+import io.github.nucleuspowered.nucleus.services.impl.permission.SuggestedLevel;
+import io.github.nucleuspowered.nucleus.services.IPermissionService;
 import io.github.nucleuspowered.nucleus.internal.text.TextParsingUtils;
 import io.github.nucleuspowered.nucleus.modules.chat.ChatModule;
 import io.github.nucleuspowered.nucleus.modules.chat.config.ChatConfig;
@@ -97,7 +97,7 @@ public class ChatListener implements SimpleReloadable, ListenerBase.Conditional 
     public static String stripPermissionless(Subject source, String message) {
         if (message.contains("&")) {
             String m = message.toLowerCase();
-            IPermissionCheckService resolver = Nucleus.getNucleus().getPermissionResolver();
+            IPermissionService resolver = Nucleus.getNucleus().getPermissionResolver();
             for (Map.Entry<String, Tuple<String[], Function<String, String>>> r : replacements.entrySet()) {
                 if (m.contains(r.getKey()) && Arrays.stream(r.getValue().getFirst()).noneMatch(x -> resolver.hasPermission(source, x))) {
                     message = r.getValue().getSecond().apply(message);

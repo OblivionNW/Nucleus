@@ -5,8 +5,8 @@
 package io.github.nucleuspowered.nucleus.configurate.typeserialisers;
 
 import com.google.common.reflect.TypeToken;
-import io.github.nucleuspowered.nucleus.internal.text.NucleusTextTemplateFactory;
-import io.github.nucleuspowered.nucleus.internal.text.NucleusTextTemplateImpl;
+import io.github.nucleuspowered.nucleus.services.impl.messagetoken.NucleusTextTemplateFactory;
+import io.github.nucleuspowered.nucleus.services.impl.messagetoken.NucleusTextTemplateImpl;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer;

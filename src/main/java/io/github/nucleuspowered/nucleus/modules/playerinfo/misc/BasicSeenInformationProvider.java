@@ -6,7 +6,6 @@ package io.github.nucleuspowered.nucleus.modules.playerinfo.misc;
 
 import io.github.nucleuspowered.nucleus.Nucleus;
 import io.github.nucleuspowered.nucleus.api.service.NucleusSeenService;
-import io.github.nucleuspowered.nucleus.internal.traits.PermissionTrait;
 import io.github.nucleuspowered.nucleus.modules.playerinfo.PlayerInfoModule;
 import io.github.nucleuspowered.nucleus.modules.playerinfo.commands.SeenCommand;
 import io.github.nucleuspowered.nucleus.modules.playerinfo.config.PlayerInfoConfigAdapter;

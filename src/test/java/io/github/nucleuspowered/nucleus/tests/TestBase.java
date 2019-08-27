@@ -20,13 +20,12 @@ import io.github.nucleuspowered.nucleus.internal.docgen.DocGenCache;
 import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
 import io.github.nucleuspowered.nucleus.internal.messages.MessageProvider;
 import io.github.nucleuspowered.nucleus.internal.messages.ResourceMessageProvider;
-import io.github.nucleuspowered.nucleus.internal.qsml.NucleusConfigAdapter;
-import io.github.nucleuspowered.nucleus.internal.qsml.module.StandardModule;
-import io.github.nucleuspowered.nucleus.services.IPermissionCheckService;
-import io.github.nucleuspowered.nucleus.internal.services.WarmupManager;
+import io.github.nucleuspowered.nucleus.quickstart.NucleusConfigAdapter;
+import io.github.nucleuspowered.nucleus.quickstart.module.StandardModule;
+import io.github.nucleuspowered.nucleus.services.IPermissionService;
 import io.github.nucleuspowered.nucleus.internal.text.TextParsingUtils;
 import io.github.nucleuspowered.nucleus.modules.core.config.WarmupConfig;
-import io.github.nucleuspowered.nucleus.storage.INucleusStorageManager;
+import io.github.nucleuspowered.nucleus.services.IStorageManager;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -275,8 +274,8 @@ public abstract class TestBase {
             // NOOP
         }
 
-        @Override public IPermissionCheckService getPermissionResolver() {
-            return IPermissionCheckService.SIMPLE;
+        @Override public IPermissionService getPermissionResolver() {
+            return IPermissionService.SIMPLE;
         }
 
         @Override public boolean isServer() {
@@ -291,7 +290,7 @@ public abstract class TestBase {
             return false;
         }
 
-        @Override public INucleusStorageManager getStorageManager() {
+        @Override public IStorageManager getStorageManager() {
             return null;
         }
 

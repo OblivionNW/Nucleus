@@ -6,7 +6,7 @@ package io.github.nucleuspowered.nucleus.modules.deathmessage;
 
 import static io.github.nucleuspowered.nucleus.modules.deathmessage.DeathMessageModule.ID;
 
-import io.github.nucleuspowered.nucleus.internal.qsml.module.ConfigurableModule;
+import io.github.nucleuspowered.nucleus.quickstart.module.ConfigurableModule;
 import io.github.nucleuspowered.nucleus.modules.deathmessage.config.DeathMessageConfigAdapter;
 import uk.co.drnaylor.quickstart.annotations.ModuleData;
 

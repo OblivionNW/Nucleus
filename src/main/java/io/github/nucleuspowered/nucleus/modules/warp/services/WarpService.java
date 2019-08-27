@@ -17,7 +17,7 @@ import io.github.nucleuspowered.nucleus.internal.interfaces.ServiceBase;
 import io.github.nucleuspowered.nucleus.modules.warp.WarpKeys;
 import io.github.nucleuspowered.nucleus.modules.warp.data.WarpCategoryData;
 import io.github.nucleuspowered.nucleus.modules.warp.data.WarpData;
-import io.github.nucleuspowered.nucleus.storage.dataobjects.modular.IGeneralDataObject;
+import io.github.nucleuspowered.nucleus.services.impl.storage.dataobjects.modular.IGeneralDataObject;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.util.annotation.NonnullByDefault;
 import org.spongepowered.api.world.Location;

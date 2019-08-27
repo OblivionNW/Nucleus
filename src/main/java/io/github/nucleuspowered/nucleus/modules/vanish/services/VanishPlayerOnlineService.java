@@ -4,15 +4,10 @@
  */
 package io.github.nucleuspowered.nucleus.modules.vanish.services;
 
-import io.github.nucleuspowered.nucleus.Nucleus;
-import io.github.nucleuspowered.nucleus.internal.annotations.ReregisterService;
-import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
 import io.github.nucleuspowered.nucleus.internal.interfaces.ServiceBase;
 import io.github.nucleuspowered.nucleus.internal.services.PlayerOnlineService;
-import io.github.nucleuspowered.nucleus.internal.traits.InternalServiceManagerTrait;
-import io.github.nucleuspowered.nucleus.internal.traits.PermissionTrait;
 import io.github.nucleuspowered.nucleus.modules.vanish.VanishModule;
-import io.github.nucleuspowered.nucleus.modules.vanish.config.VanishConfigAdapter;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.User;
@@ -20,17 +15,14 @@ import org.spongepowered.api.entity.living.player.User;
 import java.time.Instant;
 import java.util.Optional;
 
-@ReregisterService(PlayerOnlineService.class)
 public class VanishPlayerOnlineService implements PlayerOnlineService, ServiceBase, PermissionTrait,
-        InternalServiceManagerTrait, SimpleReloadable {
-
-    private boolean allCanSee = false;
+        InternalServiceManagerTrait, Reloadable {
 
     @Override
     public boolean isOnline(CommandSource src, User player) {
         if (player.isOnline()) {
             if (getServiceUnchecked(VanishService.class).isVanished(player)) {
-                return this.allCanSee || hasPermission(src, VanishModule.CAN_SEE_PERMISSION);
+                return hasPermission(src, VanishModule.CAN_SEE_PERMISSION);
             }
 
             return true;
@@ -49,12 +41,4 @@ public class VanishPlayerOnlineService implements PlayerOnlineService, ServiceBa
 
     }
 
-    @Override
-    public void onReload() throws Exception {
-        this.allCanSee = !Nucleus.getNucleus()
-                .getInternalServiceManager()
-                .getServiceUnchecked(VanishConfigAdapter.class)
-                .getNodeOrDefault()
-                .isTryHidePlayers();
-    }
 }

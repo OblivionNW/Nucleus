@@ -4,7 +4,6 @@
  */
 package io.github.nucleuspowered.nucleus.util;
 
-import io.github.nucleuspowered.nucleus.internal.traits.PermissionTrait;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.text.channel.MessageChannel;
 import org.spongepowered.api.text.channel.MessageReceiver;

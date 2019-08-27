@@ -5,13 +5,15 @@
 package io.github.nucleuspowered.nucleus.modules.vanish.services;
 
 import io.github.nucleuspowered.nucleus.Nucleus;
-import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
+import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
 import io.github.nucleuspowered.nucleus.internal.interfaces.ServiceBase;
-import io.github.nucleuspowered.nucleus.internal.traits.PermissionTrait;
 import io.github.nucleuspowered.nucleus.modules.vanish.VanishKeys;
+import io.github.nucleuspowered.nucleus.modules.vanish.VanishPermissions;
 import io.github.nucleuspowered.nucleus.modules.vanish.commands.VanishCommand;
 import io.github.nucleuspowered.nucleus.modules.vanish.config.VanishConfigAdapter;
+import io.github.nucleuspowered.nucleus.services.INucleusServiceCollection;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
@@ -25,18 +27,55 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-public class VanishService implements SimpleReloadable, PermissionTrait, ServiceBase {
+import javax.inject.Inject;
+
+public class VanishService implements Reloadable, PermissionTrait, ServiceBase {
 
     private static final String CAN_SEE_PERM = Nucleus.getNucleus().getPermissionRegistry()
             .getPermissionsForNucleusCommand(VanishCommand.class).getPermissionWithSuffix("see");
+    private final INucleusServiceCollection serviceCollection;
     private boolean isAlter = false;
     private final Map<UUID, Instant> lastVanish = new HashMap<>();
 
+    @Inject
+    VanishService(INucleusServiceCollection serviceCollection) {
+        this.serviceCollection = serviceCollection;
+    }
+
     @Override
-    public void onReload() {
+    public void onReload(INucleusServiceCollection serviceCollection) {
         String property = System.getProperty("nucleus.vanish.tablist.enable");
         this.isAlter = property != null && !property.isEmpty() &&
-            Nucleus.getNucleus().getInternalServiceManager().getServiceUnchecked(VanishConfigAdapter.class).getNodeOrDefault().isAlterTabList();
+                serviceCollection.getServiceUnchecked(VanishConfigAdapter.class).getNodeOrDefault().isAlterTabList();
+        if (!serviceCollection
+                .getServiceUnchecked(VanishConfigAdapter.class)
+                .getNodeOrDefault()
+                .isTryHidePlayers()) {
+            serviceCollection.playerOnlineService().reset();
+        } else {
+            serviceCollection.playerOnlineService().set(this::isOnline, this::lastSeen);
+        }
+    }
+
+    public boolean isOnline(CommandSource src, User player) {
+        if (player.isOnline()) {
+            if (isVanished(player)) {
+                return this.serviceCollection.permissionCheck().hasPermission(src, VanishPermissions.VANISH_SEE);
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public Optional<Instant> lastSeen(CommandSource src, User player) {
+        if (isOnline(src, player) || !player.isOnline() || !getLastVanishTime(player.getUniqueId()).isPresent()) {
+            return player.get(Keys.LAST_DATE_PLAYED);
+        } else {
+            return getLastVanishTime(player.getUniqueId());
+        }
+
     }
 
     public boolean isVanished(User player) {

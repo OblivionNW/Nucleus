@@ -1,11 +1,20 @@
+/*
+ * This file is part of Nucleus, licensed under the MIT License (MIT). See the LICENSE.txt file
+ * at the root of this project for more details.
+ */
 package io.github.nucleuspowered.nucleus.services.impl;
 
+import com.google.gson.JsonObject;
+import com.google.inject.Injector;
 import io.github.nucleuspowered.nucleus.services.ICooldownService;
 import io.github.nucleuspowered.nucleus.services.IEconomyServiceProvider;
 import io.github.nucleuspowered.nucleus.services.IMessageProviderService;
+import io.github.nucleuspowered.nucleus.services.IMessageTokenService;
 import io.github.nucleuspowered.nucleus.services.INucleusServiceCollection;
-import io.github.nucleuspowered.nucleus.services.IPermissionCheckService;
+import io.github.nucleuspowered.nucleus.services.IPermissionService;
+import io.github.nucleuspowered.nucleus.services.IPlayerOnlineService;
 import io.github.nucleuspowered.nucleus.services.IReloadableService;
+import io.github.nucleuspowered.nucleus.services.IStorageManager;
 import io.github.nucleuspowered.nucleus.services.IUserPreferenceService;
 import io.github.nucleuspowered.nucleus.services.IWarmupService;
 import org.slf4j.Logger;
@@ -33,8 +42,12 @@ public class NucleusServiceCollection implements INucleusServiceCollection {
     private final PluginContainer pluginContainer;
     private final Logger logger;
     private final IUserPreferenceService userPreferenceService;
-    private final IPermissionCheckService permissionCheckService;
+    private final IPermissionService permissionCheckService;
     private final IReloadableService reloadableService;
+    private final Injector injector;
+    private final IPlayerOnlineService playerOnlineService;
+    private final IMessageTokenService messageTokenService;
+    private final IStorageManager<JsonObject> storageManager;
 
     @Inject
     public NucleusServiceCollection(
@@ -43,8 +56,12 @@ public class NucleusServiceCollection implements INucleusServiceCollection {
             IWarmupService warmupService,
             ICooldownService cooldownService,
             IUserPreferenceService userPreferenceService,
-            IPermissionCheckService permissionCheckService,
+            IPermissionService permissionCheckService,
             IReloadableService reloadableService,
+            IPlayerOnlineService playerOnlineService,
+            IMessageTokenService messageTokenService,
+            IStorageManager<JsonObject> storageManager,
+            Injector injector,
             PluginContainer pluginContainer,
             Logger logger) {
         this.messageProviderService = messageProviderService;
@@ -54,6 +71,10 @@ public class NucleusServiceCollection implements INucleusServiceCollection {
         this.userPreferenceService = userPreferenceService;
         this.permissionCheckService = permissionCheckService;
         this.reloadableService = reloadableService;
+        this.playerOnlineService = playerOnlineService;
+        this.messageTokenService = messageTokenService;
+        this.storageManager = storageManager;
+        this.injector = injector;
         this.pluginContainer = pluginContainer;
         this.logger = logger;
     }
@@ -64,7 +85,7 @@ public class NucleusServiceCollection implements INucleusServiceCollection {
     }
 
     @Override
-    public IPermissionCheckService permissionCheck() {
+    public IPermissionService permissionCheck() {
         return this.permissionCheckService;
     }
 
@@ -88,8 +109,26 @@ public class NucleusServiceCollection implements INucleusServiceCollection {
         return this.userPreferenceService;
     }
 
-    @Override public IReloadableService reloadableService() {
+    @Override
+    public IReloadableService reloadableService() {
         return this.reloadableService;
+    }
+
+    @Override public IPlayerOnlineService playerOnlineService() {
+        return this.playerOnlineService;
+    }
+
+    @Override public IMessageTokenService messageTokenService() {
+        return this.messageTokenService;
+    }
+
+    @Override public IStorageManager<JsonObject> storageManager() {
+        return this.storageManager;
+    }
+
+    @Override
+    public Injector injector() {
+        return this.injector;
     }
 
     @Override
@@ -106,6 +145,7 @@ public class NucleusServiceCollection implements INucleusServiceCollection {
         registerService(key, service, false);
     }
 
+    @Override
     public <I, C extends I> void registerService(Class<I> key, C service, boolean rereg) {
         if (!rereg && (this.instances.containsKey(key) || this.suppliers.containsKey(key))) {
             return;
@@ -115,6 +155,7 @@ public class NucleusServiceCollection implements INucleusServiceCollection {
         this.instances.put(key, service);
     }
 
+    @Override
     public <I, C extends I> void registerServiceSupplier(Class<I> key, Supplier<C> service, boolean rereg) {
         if (!rereg && (this.instances.containsKey(key) || this.suppliers.containsKey(key))) {
             return;
@@ -124,7 +165,7 @@ public class NucleusServiceCollection implements INucleusServiceCollection {
         this.suppliers.put(key, service);
     }
 
-    @SuppressWarnings("unchecked")
+    @Override @SuppressWarnings("unchecked")
     public <I> Optional<I> getService(Class<I> key) {
         if (this.instances.containsKey(key)) {
             return Optional.of((I) this.instances.get(key));
@@ -135,7 +176,7 @@ public class NucleusServiceCollection implements INucleusServiceCollection {
         return Optional.empty();
     }
 
-    @SuppressWarnings("unchecked")
+    @Override @SuppressWarnings("unchecked")
     public <I> I getServiceUnchecked(Class<I> key) {
         if (this.instances.containsKey(key)) {
             return (I) this.instances.get(key);

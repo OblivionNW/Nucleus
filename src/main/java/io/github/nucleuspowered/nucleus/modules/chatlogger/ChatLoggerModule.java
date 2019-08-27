@@ -6,7 +6,7 @@ package io.github.nucleuspowered.nucleus.modules.chatlogger;
 
 import static io.github.nucleuspowered.nucleus.modules.chatlogger.ChatLoggerModule.ID;
 
-import io.github.nucleuspowered.nucleus.internal.qsml.module.ConfigurableModule;
+import io.github.nucleuspowered.nucleus.quickstart.module.ConfigurableModule;
 import io.github.nucleuspowered.nucleus.modules.chatlogger.config.ChatLoggingConfigAdapter;
 import uk.co.drnaylor.quickstart.annotations.ModuleData;
 

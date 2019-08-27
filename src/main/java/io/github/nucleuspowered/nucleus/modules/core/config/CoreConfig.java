@@ -6,7 +6,7 @@ package io.github.nucleuspowered.nucleus.modules.core.config;
 
 import com.google.common.collect.Maps;
 import io.github.nucleuspowered.neutrino.annotations.DoNotGenerate;
-import io.github.nucleuspowered.nucleus.internal.text.NucleusTextTemplateImpl;
+import io.github.nucleuspowered.nucleus.services.impl.messagetoken.NucleusTextTemplateImpl;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 import uk.co.drnaylor.quickstart.config.NoMergeIfPresent;

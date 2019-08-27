@@ -8,7 +8,7 @@ import com.google.common.collect.ImmutableMap;
 import io.github.nucleuspowered.nucleus.Nucleus;
 import io.github.nucleuspowered.nucleus.api.catalogkeys.NucleusTeleportHelperFilters;
 import io.github.nucleuspowered.nucleus.internal.CatalogTypeFinalStaticProcessor;
-import io.github.nucleuspowered.nucleus.internal.qsml.module.ConfigurableModule;
+import io.github.nucleuspowered.nucleus.quickstart.module.ConfigurableModule;
 import io.github.nucleuspowered.nucleus.services.impl.userprefs.UserPreferenceService;
 import io.github.nucleuspowered.nucleus.modules.core.config.CoreConfigAdapter;
 import io.github.nucleuspowered.nucleus.modules.core.teleport.filters.NoCheckFilter;

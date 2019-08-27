@@ -6,7 +6,7 @@ package io.github.nucleuspowered.nucleus.modules.core;
 
 import com.google.common.reflect.TypeToken;
 import io.github.nucleuspowered.nucleus.internal.TypeTokens;
-import io.github.nucleuspowered.nucleus.storage.dataobjects.modular.IUserDataObject;
+import io.github.nucleuspowered.nucleus.services.impl.storage.dataobjects.modular.IUserDataObject;
 import io.github.nucleuspowered.storage.dataobjects.keyed.DataKey;
 import io.github.nucleuspowered.storage.dataobjects.keyed.IKeyedDataObject;
 

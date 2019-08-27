@@ -19,7 +19,7 @@ import io.github.nucleuspowered.nucleus.internal.docgen.EssentialsDoc;
 import io.github.nucleuspowered.nucleus.internal.docgen.PermissionDoc;
 import io.github.nucleuspowered.nucleus.internal.docgen.TokenDoc;
 import io.github.nucleuspowered.nucleus.internal.docgen.generators.MarkdownGenerator;
-import io.github.nucleuspowered.nucleus.internal.permissions.SuggestedLevel;
+import io.github.nucleuspowered.nucleus.services.impl.permission.SuggestedLevel;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.SimpleConfigurationNode;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;

@@ -8,7 +8,7 @@ import io.github.nucleuspowered.nucleus.Nucleus;
 import io.github.nucleuspowered.nucleus.internal.interfaces.ListenerBase;
 import io.github.nucleuspowered.nucleus.modules.world.WorldKeys;
 import io.github.nucleuspowered.nucleus.modules.world.services.WorldHelper;
-import io.github.nucleuspowered.nucleus.storage.dataobjects.modular.IWorldDataObject;
+import io.github.nucleuspowered.nucleus.services.impl.storage.dataobjects.modular.IWorldDataObject;
 import org.spongepowered.api.GameState;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.Listener;

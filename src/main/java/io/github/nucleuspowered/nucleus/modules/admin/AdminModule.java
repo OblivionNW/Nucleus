@@ -4,7 +4,7 @@
  */
 package io.github.nucleuspowered.nucleus.modules.admin;
 
-import io.github.nucleuspowered.nucleus.internal.qsml.module.ConfigurableModule;
+import io.github.nucleuspowered.nucleus.quickstart.module.ConfigurableModule;
 import io.github.nucleuspowered.nucleus.modules.admin.config.AdminConfigAdapter;
 import uk.co.drnaylor.quickstart.annotations.ModuleData;
 

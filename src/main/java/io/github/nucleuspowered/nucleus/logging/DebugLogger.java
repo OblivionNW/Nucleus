@@ -6,7 +6,6 @@ package io.github.nucleuspowered.nucleus.logging;
 
 import io.github.nucleuspowered.nucleus.LoggerWrapper;
 import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
-import io.github.nucleuspowered.nucleus.internal.traits.InternalServiceManagerTrait;
 import io.github.nucleuspowered.nucleus.modules.core.config.CoreConfigAdapter;
 import org.slf4j.Logger;
 import org.slf4j.Marker;

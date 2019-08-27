@@ -5,7 +5,7 @@
 package io.github.nucleuspowered.nucleus.modules.nickname;
 
 import io.github.nucleuspowered.nucleus.Nucleus;
-import io.github.nucleuspowered.nucleus.internal.qsml.module.ConfigurableModule;
+import io.github.nucleuspowered.nucleus.quickstart.module.ConfigurableModule;
 import io.github.nucleuspowered.nucleus.modules.nickname.config.NicknameConfigAdapter;
 import io.github.nucleuspowered.nucleus.modules.nickname.services.NicknameService;
 import uk.co.drnaylor.quickstart.annotations.ModuleData;

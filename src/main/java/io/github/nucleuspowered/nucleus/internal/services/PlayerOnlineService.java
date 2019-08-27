@@ -14,8 +14,6 @@ import java.util.Optional;
 @FunctionalInterface
 public interface PlayerOnlineService {
 
-    PlayerOnlineService DEFAULT = (src, player) -> player.isOnline();
-
     boolean isOnline(CommandSource src, User player);
 
     default Optional<Instant> lastSeen(CommandSource src, User player) {
