@@ -6,6 +6,7 @@ package io.github.nucleuspowered.nucleus.services.impl;
 
 import com.google.gson.JsonObject;
 import com.google.inject.Injector;
+import io.github.nucleuspowered.nucleus.services.ICommandMetadataService;
 import io.github.nucleuspowered.nucleus.services.ICooldownService;
 import io.github.nucleuspowered.nucleus.services.IEconomyServiceProvider;
 import io.github.nucleuspowered.nucleus.services.IMessageProviderService;
@@ -27,6 +28,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 @Singleton
@@ -35,32 +37,34 @@ public class NucleusServiceCollection implements INucleusServiceCollection {
     private final Map<Class<?>, Object> instances = new HashMap<>();
     private final Map<Class<?>, Supplier<?>> suppliers = new HashMap<>();
 
-    private final IMessageProviderService messageProviderService;
-    private final IEconomyServiceProvider economyServiceProvider;
-    private final IWarmupService warmupService;
-    private final ICooldownService cooldownService;
+    private final Provider<IMessageProviderService> messageProviderService;
+    private final Provider<IEconomyServiceProvider> economyServiceProvider;
+    private final Provider<IWarmupService> warmupService;
+    private final Provider<ICooldownService> cooldownService;
+    private final Provider<IPermissionService> permissionCheckService;
+    private final Provider<IReloadableService> reloadableService;
+    private final Provider<IPlayerOnlineService> playerOnlineService;
+    private final Provider<IMessageTokenService> messageTokenService;
+    private final Provider<IStorageManager<JsonObject>> storageManager;
+    private final Provider<IUserPreferenceService> userPreferenceService;
+    private final Provider<ICommandMetadataService> commandMetadataService;
+    private final Injector injector;
     private final PluginContainer pluginContainer;
     private final Logger logger;
-    private final IUserPreferenceService userPreferenceService;
-    private final IPermissionService permissionCheckService;
-    private final IReloadableService reloadableService;
-    private final Injector injector;
-    private final IPlayerOnlineService playerOnlineService;
-    private final IMessageTokenService messageTokenService;
-    private final IStorageManager<JsonObject> storageManager;
 
     @Inject
     public NucleusServiceCollection(
-            IMessageProviderService messageProviderService,
-            IEconomyServiceProvider economyServiceProvider,
-            IWarmupService warmupService,
-            ICooldownService cooldownService,
-            IUserPreferenceService userPreferenceService,
-            IPermissionService permissionCheckService,
-            IReloadableService reloadableService,
-            IPlayerOnlineService playerOnlineService,
-            IMessageTokenService messageTokenService,
-            IStorageManager<JsonObject> storageManager,
+            Provider<IMessageProviderService> messageProviderService,
+            Provider<IEconomyServiceProvider> economyServiceProvider,
+            Provider<IWarmupService> warmupService,
+            Provider<ICooldownService> cooldownService,
+            Provider<IUserPreferenceService> userPreferenceService,
+            Provider<IPermissionService> permissionCheckService,
+            Provider<IReloadableService> reloadableService,
+            Provider<IPlayerOnlineService> playerOnlineService,
+            Provider<IMessageTokenService> messageTokenService,
+            Provider<IStorageManager<JsonObject>> storageManager,
+            Provider<ICommandMetadataService> commandMetadataService,
             Injector injector,
             PluginContainer pluginContainer,
             Logger logger) {
@@ -74,6 +78,7 @@ public class NucleusServiceCollection implements INucleusServiceCollection {
         this.playerOnlineService = playerOnlineService;
         this.messageTokenService = messageTokenService;
         this.storageManager = storageManager;
+        this.commandMetadataService = commandMetadataService;
         this.injector = injector;
         this.pluginContainer = pluginContainer;
         this.logger = logger;
@@ -81,49 +86,53 @@ public class NucleusServiceCollection implements INucleusServiceCollection {
 
     @Override
     public IMessageProviderService messageProvider() {
-        return this.messageProviderService;
+        return this.messageProviderService.get();
     }
 
     @Override
     public IPermissionService permissionCheck() {
-        return this.permissionCheckService;
+        return this.permissionCheckService.get();
     }
 
     @Override
     public IEconomyServiceProvider economyServiceProvider() {
-        return this.economyServiceProvider;
+        return this.economyServiceProvider.get();
     }
 
     @Override
     public IWarmupService warmupService() {
-        return this.warmupService;
+        return this.warmupService.get();
     }
 
     @Override
     public ICooldownService cooldownService() {
-        return this.cooldownService;
+        return this.cooldownService.get();
     }
 
     @Override
     public IUserPreferenceService userPreferenceService() {
-        return this.userPreferenceService;
+        return this.userPreferenceService.get();
     }
 
     @Override
     public IReloadableService reloadableService() {
-        return this.reloadableService;
+        return this.reloadableService.get();
     }
 
     @Override public IPlayerOnlineService playerOnlineService() {
-        return this.playerOnlineService;
+        return this.playerOnlineService.get();
     }
 
     @Override public IMessageTokenService messageTokenService() {
-        return this.messageTokenService;
+        return this.messageTokenService.get();
     }
 
     @Override public IStorageManager<JsonObject> storageManager() {
-        return this.storageManager;
+        return this.storageManager.get();
+    }
+
+    @Override public ICommandMetadataService commandMetadataService() {
+        return this.commandMetadataService.get();
     }
 
     @Override

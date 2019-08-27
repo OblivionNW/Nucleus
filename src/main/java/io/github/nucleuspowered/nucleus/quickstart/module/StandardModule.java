@@ -33,9 +33,8 @@ import io.github.nucleuspowered.nucleus.internal.interfaces.TaskBase;
 import io.github.nucleuspowered.nucleus.internal.permissions.ServiceChangeListener;
 import io.github.nucleuspowered.nucleus.internal.registry.NucleusRegistryModule;
 import io.github.nucleuspowered.nucleus.services.INucleusServiceCollection;
-import io.github.nucleuspowered.nucleus.services.impl.commandremap.CommandRemapperService;
+import io.github.nucleuspowered.nucleus.services.impl.commandremap.CommandMetadataService;
 import io.github.nucleuspowered.nucleus.services.impl.messagetoken.Tokens;
-import io.github.nucleuspowered.nucleus.internal.traits.MessageProviderTrait;
 import io.github.nucleuspowered.nucleus.services.impl.userprefs.PreferenceKeyImpl;
 import io.github.nucleuspowered.nucleus.services.impl.userprefs.UserPrefKeys;
 import io.github.nucleuspowered.nucleus.services.impl.userprefs.UserPreferenceService;
@@ -266,7 +265,7 @@ public abstract class StandardModule implements Module {
             CommentedConfigurationNode ccn = SimpleCommentedConfigurationNode.root();
             for (Map.Entry<String, String> map : toRegister.entrySet()) {
                 if (this.commandsConfig.getCommandNode(map.getKey()).getNode("enabled").getBoolean(true)) {
-                    getServiceUnchecked(CommandRemapperService.class).addMapping(map.getKey().toLowerCase(), map.getValue().toLowerCase());
+                    getServiceUnchecked(CommandMetadataService.class).addMapping(map.getKey().toLowerCase(), map.getValue().toLowerCase());
                 }
 
                 ccn.getNode(map.getKey(), "enabled").setComment(this.message).setValue(true);

@@ -49,7 +49,7 @@ import io.github.nucleuspowered.nucleus.quickstart.NucleusLoggerProxy;
 import io.github.nucleuspowered.nucleus.quickstart.QuickStartModuleConstructor;
 import io.github.nucleuspowered.nucleus.quickstart.event.BaseModuleEvent;
 import io.github.nucleuspowered.nucleus.quickstart.module.StandardModule;
-import io.github.nucleuspowered.nucleus.services.impl.commandremap.CommandRemapperService;
+import io.github.nucleuspowered.nucleus.services.impl.commandremap.CommandMetadataService;
 import io.github.nucleuspowered.nucleus.services.INucleusServiceCollection;
 import io.github.nucleuspowered.nucleus.services.IPermissionService;
 import io.github.nucleuspowered.nucleus.services.impl.messagetoken.NucleusTokenServiceImpl;
@@ -330,7 +330,7 @@ public class NucleusPlugin extends Nucleus {
         this.nucleusChatService = new NucleusTokenServiceImpl(this);
         this.serviceCollection.registerService(NucleusTokenServiceImpl.class, this.nucleusChatService);
         Sponge.getServiceManager().setProvider(this, NucleusMessageTokenService.class, this.nucleusChatService);
-        this.serviceCollection.registerService(CommandRemapperService.class, new CommandRemapperService());
+        this.serviceCollection.registerService(CommandMetadataService.class, new CommandMetadataService());
 
         try {
             final String he = this.messageProvider.getMessageWithFormat("config.main-header", PluginInfo.VERSION);
@@ -558,7 +558,7 @@ public class NucleusPlugin extends Nucleus {
             try {
                 this.serviceCollection.getServiceUnchecked(UniqueUserService.class).resetUniqueUserCount();
                 this.serviceCollection.getServiceUnchecked(UUIDChangeService.class).setStateAndReload();
-                this.serviceCollection.getServiceUnchecked(CommandRemapperService.class).activate();
+                this.serviceCollection.getServiceUnchecked(CommandMetadataService.class).activate();
 
                 // Save any additions.
                 this.moduleContainer.refreshSystemConfig();
@@ -623,7 +623,7 @@ public class NucleusPlugin extends Nucleus {
             this.gameStartedTime = null;
             this.logger.info(this.messageProvider.getMessageWithFormat("startup.stopped", PluginInfo.NAME));
             saveData();
-            this.serviceCollection.getServiceUnchecked(CommandRemapperService.class).deactivate();
+            this.serviceCollection.getServiceUnchecked(CommandMetadataService.class).deactivate();
         }
     }
 
@@ -975,7 +975,7 @@ public class NucleusPlugin extends Nucleus {
         Sponge.getEventManager().unregisterPluginListeners(this);
         Sponge.getCommandManager().getOwnedBy(this).forEach(Sponge.getCommandManager()::removeMapping);
         Sponge.getScheduler().getScheduledTasks(this).forEach(Task::cancel);
-        this.serviceCollection.getService(CommandRemapperService.class).ifPresent(CommandRemapperService::deactivate);
+        this.serviceCollection.getService(CommandMetadataService.class).ifPresent(CommandMetadataService::deactivate);
 
         // Re-register this to warn people about the error.
         Sponge.getEventManager().registerListener(this, GameStartedServerEvent.class, e -> errorOnStartup());

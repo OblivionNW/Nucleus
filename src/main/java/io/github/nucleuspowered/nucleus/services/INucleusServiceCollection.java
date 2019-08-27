@@ -41,6 +41,8 @@ public interface INucleusServiceCollection {
 
     IStorageManager<JsonObject> storageManager();
 
+    ICommandMetadataService commandMetadataService();
+
     Injector injector();
 
     PluginContainer pluginContainer();
