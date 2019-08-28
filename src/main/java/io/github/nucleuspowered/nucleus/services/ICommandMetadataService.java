@@ -5,6 +5,8 @@
 package io.github.nucleuspowered.nucleus.services;
 
 import com.google.inject.ImplementedBy;
+import io.github.nucleuspowered.nucleus.internal.command.control.CommandControl;
+import io.github.nucleuspowered.nucleus.internal.command.control.CommandMetadata;
 import io.github.nucleuspowered.nucleus.services.impl.command.CommandMetadataService;
 
 import java.util.Map;
@@ -13,6 +15,10 @@ import java.util.OptionalInt;
 
 @ImplementedBy(CommandMetadataService.class)
 public interface ICommandMetadataService {
+
+    void registerCommand(CommandControl control);
+
+    void completeRegistrationPhase();
 
     void addMapping(String newCommand, String remapped);
 

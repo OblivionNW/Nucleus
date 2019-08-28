@@ -8,6 +8,8 @@ import com.google.common.collect.ImmutableMap;
 import io.github.nucleuspowered.nucleus.Nucleus;
 import io.github.nucleuspowered.nucleus.PluginInfo;
 import io.github.nucleuspowered.nucleus.guice.ConfigDirectory;
+import io.github.nucleuspowered.nucleus.internal.command.control.CommandControl;
+import io.github.nucleuspowered.nucleus.internal.command.control.CommandMetadata;
 import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
 import io.github.nucleuspowered.nucleus.services.ICommandMetadataService;
 import io.github.nucleuspowered.nucleus.services.INucleusServiceCollection;
@@ -45,11 +47,21 @@ public class CommandMetadataService implements ICommandMetadataService, Reloadab
     private boolean shouldReload = true;
     private ConfigurationNode commandsConfConfigNode;
 
+    private final Map<String, CommandMetadata> commandMetadataMap = new HashMap<>();
+
     @Inject
     public CommandMetadataService(@ConfigDirectory Path configDirectory, IReloadableService reloadableService, Logger logger) {
         reloadableService.registerReloadable(this);
         this.commandsFile = configDirectory.resolve("commands.conf");
         this.logger = logger;
+    }
+
+    @Override public void registerCommand(CommandControl control) {
+
+    }
+
+    @Override public void completeRegistrationPhase() {
+
     }
 
     @Override public void addMapping(String newCommand, String remapped) {
