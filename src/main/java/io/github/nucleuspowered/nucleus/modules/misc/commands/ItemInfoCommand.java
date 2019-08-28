@@ -6,8 +6,6 @@ package io.github.nucleuspowered.nucleus.modules.misc.commands;
 
 import io.github.nucleuspowered.nucleus.Nucleus;
 import io.github.nucleuspowered.nucleus.argumentparsers.ImprovedCatalogTypeArgument;
-import io.github.nucleuspowered.nucleus.configurate.datatypes.ItemDataNode;
-import io.github.nucleuspowered.nucleus.dataservices.ItemDataService;
 import io.github.nucleuspowered.nucleus.internal.DataScanner;
 import io.github.nucleuspowered.nucleus.internal.annotations.command.Permissions;
 import io.github.nucleuspowered.nucleus.internal.annotations.command.RegisterCommand;
@@ -50,9 +48,6 @@ import java.util.Optional;
 @RegisterCommand({"iteminfo", "itemdb"})
 @EssentialsEquivalent(value = {"itemdb", "itemno", "durability", "dura"}, isExact = false, notes = "Nucleus tries to provide much more info!")
 public class ItemInfoCommand extends AbstractCommand<Player> {
-
-    private final ItemDataService itemDataService = Nucleus.getNucleus().getItemDataService();
-    private EconHelper econHelper = Nucleus.getNucleus().getEconHelper();
 
     private final String key = "key";
     private final Text comma = Text.of(TextColors.GREEN, ", ");
@@ -119,44 +114,6 @@ public class ItemInfoCommand extends AbstractCommand<Player> {
                     DataScanner.getText(player, "command.iteminfo.key", x.getKey(), it.get(k).get()).ifPresent(lt::add);
                 }
             });
-        }
-
-        ItemDataNode itemDataNode = this.itemDataService.getDataForItem(id);
-
-        // /buy and /sell prices
-        if (this.econHelper.economyServiceExists() && Nucleus.getNucleus().getModuleHolder().isModuleLoaded(ServerShopModule.ID)) {
-            boolean space = false;
-            double buyPrice = itemDataNode.getServerBuyPrice();
-            if (buyPrice >= 0) {
-                lt.add(Text.EMPTY);
-                lt.add(Nucleus.getNucleus().getMessageProvider().getTextMessageWithFormat("command.iteminfo.buyprice", this.econHelper.getCurrencySymbol(buyPrice)));
-                space = true;
-            }
-
-            double sellPrice = itemDataNode.getServerSellPrice();
-            if (sellPrice >= 0) {
-                if (!space) {
-                    lt.add(Text.EMPTY);
-                }
-
-                lt.add(Nucleus.getNucleus().getMessageProvider().getTextMessageWithFormat("command.iteminfo.sellprice", this.econHelper.getCurrencySymbol(sellPrice)));
-            }
-        }
-
-        List<String> aliases = itemDataNode.getAliases();
-        if (!aliases.isEmpty()) {
-            lt.add(Text.EMPTY);
-            lt.add(Nucleus.getNucleus().getMessageProvider().getTextMessageWithFormat("command.iteminfo.list.aliases"));
-
-            Text.Builder tb = Text.builder();
-            Iterator<String> iterator = aliases.iterator();
-            tb.append(Text.of(TextColors.YELLOW, iterator.next()));
-
-            while (iterator.hasNext()) {
-                tb.append(this.comma, Text.of(TextColors.YELLOW, iterator.next()));
-            }
-
-            lt.add(tb.build());
         }
 
         Sponge.getServiceManager().provideUnchecked(PaginationService.class).builder().contents(lt).padding(Text.of(TextColors.GREEN, "-"))

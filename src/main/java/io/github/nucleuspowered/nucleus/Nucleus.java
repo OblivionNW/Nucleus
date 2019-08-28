@@ -6,7 +6,6 @@ package io.github.nucleuspowered.nucleus;
 
 import io.github.nucleuspowered.nucleus.api.service.NucleusMessageTokenService;
 import io.github.nucleuspowered.nucleus.config.CommandsConfig;
-import io.github.nucleuspowered.nucleus.dataservices.ItemDataService;
 import io.github.nucleuspowered.nucleus.dataservices.KitDataService;
 import io.github.nucleuspowered.nucleus.dataservices.NameBanService;
 import io.github.nucleuspowered.nucleus.dataservices.UserCacheService;
@@ -76,8 +75,6 @@ public abstract class Nucleus {
     }
 
     public abstract Optional<Instant> getGameStartedTime();
-
-    public abstract ItemDataService getItemDataService();
 
     public abstract NameUtil getNameUtil();
 

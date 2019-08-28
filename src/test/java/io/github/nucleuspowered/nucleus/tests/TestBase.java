@@ -8,7 +8,6 @@ import io.github.nucleuspowered.nucleus.NameUtil;
 import io.github.nucleuspowered.nucleus.Nucleus;
 import io.github.nucleuspowered.nucleus.api.service.NucleusMessageTokenService;
 import io.github.nucleuspowered.nucleus.config.CommandsConfig;
-import io.github.nucleuspowered.nucleus.dataservices.ItemDataService;
 import io.github.nucleuspowered.nucleus.dataservices.KitDataService;
 import io.github.nucleuspowered.nucleus.dataservices.NameBanService;
 import io.github.nucleuspowered.nucleus.dataservices.UserCacheService;
@@ -188,11 +187,6 @@ public abstract class TestBase {
 
         @Override public Optional<Instant> getGameStartedTime() {
             return Optional.empty();
-        }
-
-        @Override
-        public ItemDataService getItemDataService() {
-            return null;
         }
 
         @Override

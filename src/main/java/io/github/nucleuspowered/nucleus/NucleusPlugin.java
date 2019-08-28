@@ -24,7 +24,6 @@ import io.github.nucleuspowered.nucleus.api.service.NucleusUserPreferenceService
 import io.github.nucleuspowered.nucleus.api.service.NucleusWarmupManagerService;
 import io.github.nucleuspowered.nucleus.config.CommandsConfig;
 import io.github.nucleuspowered.nucleus.configurate.ConfigurateHelper;
-import io.github.nucleuspowered.nucleus.dataservices.ItemDataService;
 import io.github.nucleuspowered.nucleus.dataservices.KitDataService;
 import io.github.nucleuspowered.nucleus.dataservices.NameBanService;
 import io.github.nucleuspowered.nucleus.dataservices.UserCacheService;
@@ -125,7 +124,6 @@ public class NucleusPlugin extends Nucleus {
     private boolean hasStarted = false;
     private Throwable isErrored = null;
     private CommandsConfig commandsConfig;
-    private ItemDataService itemDataService;
     private UserCacheService userCacheService;
     private NameBanService nameBanService;
     private KitDataService kitDataService;
@@ -291,8 +289,6 @@ public class NucleusPlugin extends Nucleus {
             this.commandsConfig = new CommandsConfig(Paths.get(this.configDir.toString(), "commands.conf"));
 
             DataProviders d = new DataProviders(this);
-            this.itemDataService = new ItemDataService(d.getItemDataProvider());
-            this.itemDataService.loadInternal();
             this.kitDataService = new KitDataService(d.getKitsDataProvider());
             this.nameBanService = new NameBanService(d.getNameBanDataProvider());
             this.userCacheService = new UserCacheService(d.getUserCacheDataProvider());
@@ -692,7 +688,6 @@ public class NucleusPlugin extends Nucleus {
             this.moduleContainer.reloadSystemConfig();
             reloadMessages();
             this.commandsConfig.load();
-            this.itemDataService.load();
             this.warmupConfig = null;
 
             CoreConfig coreConfig = this.serviceCollection.getServiceUnchecked(CoreConfigAdapter.class).getNodeOrDefault();
@@ -807,11 +802,6 @@ public class NucleusPlugin extends Nucleus {
 
     @Override public Optional<Instant> getGameStartedTime() {
         return Optional.ofNullable(this.gameStartedTime);
-    }
-
-    @Override
-    public ItemDataService getItemDataService() {
-        return this.itemDataService;
     }
 
     @Override public KitDataService getKitDataService() {
