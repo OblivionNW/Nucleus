@@ -5,7 +5,7 @@
 package io.github.nucleuspowered.nucleus.modules.misc.commands;
 
 import io.github.nucleuspowered.nucleus.Nucleus;
-import io.github.nucleuspowered.nucleus.argumentparsers.ItemAliasArgument;
+import io.github.nucleuspowered.nucleus.argumentparsers.ImprovedCatalogTypeArgument;
 import io.github.nucleuspowered.nucleus.configurate.datatypes.ItemDataNode;
 import io.github.nucleuspowered.nucleus.dataservices.ItemDataService;
 import io.github.nucleuspowered.nucleus.internal.DataScanner;
@@ -14,6 +14,7 @@ import io.github.nucleuspowered.nucleus.internal.annotations.command.RegisterCom
 import io.github.nucleuspowered.nucleus.internal.command.AbstractCommand;
 import io.github.nucleuspowered.nucleus.internal.docgen.annotations.EssentialsEquivalent;
 import io.github.nucleuspowered.nucleus.internal.permissions.PermissionInformation;
+import io.github.nucleuspowered.nucleus.modules.misc.MiscPermissions;
 import io.github.nucleuspowered.nucleus.services.impl.permission.SuggestedLevel;
 import io.github.nucleuspowered.nucleus.modules.servershop.ServerShopModule;
 import org.spongepowered.api.CatalogType;
@@ -59,8 +60,8 @@ public class ItemInfoCommand extends AbstractCommand<Player> {
     @Override
     public CommandElement[] getArguments() {
         return new CommandElement[] {
-                GenericArguments.flags().permissionFlag(this.permissions.getPermissionWithSuffix("extended"), "e", "-extended")
-            .buildWith(GenericArguments.optional(new ItemAliasArgument(Text.of(this.key))))
+                GenericArguments.flags().permissionFlag(MiscPermissions.ITEMINFO_EXTENDED, "e", "-extended")
+                    .buildWith(GenericArguments.optional(new ImprovedCatalogTypeArgument(Text.of(this.key), ItemType.class)))
         };
     }
 
