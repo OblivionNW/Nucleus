@@ -12,7 +12,6 @@ import io.github.nucleuspowered.nucleus.dataservices.ItemDataService;
 import io.github.nucleuspowered.nucleus.dataservices.KitDataService;
 import io.github.nucleuspowered.nucleus.dataservices.NameBanService;
 import io.github.nucleuspowered.nucleus.dataservices.UserCacheService;
-import io.github.nucleuspowered.nucleus.internal.EconHelper;
 import io.github.nucleuspowered.nucleus.internal.InternalServiceManager;
 import io.github.nucleuspowered.nucleus.internal.PermissionRegistry;
 import io.github.nucleuspowered.nucleus.internal.TextFileController;
@@ -25,7 +24,6 @@ import io.github.nucleuspowered.nucleus.quickstart.module.StandardModule;
 import io.github.nucleuspowered.nucleus.services.IPermissionService;
 import io.github.nucleuspowered.nucleus.internal.text.TextParsingUtils;
 import io.github.nucleuspowered.nucleus.modules.core.config.WarmupConfig;
-import io.github.nucleuspowered.nucleus.services.IStorageManager;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -39,7 +37,6 @@ import org.spongepowered.api.asset.Asset;
 import org.spongepowered.api.event.CauseStackManager;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.EventContext;
-import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.FormattingCodeTextSerializer;
 import org.spongepowered.api.text.serializer.SafeTextSerializer;
@@ -167,11 +164,6 @@ public abstract class TestBase {
         }
 
         @Override
-        public EconHelper getEconHelper() {
-            return null;
-        }
-
-        @Override
         public PermissionRegistry getPermissionRegistry() {
             return this.permissionRegistry;
         }
@@ -262,10 +254,6 @@ public abstract class TestBase {
             return null;
         }
 
-        @Override public PluginContainer getPluginContainer() {
-            return null;
-        }
-
         @Override public boolean isSessionDebug() {
             return false;
         }
@@ -288,10 +276,6 @@ public abstract class TestBase {
 
         @Override public boolean isPrintingSavesAndLoads() {
             return false;
-        }
-
-        @Override public IStorageManager getStorageManager() {
-            return null;
         }
 
         @Override public boolean isConsoleBypass() {

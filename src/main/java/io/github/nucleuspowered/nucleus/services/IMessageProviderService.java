@@ -12,11 +12,22 @@ import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.function.Supplier;
 
 @ImplementedBy(MessageProviderService.class)
 public interface IMessageProviderService {
 
     Locale getDefaultLocale();
+
+    Text getMessageFor(Locale locale, String key);
+
+    Text getMessageFor(Locale locale, String key, Text... args);
+
+    Text getMessageFor(Locale locale, String key, Object... replacements);
+
+    Text getMessageFor(Locale locale, String key, String... replacements);
+
+    String getMessageString(Locale locale, String key, String... replacements);
 
     default Text getMessageForDefault(String key, Text... args) {
         return getMessageFor(getDefaultLocale(), key, args);
@@ -35,10 +46,46 @@ public interface IMessageProviderService {
         return getMessageFor(source.getLocale(), key, t);
     }
 
-    Text getMessageFor(Locale locale, String key, Text... args);
+    default Text getMessage(String key) {
+        return getMessageForDefault(key);
+    }
 
-    default void sendTo(CommandSource source, String key, Text... args) {
-        source.sendMessage(getMessageFor(source, key, args));
+    default Text getMessage(String key, String... replacements) {
+        return getMessageFor(getDefaultLocale(), key, replacements);
+    }
+
+    default Text getMessage(String key, Text... replacements) {
+        return getMessageFor(getDefaultLocale(), key, replacements);
+    }
+
+    default Text getMessage(String key, Object... replacements) {
+        return getMessageFor(getDefaultLocale(), key, replacements);
+    }
+
+    // for future releases
+
+    default Text getMessageFor(CommandSource source, String key, Object... replacements) {
+        return getMessageFor(source.getLocale(), key, replacements);
+    }
+
+    default void sendMessageTo(CommandSource receiver, String key) {
+        receiver.sendMessage(getMessageFor(receiver.getLocale(), key));
+    }
+
+    default void sendMessageTo(CommandSource receiver, String key, Object... replacements) {
+        receiver.sendMessage(getMessageFor(receiver.getLocale(), key, replacements));
+    }
+
+    default void sendMessageTo(CommandSource receiver, String key, Text... replacements) {
+        receiver.sendMessage(getMessageFor(receiver.getLocale(), key, replacements));
+    }
+
+    default void sendMessageTo(CommandSource receiver, String key, String... replacements) {
+        receiver.sendMessage(getMessageFor(receiver.getLocale(), key, replacements));
+    }
+
+    default void sendMessageTo(Supplier<CommandSource> receiver, String key, String... replacements) {
+        sendMessageTo(receiver.get(), key, replacements);
     }
 
 }

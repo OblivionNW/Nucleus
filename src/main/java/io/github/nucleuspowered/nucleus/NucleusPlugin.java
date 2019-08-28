@@ -14,7 +14,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.google.inject.Injector;
 import com.typesafe.config.ConfigException;
@@ -33,7 +32,6 @@ import io.github.nucleuspowered.nucleus.dataservices.dataproviders.DataProviders
 import io.github.nucleuspowered.nucleus.guice.NucleusInjectorModule;
 import io.github.nucleuspowered.nucleus.internal.CatalogTypeFinalStaticProcessor;
 import io.github.nucleuspowered.nucleus.internal.CommandPermissionHandler;
-import io.github.nucleuspowered.nucleus.internal.EconHelper;
 import io.github.nucleuspowered.nucleus.internal.PreloadTasks;
 import io.github.nucleuspowered.nucleus.internal.TextFileController;
 import io.github.nucleuspowered.nucleus.internal.client.ClientMessageReciever;
@@ -42,17 +40,6 @@ import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
 import io.github.nucleuspowered.nucleus.internal.messages.ConfigMessageProvider;
 import io.github.nucleuspowered.nucleus.internal.messages.MessageProvider;
 import io.github.nucleuspowered.nucleus.internal.messages.ResourceMessageProvider;
-import io.github.nucleuspowered.nucleus.internal.permissions.ServiceChangeListener;
-import io.github.nucleuspowered.nucleus.quickstart.ModuleRegistrationProxyService;
-import io.github.nucleuspowered.nucleus.quickstart.NucleusConfigAdapter;
-import io.github.nucleuspowered.nucleus.quickstart.NucleusLoggerProxy;
-import io.github.nucleuspowered.nucleus.quickstart.QuickStartModuleConstructor;
-import io.github.nucleuspowered.nucleus.quickstart.event.BaseModuleEvent;
-import io.github.nucleuspowered.nucleus.quickstart.module.StandardModule;
-import io.github.nucleuspowered.nucleus.services.impl.commandremap.CommandMetadataService;
-import io.github.nucleuspowered.nucleus.services.INucleusServiceCollection;
-import io.github.nucleuspowered.nucleus.services.IPermissionService;
-import io.github.nucleuspowered.nucleus.services.impl.messagetoken.NucleusTokenServiceImpl;
 import io.github.nucleuspowered.nucleus.internal.text.TextParsingUtils;
 import io.github.nucleuspowered.nucleus.logging.DebugLogger;
 import io.github.nucleuspowered.nucleus.modules.core.CoreModule;
@@ -61,8 +48,17 @@ import io.github.nucleuspowered.nucleus.modules.core.config.CoreConfigAdapter;
 import io.github.nucleuspowered.nucleus.modules.core.config.WarmupConfig;
 import io.github.nucleuspowered.nucleus.modules.core.services.UUIDChangeService;
 import io.github.nucleuspowered.nucleus.modules.core.services.UniqueUserService;
+import io.github.nucleuspowered.nucleus.quickstart.ModuleRegistrationProxyService;
+import io.github.nucleuspowered.nucleus.quickstart.NucleusConfigAdapter;
+import io.github.nucleuspowered.nucleus.quickstart.NucleusLoggerProxy;
+import io.github.nucleuspowered.nucleus.quickstart.QuickStartModuleConstructor;
+import io.github.nucleuspowered.nucleus.quickstart.event.BaseModuleEvent;
+import io.github.nucleuspowered.nucleus.quickstart.module.StandardModule;
+import io.github.nucleuspowered.nucleus.services.INucleusServiceCollection;
+import io.github.nucleuspowered.nucleus.services.IPermissionService;
 import io.github.nucleuspowered.nucleus.services.IStorageManager;
-import io.github.nucleuspowered.nucleus.services.impl.storage.StorageManager;
+import io.github.nucleuspowered.nucleus.services.impl.command.CommandMetadataService;
+import io.github.nucleuspowered.nucleus.services.impl.messagetoken.NucleusTokenServiceImpl;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import org.slf4j.Logger;
@@ -82,7 +78,6 @@ import org.spongepowered.api.event.game.state.GameStartingServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppedServerEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
-import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.service.economy.EconomyService;
 import org.spongepowered.api.text.Text;
@@ -125,7 +120,6 @@ public class NucleusPlugin extends Nucleus {
     private static final String divider = "+------------------------------------------------------------+";
     private static final int length = divider.length() - 2;
 
-    private final IStorageManager<JsonObject> storageManager = new StorageManager();
     private final INucleusServiceCollection serviceCollection;
 
     private Instant gameStartedTime = null;
@@ -145,8 +139,6 @@ public class NucleusPlugin extends Nucleus {
 
     private MessageProvider messageProvider = new ResourceMessageProvider(ResourceMessageProvider.messagesBundle);
     private MessageProvider commandMessageProvider = new ResourceMessageProvider(ResourceMessageProvider.commandMessagesBundle);
-
-    private final EconHelper econHelper = new EconHelper();
 
     private DiscoveryModuleHolder<StandardModule, StandardModule> moduleContainer;
 
@@ -327,10 +319,7 @@ public class NucleusPlugin extends Nucleus {
         game.getServiceManager().setProvider(this, NucleusWarmupManagerService.class, this.serviceCollection.warmupService());
         Sponge.getServiceManager().setProvider(this, NucleusUserPreferenceService.class, this.serviceCollection.userPreferenceService());
 
-        this.nucleusChatService = new NucleusTokenServiceImpl(this);
-        this.serviceCollection.registerService(NucleusTokenServiceImpl.class, this.nucleusChatService);
-        Sponge.getServiceManager().setProvider(this, NucleusMessageTokenService.class, this.nucleusChatService);
-        this.serviceCollection.registerService(CommandMetadataService.class, new CommandMetadataService());
+        Sponge.getServiceManager().setProvider(this, NucleusMessageTokenService.class, this.serviceCollection.messageTokenService());
 
         try {
             final String he = this.messageProvider.getMessageWithFormat("config.main-header", PluginInfo.VERSION);
@@ -423,13 +412,6 @@ public class NucleusPlugin extends Nucleus {
         }
     }
 
-    /**
-     * Initialises the storage manager
-     */
-    private void initStorageManager() {
-
-    }
-
     @Listener(order = Order.FIRST)
     public void onInit(GameInitializationEvent event) {
         if (this.isErrored != null) {
@@ -496,9 +478,7 @@ public class NucleusPlugin extends Nucleus {
 
         logMessageDefault();
         this.logger.info(this.messageProvider.getMessageWithFormat("startup.moduleloaded", PluginInfo.NAME));
-        PermissionResolverImpl.INSTANCE.registerPermissions();
-        registerReloadable(s -> this.reloadPerm());
-        this.reloadPerm();
+        this.serviceCollection.permissionCheck().registerDescriptions();
         Sponge.getEventManager().post(new BaseModuleEvent.Complete(this));
 
         this.logger.info(this.messageProvider.getMessageWithFormat("startup.completeinit", PluginInfo.NAME));
@@ -519,8 +499,8 @@ public class NucleusPlugin extends Nucleus {
     }
 
     private void allChange() throws Exception {
+        reload();
         resetDataPath(true);
-        initStorageManager();
 
         this.kitDataService.changeFile();
         this.nameBanService.changeFile();
@@ -576,7 +556,7 @@ public class NucleusPlugin extends Nucleus {
             if (this.serviceCollection.getServiceUnchecked(CoreConfigAdapter.class).getNodeOrDefault().isWarningOnStartup()) {
                 // What about perms and econ?
                 List<Text> lt = Lists.newArrayList();
-                if (ServiceChangeListener.isOpOnly()) {
+                if (this.serviceCollection.permissionCheck().isOpOnly()) {
                     addTri(lt);
                     lt.add(this.messageProvider.getTextMessageWithFormat("standard.line"));
                     lt.add(this.messageProvider.getTextMessageWithFormat("standard.nopermplugin"));
@@ -629,12 +609,13 @@ public class NucleusPlugin extends Nucleus {
 
     @Override
     public void saveData() {
-        this.storageManager.getUserService().ensureSaved();
-        this.storageManager.getWorldService().ensureSaved();
+        IStorageManager<?> ism = this.serviceCollection.storageManager();
+        ism.getUserService().ensureSaved();
+        ism.getWorldService().ensureSaved();
 
         if (Sponge.getGame().getState().ordinal() > GameState.SERVER_ABOUT_TO_START.ordinal()) {
             try {
-                this.storageManager.getGeneralService().ensureSaved();
+                ism.getGeneralService().ensureSaved();
                 this.nameBanService.save();
                 this.userCacheService.save();
             } catch (Exception e) {
@@ -740,15 +721,6 @@ public class NucleusPlugin extends Nucleus {
         this.serviceCollection.reloadableService().fireReloadables(this.serviceCollection);
     }
 
-    private void reloadPerm() {
-        IPermissionService permissionResolver = PermissionResolverImpl.INSTANCE;
-        if (this.serviceCollection.getServiceUnchecked(CoreConfigAdapter.class).getNodeOrDefault().isUseParentPerms()) {
-            permissionResolver = PermissionResolverImpl.INSTANCE;
-        } else {
-            permissionResolver = IPermissionService.SIMPLE;
-        }
-    }
-
     @Override
     public boolean reloadMessages() {
         boolean r = true;
@@ -813,11 +785,6 @@ public class NucleusPlugin extends Nucleus {
         }
 
         return this.warmupConfig;
-    }
-
-    @Override
-    public EconHelper getEconHelper() {
-        return this.econHelper;
     }
 
     @Override
@@ -919,10 +886,6 @@ public class NucleusPlugin extends Nucleus {
         return Optional.ofNullable(this.docGenCache);
     }
 
-    @Override public PluginContainer getPluginContainer() {
-        return this.pluginContainer;
-    }
-
     @Override public boolean isSessionDebug() {
         return this.sessionDebugMode;
     }
@@ -960,10 +923,6 @@ public class NucleusPlugin extends Nucleus {
 
     @Override public boolean isPrintingSavesAndLoads() {
         return this.savesandloads;
-    }
-
-    @Override public IStorageManager<JsonObject> getStorageManager() {
-        return this.storageManager;
     }
 
     @Override public boolean isConsoleBypass() {

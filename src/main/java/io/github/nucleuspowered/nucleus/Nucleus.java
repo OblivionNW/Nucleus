@@ -11,7 +11,6 @@ import io.github.nucleuspowered.nucleus.dataservices.ItemDataService;
 import io.github.nucleuspowered.nucleus.dataservices.KitDataService;
 import io.github.nucleuspowered.nucleus.dataservices.NameBanService;
 import io.github.nucleuspowered.nucleus.dataservices.UserCacheService;
-import io.github.nucleuspowered.nucleus.internal.EconHelper;
 import io.github.nucleuspowered.nucleus.internal.TextFileController;
 import io.github.nucleuspowered.nucleus.internal.docgen.DocGenCache;
 import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
@@ -67,8 +66,6 @@ public abstract class Nucleus {
 
     public abstract WarmupConfig getWarmupConfig();
 
-    public abstract EconHelper getEconHelper();
-
     public abstract DiscoveryModuleHolder<StandardModule, StandardModule> getModuleHolder();
 
     public abstract boolean isModuleLoaded(String moduleId);
@@ -113,8 +110,6 @@ public abstract class Nucleus {
 
     public abstract CommandsConfig getCommandsConfig();
 
-    public abstract PluginContainer getPluginContainer();
-
     public abstract boolean isSessionDebug();
 
     public abstract void setSessionDebug(boolean debug);
@@ -126,8 +121,6 @@ public abstract class Nucleus {
     public abstract void addStartupMessage(Text message);
 
     public abstract boolean isPrintingSavesAndLoads();
-
-    public abstract IStorageManager<JsonObject> getStorageManager();
 
     public abstract boolean isConsoleBypass();
 }

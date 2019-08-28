@@ -5,7 +5,7 @@
 package io.github.nucleuspowered.nucleus.services;
 
 import com.google.inject.ImplementedBy;
-import io.github.nucleuspowered.nucleus.services.impl.commandremap.CommandMetadataService;
+import io.github.nucleuspowered.nucleus.services.impl.command.CommandMetadataService;
 
 import java.util.Map;
 import java.util.OptionalDouble;

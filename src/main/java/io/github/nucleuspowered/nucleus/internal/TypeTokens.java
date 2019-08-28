@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+@SuppressWarnings("UnstableApiUsage")
 public final class TypeTokens {
 
     public static final TypeToken<Boolean> BOOLEAN = TypeToken.of(Boolean.class);
