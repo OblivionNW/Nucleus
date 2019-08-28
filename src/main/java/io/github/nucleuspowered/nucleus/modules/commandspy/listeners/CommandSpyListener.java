@@ -7,7 +7,6 @@ package io.github.nucleuspowered.nucleus.modules.commandspy.listeners;
 import com.google.common.collect.ImmutableSet;
 import io.github.nucleuspowered.nucleus.Nucleus;
 import io.github.nucleuspowered.nucleus.Util;
-import io.github.nucleuspowered.nucleus.internal.CommandPermissionHandler;
 import io.github.nucleuspowered.nucleus.internal.interfaces.ListenerBase;
 import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.text.TextParsingUtils;

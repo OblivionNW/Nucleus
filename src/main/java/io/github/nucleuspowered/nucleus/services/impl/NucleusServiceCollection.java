@@ -13,6 +13,7 @@ import io.github.nucleuspowered.nucleus.services.IMessageProviderService;
 import io.github.nucleuspowered.nucleus.services.IMessageTokenService;
 import io.github.nucleuspowered.nucleus.services.INucleusServiceCollection;
 import io.github.nucleuspowered.nucleus.services.IPermissionService;
+import io.github.nucleuspowered.nucleus.services.IPlayerDisplayNameService;
 import io.github.nucleuspowered.nucleus.services.IPlayerOnlineService;
 import io.github.nucleuspowered.nucleus.services.IReloadableService;
 import io.github.nucleuspowered.nucleus.services.IStorageManager;
@@ -48,6 +49,7 @@ public class NucleusServiceCollection implements INucleusServiceCollection {
     private final Provider<IStorageManager<JsonObject>> storageManager;
     private final Provider<IUserPreferenceService> userPreferenceService;
     private final Provider<ICommandMetadataService> commandMetadataService;
+    private final Provider<IPlayerDisplayNameService> playerDisplayNameService;
     private final Injector injector;
     private final PluginContainer pluginContainer;
     private final Logger logger;
@@ -65,6 +67,7 @@ public class NucleusServiceCollection implements INucleusServiceCollection {
             Provider<IMessageTokenService> messageTokenService,
             Provider<IStorageManager<JsonObject>> storageManager,
             Provider<ICommandMetadataService> commandMetadataService,
+            Provider<IPlayerDisplayNameService> playerDisplayNameService,
             Injector injector,
             PluginContainer pluginContainer,
             Logger logger) {
@@ -79,6 +82,7 @@ public class NucleusServiceCollection implements INucleusServiceCollection {
         this.messageTokenService = messageTokenService;
         this.storageManager = storageManager;
         this.commandMetadataService = commandMetadataService;
+        this.playerDisplayNameService = playerDisplayNameService;
         this.injector = injector;
         this.pluginContainer = pluginContainer;
         this.logger = logger;
@@ -133,6 +137,10 @@ public class NucleusServiceCollection implements INucleusServiceCollection {
 
     @Override public ICommandMetadataService commandMetadataService() {
         return this.commandMetadataService.get();
+    }
+
+    @Override public IPlayerDisplayNameService playerDisplayNameService() {
+        return this.playerDisplayNameService.get();
     }
 
     @Override

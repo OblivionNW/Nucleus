@@ -2,12 +2,13 @@
  * This file is part of Nucleus, licensed under the MIT License (MIT). See the LICENSE.txt file
  * at the root of this project for more details.
  */
-package io.github.nucleuspowered.nucleus.internal.messages;
+package io.github.nucleuspowered.nucleus.services.impl.messageprovider.repository;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import io.github.nucleuspowered.nucleus.Nucleus;
 import io.github.nucleuspowered.nucleus.internal.text.TextParsingUtils;
+import io.github.nucleuspowered.nucleus.services.IPlayerDisplayNameService;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.TextRepresentable;
@@ -16,44 +17,46 @@ import org.spongepowered.api.text.translation.Translatable;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public abstract class MessageProvider {
+abstract class AbstractMessageRepository implements IMessageRepository {
 
     private final static Pattern STRING_REPLACER = Pattern.compile("\\{+[^0-9]+}+");
-    public abstract Locale getLocale();
 
-    public abstract Optional<String> getMessageFromKey(String key);
-    private final Map<String, TextTemplate> textTemplateMap = Maps.newHashMap();
+    final Map<String, String> cachedStringMessages = new HashMap<>();
+    final Map<String, TextTemplate> cachedMessages = new HashMap<>();
+    private final IPlayerDisplayNameService playerDisplayNameService;
 
-    public Locale setLocale(String string) {
-        return setLocale(Locale.forLanguageTag(string));
+    public AbstractMessageRepository(IPlayerDisplayNameService playerDisplayNameService) {
+        this.playerDisplayNameService = playerDisplayNameService;
     }
 
-    public abstract Locale setLocale(Locale locale);
+    abstract String getEntry(String key);
 
-    public String getMessageWithFormat(String key, String... substitutions) {
-        try {
-            String valueReplacement = STRING_REPLACER.matcher(getMessageFromKey(key)
-                    .orElseThrow(() -> new IllegalArgumentException("The key " + key + " does not exist!"))
-                    .replaceAll("'", "''")
-            ).replaceAll("'$0'");
-            return MessageFormat.format(valueReplacement, (Object[]) substitutions);
-        } catch (NoSuchElementException e) {
-            throw new IllegalArgumentException("The message key " + key + " does not exist!");
-        }
+    private String getStringEntry(String key) {
+        return STRING_REPLACER.matcher(
+                getEntry(key).replaceAll("'", "''")
+        ).replaceAll("'$0'");
     }
 
-    public final Text getTextMessageWithFormat(String key, Object... substitutions) {
+    private TextTemplate getTextTemplate(String key) {
+        return this.cachedMessages.computeIfAbsent(key, k -> templateCreator(getEntry(k)));
+    }
+
+    @Override
+    public Text getText(String key) {
+        return this.cachedMessages.computeIfAbsent(key, this::getTextTemplate).toText();
+    }
+
+    @Override
+    public Text getText(String key, Object[] args) {
         return getTextMessageWithTextFormat(key,
-                Arrays.stream(substitutions).map(x -> {
+                Arrays.stream(args).map(x -> {
                     if (x instanceof User) {
                         return Nucleus.getNucleus().getNameUtil().getName((User) x);
                     } else if (x instanceof TextRepresentable) {
@@ -63,20 +66,21 @@ public abstract class MessageProvider {
                     } else {
                         return Text.of(x.toString());
                     }
-                }).collect(Collectors.toList())
-        );
+                }).collect(Collectors.toList()));
     }
 
-    public final Text getTextMessageWithFormat(String key, String... substitutions) {
-        return getTextMessageWithTextFormat(key, Arrays.stream(substitutions).map(TextParsingUtils::oldLegacy).collect(Collectors.toList()));
+    @Override
+    public String getString(String key) {
+        return this.cachedStringMessages.computeIfAbsent(key, this::getStringEntry);
     }
 
-    public final Text getTextMessageWithTextFormat(String key, Text... substitutions) {
-        return getTextMessageWithTextFormat(key, Arrays.asList(substitutions));
+    @Override
+    public String getString(String key, Object[] args) {
+        return MessageFormat.format(getString(key), args);
     }
 
     private Text getTextMessageWithTextFormat(String key, List<? extends TextRepresentable> textList) {
-        TextTemplate template = this.textTemplateMap.computeIfAbsent(key, k -> templateCreator(getMessageWithFormat(k)));
+        TextTemplate template = getTextTemplate(key);
         if (textList.isEmpty()) {
             return template.toText();
         }
@@ -89,7 +93,7 @@ public abstract class MessageProvider {
         return template.apply(objs).build();
     }
 
-    private TextTemplate templateCreator(String string) {
+    final TextTemplate templateCreator(String string) {
         // regex!
         Matcher mat = Pattern.compile("\\{([\\d]+)}").matcher(string);
         List<Integer> map = Lists.newArrayList();
@@ -116,6 +120,7 @@ public abstract class MessageProvider {
             count++;
         }
 
-        return TextTemplate.of((Object[])objects.toArray(new Object[0]));
+        return TextTemplate.of(objects.toArray(new Object[0]));
     }
+
 }

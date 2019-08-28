@@ -2,7 +2,9 @@
  * This file is part of Nucleus, licensed under the MIT License (MIT). See the LICENSE.txt file
  * at the root of this project for more details.
  */
-package io.github.nucleuspowered.nucleus.internal.messages;
+package io.github.nucleuspowered.nucleus.services.impl.messageprovider.legacy;
+
+import io.github.nucleuspowered.nucleus.services.impl.messageprovider.repository.UTF8Control;
 
 import java.util.Locale;
 import java.util.Optional;
@@ -45,7 +47,7 @@ public class ResourceMessageProvider extends MessageProvider {
 
     @Override
     public Locale setLocale(Locale locale) {
-        this.rb = ResourceBundle.getBundle(this.resource, locale, new UTF8Control());
+        this.rb = ResourceBundle.getBundle(this.resource, locale, UTF8Control.INSTANCE);
         return this.rb.getLocale();
     }
 

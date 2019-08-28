@@ -111,7 +111,7 @@ public class CommandMetadataService implements ICommandMetadataService, Reloadab
                         .load();
             } catch (Exception ex) {
                 // something bad happened.
-                PrettyPrinter prettyPrinter = new PrettyPrinter()
+                new PrettyPrinter()
                         .add("[Nucleus] Could not load commands.conf")
                         .hr()
                         .add("We could not read your commands.conf file and so things like cooldowns and warmups are not available.")

@@ -43,6 +43,8 @@ public interface INucleusServiceCollection {
 
     ICommandMetadataService commandMetadataService();
 
+    IPlayerDisplayNameService playerDisplayNameService();
+
     Injector injector();
 
     PluginContainer pluginContainer();

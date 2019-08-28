@@ -5,7 +5,6 @@
 package io.github.nucleuspowered.nucleus.services;
 
 import com.google.inject.ImplementedBy;
-import io.github.nucleuspowered.nucleus.Nucleus;
 import io.github.nucleuspowered.nucleus.services.impl.storage.StorageManager;
 import io.github.nucleuspowered.nucleus.services.impl.storage.dataobjects.modular.IGeneralDataObject;
 import io.github.nucleuspowered.nucleus.services.impl.storage.dataobjects.modular.IUserDataObject;
@@ -41,6 +40,8 @@ public interface IStorageManager<O> {
     IStorageRepository.Keyed<UUID, IWorldQueryObject, O> getWorldRepository();
 
     IStorageRepository.Single<O> getGeneralRepository();
+
+    CompletableFuture<Void> saveAndInvalidateAllCaches();
 
     default CompletableFuture<IUserDataObject> getOrCreateUser(UUID uuid) {
         return getUserService().getOrNew(uuid);

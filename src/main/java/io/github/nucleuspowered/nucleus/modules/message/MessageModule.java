@@ -7,7 +7,7 @@ package io.github.nucleuspowered.nucleus.modules.message;
 import com.google.common.collect.Lists;
 import io.github.nucleuspowered.nucleus.Nucleus;
 import io.github.nucleuspowered.nucleus.Util;
-import io.github.nucleuspowered.nucleus.internal.messages.MessageProvider;
+import io.github.nucleuspowered.nucleus.services.impl.messageprovider.legacy.MessageProvider;
 import io.github.nucleuspowered.nucleus.quickstart.module.ConfigurableModule;
 import io.github.nucleuspowered.nucleus.services.impl.userprefs.UserPreferenceService;
 import io.github.nucleuspowered.nucleus.modules.message.commands.SocialSpyCommand;

@@ -2,7 +2,7 @@
  * This file is part of Nucleus, licensed under the MIT License (MIT). See the LICENSE.txt file
  * at the root of this project for more details.
  */
-package io.github.nucleuspowered.nucleus.internal.messages;
+package io.github.nucleuspowered.nucleus.services.impl.messageprovider.repository;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,7 +16,11 @@ import java.util.ResourceBundle;
 /**
  * From https://gist.github.com/DemkaAge/8999236 with thanks.
  */
-class UTF8Control extends ResourceBundle.Control {
+public class UTF8Control extends ResourceBundle.Control {
+
+    public static final UTF8Control INSTANCE = new UTF8Control();
+
+    private UTF8Control() {}
 
     public ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader, boolean reload)
             throws IOException {

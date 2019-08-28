@@ -5,9 +5,7 @@
 package io.github.nucleuspowered.nucleus.internal.command.impl;
 
 import io.github.nucleuspowered.nucleus.internal.command.ICommandResult;
-import io.github.nucleuspowered.nucleus.internal.traits.MessageProviderTrait;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
 

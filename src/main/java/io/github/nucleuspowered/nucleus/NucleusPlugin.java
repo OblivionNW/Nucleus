@@ -31,15 +31,14 @@ import io.github.nucleuspowered.nucleus.dataservices.UserCacheService;
 import io.github.nucleuspowered.nucleus.dataservices.dataproviders.DataProviders;
 import io.github.nucleuspowered.nucleus.guice.NucleusInjectorModule;
 import io.github.nucleuspowered.nucleus.internal.CatalogTypeFinalStaticProcessor;
-import io.github.nucleuspowered.nucleus.internal.CommandPermissionHandler;
 import io.github.nucleuspowered.nucleus.internal.PreloadTasks;
-import io.github.nucleuspowered.nucleus.internal.TextFileController;
+import io.github.nucleuspowered.nucleus.io.TextFileController;
 import io.github.nucleuspowered.nucleus.internal.client.ClientMessageReciever;
 import io.github.nucleuspowered.nucleus.internal.docgen.DocGenCache;
 import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
-import io.github.nucleuspowered.nucleus.internal.messages.ConfigMessageProvider;
-import io.github.nucleuspowered.nucleus.internal.messages.MessageProvider;
-import io.github.nucleuspowered.nucleus.internal.messages.ResourceMessageProvider;
+import io.github.nucleuspowered.nucleus.services.impl.messageprovider.legacy.ConfigMessageProvider;
+import io.github.nucleuspowered.nucleus.services.impl.messageprovider.legacy.MessageProvider;
+import io.github.nucleuspowered.nucleus.services.impl.messageprovider.legacy.ResourceMessageProvider;
 import io.github.nucleuspowered.nucleus.internal.text.TextParsingUtils;
 import io.github.nucleuspowered.nucleus.logging.DebugLogger;
 import io.github.nucleuspowered.nucleus.modules.core.CoreModule;
@@ -470,10 +469,6 @@ public class NucleusPlugin extends Nucleus {
             return;
         }
 
-        // Register a reloadable.
-        // TODO: Remove?
-        CommandPermissionHandler.onReload();
-        registerReloadable(serviceCollection -> CommandPermissionHandler.onReload());
         getDocGenCache().ifPresent(x -> x.addTokenDocs(this.nucleusChatService.getNucleusTokenParser().getTokenNames()));
 
         logMessageDefault();
@@ -499,6 +494,7 @@ public class NucleusPlugin extends Nucleus {
     }
 
     private void allChange() throws Exception {
+        this.serviceCollection.storageManager().saveAndInvalidateAllCaches();
         reload();
         resetDataPath(true);
 

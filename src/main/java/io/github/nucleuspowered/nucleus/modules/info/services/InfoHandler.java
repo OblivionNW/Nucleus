@@ -8,7 +8,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import io.github.nucleuspowered.nucleus.Nucleus;
 import io.github.nucleuspowered.nucleus.NucleusPlugin;
-import io.github.nucleuspowered.nucleus.internal.TextFileController;
+import io.github.nucleuspowered.nucleus.io.TextFileController;
 import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.interfaces.ServiceBase;
 import org.spongepowered.api.Sponge;

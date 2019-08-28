@@ -7,7 +7,6 @@ package io.github.nucleuspowered.nucleus.services.impl.storage;
 import com.google.gson.JsonObject;
 import io.github.nucleuspowered.nucleus.guice.DataDirectory;
 import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
-import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.services.INucleusServiceCollection;
 import io.github.nucleuspowered.nucleus.services.IStorageManager;
 import io.github.nucleuspowered.nucleus.services.impl.storage.dataaccess.IConfigurateBackedDataTranslator;
@@ -26,10 +25,10 @@ import io.github.nucleuspowered.nucleus.services.impl.storage.services.UserServi
 import io.github.nucleuspowered.nucleus.services.impl.storage.services.WorldService;
 import io.github.nucleuspowered.storage.dataaccess.IDataTranslator;
 import io.github.nucleuspowered.storage.persistence.IStorageRepository;
-import io.github.nucleuspowered.storage.persistence.IStorageRepositoryFactory;
 
 import java.nio.file.Path;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -116,6 +115,14 @@ public final class StorageManager implements IStorageManager<JsonObject>, Reload
             this.generalRepository = this.flatFileStorageRepositoryFactory.generalRepository();
         }
         return this.generalRepository;
+    }
+
+    @Override
+    public CompletableFuture<Void> saveAndInvalidateAllCaches() {
+        CompletableFuture<Void> a = this.generalService.ensureSaved().whenComplete((cv, t) -> this.generalService.clearCache());
+        CompletableFuture<Void> b = this.userService.ensureSaved().whenComplete((cv, t) -> this.userService.clearCache());
+        CompletableFuture<Void> c = this.worldService.ensureSaved().whenComplete((cv, t) -> this.worldService.clearCache());
+        return CompletableFuture.allOf(a, b, c);
     }
 
     @Override

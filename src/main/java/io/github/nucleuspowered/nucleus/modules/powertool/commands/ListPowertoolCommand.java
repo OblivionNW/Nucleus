@@ -12,7 +12,7 @@ import io.github.nucleuspowered.nucleus.internal.annotations.command.Permissions
 import io.github.nucleuspowered.nucleus.internal.annotations.command.RegisterCommand;
 import io.github.nucleuspowered.nucleus.internal.command.AbstractCommand;
 import io.github.nucleuspowered.nucleus.internal.command.ReturnMessageException;
-import io.github.nucleuspowered.nucleus.internal.messages.MessageProvider;
+import io.github.nucleuspowered.nucleus.services.impl.messageprovider.legacy.MessageProvider;
 import io.github.nucleuspowered.nucleus.services.impl.userprefs.UserPreferenceService;
 import io.github.nucleuspowered.nucleus.modules.powertool.PowertoolUserPreferenceKeys;
 import io.github.nucleuspowered.nucleus.modules.powertool.services.PowertoolService;

@@ -13,7 +13,6 @@ import io.github.nucleuspowered.nucleus.api.nucleusdata.MuteInfo;
 import io.github.nucleuspowered.nucleus.api.service.NucleusMuteService;
 import io.github.nucleuspowered.nucleus.internal.annotations.APIService;
 import io.github.nucleuspowered.nucleus.internal.interfaces.ServiceBase;
-import io.github.nucleuspowered.nucleus.internal.traits.MessageProviderTrait;
 import io.github.nucleuspowered.nucleus.modules.mute.MuteKeys;
 import io.github.nucleuspowered.nucleus.modules.mute.data.MuteData;
 import io.github.nucleuspowered.nucleus.modules.mute.events.MuteEvent;

@@ -8,7 +8,7 @@ import com.google.inject.AbstractModule;
 import io.github.nucleuspowered.nucleus.NucleusPlugin;
 import io.github.nucleuspowered.nucleus.config.CommandsConfig;
 import io.github.nucleuspowered.nucleus.internal.PermissionRegistry;
-import io.github.nucleuspowered.nucleus.internal.messages.ResourceMessageProvider;
+import io.github.nucleuspowered.nucleus.services.impl.messageprovider.legacy.ResourceMessageProvider;
 import io.github.nucleuspowered.nucleus.modules.core.config.CoreConfig;
 import io.github.nucleuspowered.nucleus.modules.core.config.CoreConfigAdapter;
 import org.mockito.Mockito;

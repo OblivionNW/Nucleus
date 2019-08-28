@@ -4,26 +4,23 @@
  */
 package io.github.nucleuspowered.nucleus;
 
-import com.google.gson.JsonObject;
 import io.github.nucleuspowered.nucleus.api.service.NucleusMessageTokenService;
 import io.github.nucleuspowered.nucleus.config.CommandsConfig;
 import io.github.nucleuspowered.nucleus.dataservices.ItemDataService;
 import io.github.nucleuspowered.nucleus.dataservices.KitDataService;
 import io.github.nucleuspowered.nucleus.dataservices.NameBanService;
 import io.github.nucleuspowered.nucleus.dataservices.UserCacheService;
-import io.github.nucleuspowered.nucleus.internal.TextFileController;
+import io.github.nucleuspowered.nucleus.io.TextFileController;
 import io.github.nucleuspowered.nucleus.internal.docgen.DocGenCache;
 import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
-import io.github.nucleuspowered.nucleus.internal.messages.MessageProvider;
+import io.github.nucleuspowered.nucleus.services.impl.messageprovider.legacy.MessageProvider;
 import io.github.nucleuspowered.nucleus.quickstart.NucleusConfigAdapter;
 import io.github.nucleuspowered.nucleus.quickstart.module.StandardModule;
 import io.github.nucleuspowered.nucleus.services.IPermissionService;
 import io.github.nucleuspowered.nucleus.internal.text.TextParsingUtils;
 import io.github.nucleuspowered.nucleus.modules.core.config.WarmupConfig;
-import io.github.nucleuspowered.nucleus.services.IStorageManager;
 import org.slf4j.Logger;
 import org.spongepowered.api.asset.Asset;
-import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.text.Text;
 import uk.co.drnaylor.quickstart.holders.DiscoveryModuleHolder;
 

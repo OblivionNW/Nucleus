@@ -13,7 +13,7 @@ import io.github.nucleuspowered.nucleus.internal.annotations.command.RegisterCom
 import io.github.nucleuspowered.nucleus.internal.command.AbstractCommand;
 import io.github.nucleuspowered.nucleus.internal.command.ReturnMessageException;
 import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
-import io.github.nucleuspowered.nucleus.internal.messages.MessageProvider;
+import io.github.nucleuspowered.nucleus.services.impl.messageprovider.legacy.MessageProvider;
 import io.github.nucleuspowered.nucleus.services.impl.messagetoken.NucleusTextTemplateImpl;
 import io.github.nucleuspowered.nucleus.modules.serverlist.config.ServerListConfig;
 import io.github.nucleuspowered.nucleus.modules.serverlist.config.ServerListConfigAdapter;
