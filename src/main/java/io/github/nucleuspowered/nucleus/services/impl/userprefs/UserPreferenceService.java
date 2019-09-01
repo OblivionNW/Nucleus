@@ -5,9 +5,12 @@
 package io.github.nucleuspowered.nucleus.services.impl.userprefs;
 
 import com.google.common.collect.ImmutableList;
+import com.google.gson.JsonObject;
+import com.google.inject.Inject;
 import io.github.nucleuspowered.nucleus.Nucleus;
 import io.github.nucleuspowered.nucleus.api.service.NucleusUserPreferenceService;
 import io.github.nucleuspowered.nucleus.internal.command.NucleusParameters;
+import io.github.nucleuspowered.nucleus.services.IStorageManager;
 import io.github.nucleuspowered.nucleus.services.IUserPreferenceService;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.*;
@@ -28,12 +31,18 @@ public class UserPreferenceService implements IUserPreferenceService {
 
     public static final Text PREFERENCE_ARG = Text.of("preference");
     public static final Text VALUE_ARG = Text.of("value");
+    private final IStorageManager<JsonObject> storageManager;
 
-    public CommandElement getElement() {
+    @Inject
+    UserPreferenceService(IStorageManager<JsonObject> storageManager) {
+        this.storageManager = storageManager;
+    }
+
+    @Override public CommandElement getElement() {
         return this.element;
     }
 
-    public void postInit() {
+    @Override public void postInit() {
         // Get fields
         Arrays.stream(NucleusKeysProvider.class.getDeclaredFields())
                 .filter(x -> x.isAnnotationPresent(TargetID.class))
@@ -51,7 +60,7 @@ public class UserPreferenceService implements IUserPreferenceService {
                 });
     }
 
-    public void register(PreferenceKeyImpl<?> key) {
+    @Override public void register(PreferenceKeyImpl<?> key) {
         if (this.registered.containsKey(key.getID())) {
             throw new IllegalArgumentException("ID already registered");
         }
@@ -60,7 +69,7 @@ public class UserPreferenceService implements IUserPreferenceService {
         this.element.keys.put(key.getID().toLowerCase(), key);
     }
 
-    public <T> void set(UUID uuid, NucleusUserPreferenceService.PreferenceKey<T> key, @Nullable T value) {
+    @Override public <T> void set(UUID uuid, NucleusUserPreferenceService.PreferenceKey<T> key, @Nullable T value) {
         PreferenceKeyImpl pki;
         if (Objects.requireNonNull(key) instanceof PreferenceKeyImpl) {
             pki = (PreferenceKeyImpl) key;
@@ -71,14 +80,14 @@ public class UserPreferenceService implements IUserPreferenceService {
         set(uuid, pki, value);
     }
 
-    public <T> void set(UUID uuid, PreferenceKeyImpl<T> key, @Nullable T value) {
-        Nucleus.getNucleus().getStorageManager()
+    @Override public <T> void set(UUID uuid, PreferenceKeyImpl<T> key, @Nullable T value) {
+        this.storageManager
                 .getUserService()
                 .getOrNew(uuid)
                 .thenAccept(x -> x.set(key, value));
     }
 
-    public Map<NucleusUserPreferenceService.PreferenceKey<?>, Object> get(User user) {
+    @Override public Map<NucleusUserPreferenceService.PreferenceKey<?>, Object> get(User user) {
         Map<NucleusUserPreferenceService.PreferenceKey<?>, Object> ret = new HashMap<>();
         for (NucleusUserPreferenceService.PreferenceKey<?> key : this.registered.values()) {
             if (key.canAccess(user)) {
@@ -89,7 +98,7 @@ public class UserPreferenceService implements IUserPreferenceService {
         return ret;
     }
 
-    public <T> Optional<T> get(UUID uuid, NucleusUserPreferenceService.PreferenceKey<T> key) {
+    @Override public <T> Optional<T> get(UUID uuid, NucleusUserPreferenceService.PreferenceKey<T> key) {
         if (!this.registered.containsValue(key)) {
             throw new IllegalArgumentException("Key is not registered.");
         }
@@ -101,7 +110,7 @@ public class UserPreferenceService implements IUserPreferenceService {
         PreferenceKeyImpl<T> prefKey = (PreferenceKeyImpl<T>) key;
         Optional<T> ot = Optional.empty();
         try {
-            ot = Nucleus.getNucleus().getStorageManager()
+            ot = this.storageManager
                     .getUserService()
                     .getOnThread(uuid)
                     .map(x -> x.getOrDefault(prefKey));
@@ -112,7 +121,7 @@ public class UserPreferenceService implements IUserPreferenceService {
         return ot;
     }
 
-    public <T> T getUnwrapped(UUID uuid, NucleusUserPreferenceService.PreferenceKey<T> key) {
+    @Override public <T> T getUnwrapped(UUID uuid, NucleusUserPreferenceService.PreferenceKey<T> key) {
         return get(uuid, key).orElse(null);
     }
 

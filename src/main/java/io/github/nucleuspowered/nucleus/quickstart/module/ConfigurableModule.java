@@ -5,14 +5,20 @@
 package io.github.nucleuspowered.nucleus.quickstart.module;
 
 import io.github.nucleuspowered.nucleus.quickstart.NucleusConfigAdapter;
+import io.github.nucleuspowered.nucleus.services.INucleusServiceCollection;
 import uk.co.drnaylor.quickstart.annotations.ModuleData;
 import uk.co.drnaylor.quickstart.config.AbstractConfigAdapter;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
-public abstract class ConfigurableModule<A extends NucleusConfigAdapter<?>> extends StandardModule {
+public abstract class ConfigurableModule<C, A extends NucleusConfigAdapter.Standard<C>> extends StandardModule {
 
     private A adapter;
+
+    public ConfigurableModule(INucleusServiceCollection collection) {
+        super(collection);
+    }
 
     /**
      * Gets a new instance of the unattached config adapter.
@@ -36,6 +42,9 @@ public abstract class ConfigurableModule<A extends NucleusConfigAdapter<?>> exte
     }
 
     @Override public void configTasks() {
-        this.plugin.getDocGenCache().ifPresent(x -> x.addConfigurableModule(this.getClass().getAnnotation(ModuleData.class).id(), this));
+        // Register the config on the config provider
+        getServiceCollection().moduleConfigProvider().registerModuleConfig(getAdapter().getConfigClass(), () -> getAdapter().getNodeOrDefault());
+        // this.plugin.getDocGenCache().ifPresent(x -> x.addConfigurableModule(this.getClass().getAnnotation(ModuleData.class).id(), this));
     }
+
 }

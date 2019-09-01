@@ -62,7 +62,9 @@ public interface IMessageProviderService {
         return getMessageFor(getDefaultLocale(), key, replacements);
     }
 
-    // for future releases
+    default String getMessageString(String key, String... replacements) {
+        return getMessageString(getDefaultLocale(), key, replacements);
+    }
 
     default Text getMessageFor(CommandSource source, String key, Object... replacements) {
         return getMessageFor(source.getLocale(), key, replacements);

@@ -13,19 +13,10 @@ import uk.co.drnaylor.quickstart.config.TypedAbstractConfigAdapter;
 
 public abstract class NucleusConfigAdapter<R> extends TypedAbstractConfigAdapter<R> {
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public void onAttach(String module, AbstractAdaptableConfig<?> adapter) {
-        registerService((Class)this.getClass(), this);
-    }
-
-    private static <T> void registerService(Class<? super T> clazz, T t) {
-        Nucleus.getNucleus().getInternalServiceManager().registerService(clazz, t);
-    }
-
     public abstract static class Standard<R> extends NucleusConfigAdapter<R> {
 
         final TypeToken<R> typeToken;
+        final Class<R> clazz;
 
         public Standard(Class<R> clazz) {
             this(TypeToken.of(clazz));
@@ -33,6 +24,11 @@ public abstract class NucleusConfigAdapter<R> extends TypedAbstractConfigAdapter
 
         public Standard(TypeToken<R> typeToken) {
             this.typeToken = typeToken;
+            this.clazz = (Class<R>) typeToken.getRawType();
+        }
+
+        public Class<R> getConfigClass() {
+            return this.clazz;
         }
 
         @Override

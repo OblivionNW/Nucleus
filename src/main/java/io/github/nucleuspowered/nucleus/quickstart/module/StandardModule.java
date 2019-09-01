@@ -9,7 +9,6 @@ import io.github.nucleuspowered.nucleus.Nucleus;
 import io.github.nucleuspowered.nucleus.NucleusPlugin;
 import io.github.nucleuspowered.nucleus.annotationprocessor.Store;
 import io.github.nucleuspowered.nucleus.api.service.NucleusUserPreferenceService;
-import io.github.nucleuspowered.nucleus.config.CommandsConfig;
 import io.github.nucleuspowered.nucleus.internal.Constants;
 import io.github.nucleuspowered.nucleus.internal.annotations.APIService;
 import io.github.nucleuspowered.nucleus.internal.annotations.RegisterCommandInterceptors;
@@ -26,19 +25,18 @@ import io.github.nucleuspowered.nucleus.internal.command.ICommandInterceptor;
 import io.github.nucleuspowered.nucleus.internal.docgen.DocGenCache;
 import io.github.nucleuspowered.nucleus.internal.interfaces.ListenerBase;
 import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
-import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.interfaces.ServiceBase;
+import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.interfaces.TaskBase;
-import io.github.nucleuspowered.nucleus.internal.permissions.ServiceChangeListener;
 import io.github.nucleuspowered.nucleus.internal.registry.NucleusRegistryModule;
+import io.github.nucleuspowered.nucleus.modules.playerinfo.misc.BasicSeenInformationProvider;
+import io.github.nucleuspowered.nucleus.modules.playerinfo.services.SeenHandler;
 import io.github.nucleuspowered.nucleus.services.INucleusServiceCollection;
+import io.github.nucleuspowered.nucleus.services.IUserPreferenceService;
 import io.github.nucleuspowered.nucleus.services.impl.command.CommandMetadataService;
 import io.github.nucleuspowered.nucleus.services.impl.messagetoken.Tokens;
 import io.github.nucleuspowered.nucleus.services.impl.userprefs.PreferenceKeyImpl;
 import io.github.nucleuspowered.nucleus.services.impl.userprefs.UserPrefKeys;
-import io.github.nucleuspowered.nucleus.services.impl.userprefs.UserPreferenceService;
-import io.github.nucleuspowered.nucleus.modules.playerinfo.misc.BasicSeenInformationProvider;
-import io.github.nucleuspowered.nucleus.modules.playerinfo.services.SeenHandler;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.commented.SimpleCommentedConfigurationNode;
 import org.spongepowered.api.Platform;
@@ -54,6 +52,7 @@ import uk.co.drnaylor.quickstart.Module;
 import uk.co.drnaylor.quickstart.annotations.ModuleData;
 import uk.co.drnaylor.quickstart.config.AbstractConfigAdapter;
 import uk.co.drnaylor.quickstart.exceptions.MissingDependencyException;
+import uk.co.drnaylor.quickstart.holders.DiscoveryModuleHolder;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -67,6 +66,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -79,18 +79,22 @@ public abstract class StandardModule implements Module {
     private final String moduleId;
     private final String moduleName;
     private final INucleusServiceCollection serviceCollection;
+    private final Supplier<DiscoveryModuleHolder<?, ?>> moduleHolderSupplier;
     private String packageName;
-    protected final Nucleus plugin;
-    private final CommandsConfig commandsConfig;
     @Nullable private Map<String, List<String>> objectTypesToClassListMap;
     private final String message = NucleusPlugin.getNucleus().getMessageProvider().getMessageWithFormat("config.enabled");
 
     @Inject
-    public StandardModule(INucleusServiceCollection collection) {
+    public StandardModule(Supplier<DiscoveryModuleHolder<?, ?>> moduleHolder, INucleusServiceCollection collection) {
         ModuleData md = this.getClass().getAnnotation(ModuleData.class);
         this.moduleId = md.id();
         this.moduleName = md.name();
         this.serviceCollection = collection;
+        this.moduleHolderSupplier = moduleHolder;
+    }
+
+    protected final INucleusServiceCollection getServiceCollection() {
+        return this.serviceCollection;
     }
 
     public void init(Map<String, List<String>> m) {
@@ -179,7 +183,8 @@ public abstract class StandardModule implements Module {
                 serviceImpl.getClass().getMethod("matches", Context.class, Subject.class);
 
                 // register it
-                ServiceChangeListener.getInstance().registerCalculator((ContextCalculator<Subject>) serviceImpl);
+                //noinspection unchecked
+                this.serviceCollection.permissionCheck().registerContextCalculator((ContextCalculator<Subject>) serviceImpl);
             } catch (NoSuchMethodException e) {
                 // ignored
             }
@@ -202,12 +207,13 @@ public abstract class StandardModule implements Module {
                     throw new IllegalStateException(error, e);
                 }
 
-                if (impl instanceof SimpleReloadable) {
-                    SimpleReloadable reloadable = (SimpleReloadable) impl;
-                    Nucleus.getNucleus().registerReloadable(reloadable);
-                    reloadable.onReload();
+                if (impl instanceof Reloadable) {
+                    Reloadable reloadable = (Reloadable) impl;
+                    this.serviceCollection.reloadableService().registerReloadable(reloadable);
+                    reloadable.onReload(this.serviceCollection);
                 }
 
+                // hahahaha, no
                 AbstractCommand.registerInterceptor(impl);
             }
         }
@@ -226,12 +232,11 @@ public abstract class StandardModule implements Module {
         if (this.objectTypesToClassListMap != null) {
             cmds = getClassesFromList(Constants.COMMAND);
         } else {
-            cmds = new HashSet<>(
-                    performFilter(getStreamForModule(AbstractCommand.class).map(x -> (Class<? extends AbstractCommand<?>>) x))
-                            .collect(Collectors.toSet()));
+            cmds = performFilter(getStreamForModule(AbstractCommand.class).map(x -> (Class<? extends AbstractCommand<?>>) x))
+                    .collect(Collectors.toSet());
 
             // Find all commands that are also scannable.
-            performFilter(this.plugin.getModuleHolder().getLoadedClasses().stream()
+            performFilter(this.moduleHolderSupplier.get().getLoadedClasses().stream()
                     .filter(x -> x.getPackage().getName().startsWith(this.packageName))
                     .filter(x -> x.isAnnotationPresent(Scan.class))
                     .flatMap(x -> Arrays.stream(x.getDeclaredClasses()))
@@ -253,7 +258,7 @@ public abstract class StandardModule implements Module {
             this.commandsConfig.mergeDefaults(builder.getNodeToMerge());
             this.commandsConfig.save();
         } catch (Exception e) {
-            this.plugin.getLogger().error("Could not save defaults.");
+            this.serviceCollection.logger().error("Could not save defaults.");
             e.printStackTrace();
         }
     }
@@ -264,7 +269,7 @@ public abstract class StandardModule implements Module {
             CommentedConfigurationNode ccn = SimpleCommentedConfigurationNode.root();
             for (Map.Entry<String, String> map : toRegister.entrySet()) {
                 if (this.commandsConfig.getCommandNode(map.getKey()).getNode("enabled").getBoolean(true)) {
-                    getServiceUnchecked(CommandMetadataService.class).addMapping(map.getKey().toLowerCase(), map.getValue().toLowerCase());
+                    this.serviceCollection.commandMetadataService().addMapping(map.getKey().toLowerCase(), map.getValue().toLowerCase());
                 }
 
                 ccn.getNode(map.getKey(), "enabled").setComment(this.message).setValue(true);
@@ -296,21 +301,21 @@ public abstract class StandardModule implements Module {
                     }
 
                     if (((ListenerBase.Conditional) c).shouldEnable()) {
-                        Sponge.getEventManager().registerListeners(this.plugin, c);
+                        Sponge.getEventManager().registerListeners(serviceCollection.pluginContainer(), c);
                     }
                 };
 
-                this.plugin.registerReloadable(tae);
+                this.serviceCollection.reloadableService().registerReloadable(tae);
                 try {
-                    tae.onReload();
+                    tae.onReload(this.serviceCollection);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            } else if (c instanceof SimpleReloadable) {
-                this.plugin.registerReloadable(((SimpleReloadable) c));
-                Sponge.getEventManager().registerListeners(this.plugin, c);
+            } else if (c instanceof Reloadable) {
+                this.serviceCollection.reloadableService().registerReloadable((Reloadable) c);
+                Sponge.getEventManager().registerListeners(this.serviceCollection.pluginContainer(), c);
             } else {
-                Sponge.getEventManager().registerListeners(this.plugin, c);
+                Sponge.getEventManager().registerListeners(this.serviceCollection.pluginContainer(), c);
             }
         });
     }
@@ -341,12 +346,12 @@ public abstract class StandardModule implements Module {
                 tb.async();
             }
 
-            tb.submit(this.plugin);
+            tb.submit(this.serviceCollection.pluginContainer());
 
-            if (c instanceof SimpleReloadable) {
-                this.plugin.registerReloadable((SimpleReloadable) c);
+            if (c instanceof Reloadable) {
+                this.serviceCollection.reloadableService().registerReloadable((Reloadable) c);
                 try {
-                    ((SimpleReloadable) c).onReload();
+                    ((Reloadable) c).onReload(this.serviceCollection);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -397,7 +402,7 @@ public abstract class StandardModule implements Module {
 
         if (!keyClasses.isEmpty()) {
             // Get the User Preference Service
-            UserPreferenceService ups = Nucleus.getNucleus().getInternalServiceManager().getServiceUnchecked(UserPreferenceService.class);
+            IUserPreferenceService ups = this.serviceCollection.userPreferenceService();
             for (Class<? extends UserPrefKeys> r : keyClasses) {
                 // These will contain static fields.
                 Arrays.stream(r.getFields())
@@ -479,8 +484,7 @@ public abstract class StandardModule implements Module {
                         }
                     }
                 } catch (ClassNotFoundException | RuntimeException | NoClassDefFoundError e) {
-                    this.plugin.getLogger().warn(NucleusPlugin.getNucleus().getMessageProvider()
-                            .getMessageWithFormat("startup.injectablenotloaded", clazz.getName()));
+                    this.serviceCollection.logger().warn(this.serviceCollection.messageProvider().getMessageString("startup.injectablenotloaded", clazz.getName()));
                     return null;
                 }
             }
@@ -490,12 +494,13 @@ public abstract class StandardModule implements Module {
                 clazz.getDeclaredMethods();
             }
 
-            return clazz.newInstance();
+            return this.serviceCollection.injector().getInstance(clazz);
 
         // I can't believe I have to do this...
-        } catch (IllegalAccessException | InstantiationException | RuntimeException | NoClassDefFoundError e) {
+        } catch (RuntimeException | NoClassDefFoundError e) {
             if (clazz.isAnnotationPresent(SkipOnError.class)) {
-                this.plugin.getLogger().warn(NucleusPlugin.getNucleus().getMessageProvider().getMessageWithFormat("startup.injectablenotloaded", clazz.getName()));
+                this.serviceCollection.logger()
+                        .warn(this.serviceCollection.messageProvider().getMessageString("startup.injectablenotloaded", clazz.getName()));
                 return null;
             }
 
@@ -520,7 +525,7 @@ public abstract class StandardModule implements Module {
             String platformId = Sponge.getPlatform().getContainer(Platform.Component.GAME).getId();
             boolean loadable = Arrays.stream(clazz.getAnnotation(RequiresPlatform.class).value()).anyMatch(platformId::equalsIgnoreCase);
             if (!loadable) {
-                this.plugin.getLogger().warn("Not loading /" + clazz.getSimpleName() + ": platform " + platformId + " is not supported.");
+                this.serviceCollection.logger().warn("Not loading /" + clazz.getSimpleName() + ": platform " + platformId + " is not supported.");
                 return false;
             }
         }
@@ -528,44 +533,29 @@ public abstract class StandardModule implements Module {
         return true;
     }
 
-    protected final void createSeenModule(BiFunction<CommandSource, User, Collection<Text>> function) {
-        createSeenModule((String)null, function);
+    protected final <I, S extends I> void register(Class<S> impl) {
+        register(impl, this.serviceCollection.injector().getInstance(impl));
     }
 
-    protected final void createSeenModule(@Nullable Class<? extends AbstractCommand> permissionClass, BiFunction<CommandSource, User, Collection<Text>> function) {
-        // Register seen information.
-        CommandPermissionHandler permissionHandler = this.plugin.getPermissionRegistry().getPermissionsForNucleusCommand(permissionClass);
-        createSeenModule(permissionHandler == null ? null : permissionHandler.getBase(), function);
-    }
-
-    protected void createSeenModule(@Nullable String permission, BiFunction<CommandSource, User, Collection<Text>> function) {
-        this.plugin.getInternalServiceManager().getService(SeenHandler.class).ifPresent(x ->
-                x.register(this.plugin, this.getClass().getAnnotation(ModuleData.class).name(), new BasicSeenInformationProvider(permission, function)));
-    }
-
-    protected final <I, S extends I> void register(Class<S> impl) throws IllegalAccessException, InstantiationException {
-        Nucleus.getNucleus().getInternalServiceManager().registerService(impl, impl.newInstance());
-    }
-
-    protected final <I, S extends I> void register(Class<I> api, Class<S> impl) throws IllegalAccessException, InstantiationException {
-        S object = impl.newInstance();
-        Sponge.getServiceManager().setProvider(Nucleus.getNucleus(), api, object);
-        Nucleus.getNucleus().getInternalServiceManager().registerService(api, object);
+    protected final <I, S extends I> void register(Class<I> api, Class<S> impl) {
+        S object = this.serviceCollection.injector().getInstance(impl);
+        Sponge.getServiceManager().setProvider(this.serviceCollection.pluginContainer(), api, object);
+        register(api, object);
         register(impl, object);
     }
 
-    protected final <I, S extends I> void register(Class<S> impl, S object) {
-        Nucleus.getNucleus().getInternalServiceManager().registerService(impl, object);
+    protected final <I, S extends I> void register(Class<? super S> impl, S object) {
+        this.serviceCollection.registerService(impl, object, false);
     }
 
     protected final <I, S extends I> void register(Class<I> internalApi, Class<S> impl, S object, boolean remap) {
         register(impl, object);
-        Nucleus.getNucleus().getInternalServiceManager().registerService(internalApi, object, remap);
+        this.serviceCollection.registerService(internalApi, object, remap);
     }
 
     protected final <I, S extends I> void register(Class<I> api, Class<S> impl, S object) {
-        Sponge.getServiceManager().setProvider(Nucleus.getNucleus(), api, object);
-        Nucleus.getNucleus().getInternalServiceManager().registerService(api, object);
+        Sponge.getServiceManager().setProvider(this.serviceCollection.pluginContainer(), api, object);
+        this.serviceCollection.registerService(api, object, false);
         register(impl, object);
     }
 

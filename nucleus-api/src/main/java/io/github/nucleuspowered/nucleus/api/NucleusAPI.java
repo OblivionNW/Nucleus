@@ -311,19 +311,6 @@ public class NucleusAPI {
     }
 
     /**
-     * Gets the {@link NucleusServerShopService}, if it exists.
-     *
-     * <p>
-     *     Requires the "servershop" module.
-     * </p>
-     *
-     * @return The {@link NucleusServerShopService}
-     */
-    public static Optional<NucleusServerShopService> getServerShopService() {
-        return getService(NucleusServerShopService.class);
-    }
-
-    /**
      * Gets the {@link NucleusStaffChatService}, if it exists.
      *
      * <p>
