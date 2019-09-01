@@ -22,20 +22,43 @@ import javax.inject.Singleton;
 @Singleton
 public class PlayerDisplayNameService implements IPlayerDisplayNameService {
 
-    private final LinkedHashSet<Resolver> resolvers = new LinkedHashSet<>();
+    private final LinkedHashSet<DisplayNameResolver> resolvers = new LinkedHashSet<>();
+    private final LinkedHashSet<DisplayNameQuery> queries = new LinkedHashSet<>();
 
     @Override
-    public void provideResolver(Resolver resolver) {
+    public void provideDisplayNameResolver(DisplayNameResolver resolver) {
         this.resolvers.add(resolver);
     }
 
     @Override
-    public Text resolve(final UUID playerUUID) {
-        if (playerUUID == Util.consoleFakeUUID) {
-            return resolve(Sponge.getServer().getConsole());
+    public void provideDisplayNameQuery(DisplayNameQuery resolver) {
+        this.queries.add(resolver);
+    }
+
+    @Override
+    public Optional<User> getUser(Text displayName) {
+        Optional<User> withRealName = Sponge.getServiceManager().provideUnchecked(UserStorageService.class).get(displayName.toPlain());
+        if (withRealName.isPresent()) {
+            return withRealName;
         }
 
-        for (Resolver resolver : this.resolvers) {
+        for (DisplayNameQuery query : this.queries) {
+            Optional<User> user = query.resolve(displayName);
+            if (user.isPresent()) {
+                return user;
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    @Override
+    public Text getDisplayName(final UUID playerUUID) {
+        if (playerUUID == Util.consoleFakeUUID) {
+            return getDisplayName(Sponge.getServer().getConsole());
+        }
+
+        for (DisplayNameResolver resolver : this.resolvers) {
             Optional<Text> userName = resolver.resolve(playerUUID);
             if (userName.isPresent()) {
                 return userName.get();
@@ -49,9 +72,9 @@ public class PlayerDisplayNameService implements IPlayerDisplayNameService {
     }
 
     @Override
-    public Text resolve(CommandSource source) {
+    public Text getDisplayName(CommandSource source) {
         if (source instanceof User) {
-            return resolve(((User) source).getUniqueId());
+            return getDisplayName(((User) source).getUniqueId());
         }
 
         return Text.of(source.getName());

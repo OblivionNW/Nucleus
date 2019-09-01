@@ -14,6 +14,8 @@ import org.spongepowered.api.service.context.ContextCalculator;
 import org.spongepowered.api.service.permission.PermissionService;
 import org.spongepowered.api.service.permission.Subject;
 
+import java.util.Optional;
+
 @ImplementedBy(NucleusPermissionService.class)
 public interface IPermissionService {
 
@@ -27,6 +29,8 @@ public interface IPermissionService {
 
     boolean hasPermissionWithConsoleOverride(Subject subject, String permission, boolean permissionIfConsoleAndOverridden);
 
+
+
     void registerDescriptions();
 
     void register(String permission, PermissionMetadata metadata);
@@ -35,4 +39,13 @@ public interface IPermissionService {
         return new NucleusRequirePermissionArgument(wrapped, this, permission);
     }
 
+    Optional<Double> getDoubleOptionFromSubject(Subject player, String... options);
+
+    Optional<Long> getPositiveLongOptionFromSubject(Subject player, String... options);
+
+    Optional<Integer> getPositiveIntOptionFromSubject(Subject player, String... options);
+
+    Optional<Integer> getIntOptionFromSubject(Subject player, String... options);
+
+    Optional<String> getOptionFromSubject(Subject player, String... options);
 }

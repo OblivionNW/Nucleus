@@ -11,6 +11,7 @@ import io.github.nucleuspowered.nucleus.services.INucleusServiceCollection;
 import io.github.nucleuspowered.nucleus.services.IPermissionService;
 import io.github.nucleuspowered.nucleus.services.IReloadableService;
 import io.github.nucleuspowered.nucleus.util.PrettyPrinter;
+import io.github.nucleuspowered.nucleus.util.ThrownFunction;
 import org.slf4j.event.Level;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.source.ConsoleSource;
@@ -24,6 +25,7 @@ import org.spongepowered.api.util.Tristate;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -98,6 +100,55 @@ public class NucleusPermissionService implements IPermissionService, Reloadable 
         } else {
             this.metadataMap.put(permission.toLowerCase(), m);
         }
+    }
+
+    @Override public Optional<Double> getDoubleOptionFromSubject(Subject player, String... options) {
+        return getTypedObjectFromSubject(Double::parseDouble, player, options);
+    }
+
+    @Override public Optional<Long> getPositiveLongOptionFromSubject(Subject player, String... options) {
+        return getTypedObjectFromSubject(Long::parseUnsignedLong, player, options);
+    }
+
+    @Override public Optional<Integer> getPositiveIntOptionFromSubject(Subject player, String... options) {
+        return getTypedObjectFromSubject(Integer::parseUnsignedInt, player, options);
+    }
+
+    @Override public Optional<Integer> getIntOptionFromSubject(Subject player, String... options) {
+        return getTypedObjectFromSubject(Integer::parseInt, player, options);
+    }
+
+    private <T> Optional<T> getTypedObjectFromSubject(ThrownFunction<String, T, Exception> conversion, Subject player, String... options) {
+        try {
+            Optional<String> optional = getOptionFromSubject(player, options);
+            if (optional.isPresent()) {
+                return Optional.ofNullable(conversion.apply(optional.get()));
+            }
+        } catch (Exception e) {
+            // ignored
+        }
+
+        return Optional.empty();
+    }
+
+    @Override public Optional<String> getOptionFromSubject(Subject player, String... options) {
+        for (String option : options) {
+            String o = option.toLowerCase();
+
+            // Option for context.
+            Optional<String> os = player.getOption(player.getActiveContexts(), o);
+            if (os.isPresent()) {
+                return os.map(r -> r.isEmpty() ? null : r);
+            }
+
+            // General option
+            os = player.getOption(o);
+            if (os.isPresent()) {
+                return os.map(r -> r.isEmpty() ? null : r);
+            }
+        }
+
+        return Optional.empty();
     }
 
     private boolean hasPermission(Subject subject, String permission, boolean checkRole) {

@@ -16,20 +16,31 @@ import java.util.UUID;
 @ImplementedBy(PlayerDisplayNameService.class)
 public interface IPlayerDisplayNameService {
 
-    void provideResolver(Resolver resolver);
+    void provideDisplayNameResolver(DisplayNameResolver resolver);
 
-    Text resolve(UUID playerUUID);
+    void provideDisplayNameQuery(DisplayNameQuery resolver);
 
-    default Text resolve(User user) {
-        return resolve(user.getUniqueId());
+    Optional<User> getUser(Text displayName);
+
+    Text getDisplayName(UUID playerUUID);
+
+    default Text getDisplayName(User user) {
+        return getDisplayName(user.getUniqueId());
     }
 
-    Text resolve(CommandSource source);
+    Text getDisplayName(CommandSource source);
 
     @FunctionalInterface
-    interface Resolver {
+    interface DisplayNameResolver {
 
         Optional<Text> resolve(UUID userUUID);
+
+    }
+
+    @FunctionalInterface
+    interface DisplayNameQuery {
+
+        Optional<User> resolve(Text name);
 
     }
 

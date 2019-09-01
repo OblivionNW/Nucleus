@@ -45,6 +45,8 @@ public interface INucleusServiceCollection {
 
     IPlayerDisplayNameService playerDisplayNameService();
 
+    IModuleConfigProvider moduleConfigProvider();
+
     Injector injector();
 
     PluginContainer pluginContainer();

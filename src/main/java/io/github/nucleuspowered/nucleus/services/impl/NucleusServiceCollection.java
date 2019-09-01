@@ -11,6 +11,7 @@ import io.github.nucleuspowered.nucleus.services.ICooldownService;
 import io.github.nucleuspowered.nucleus.services.IEconomyServiceProvider;
 import io.github.nucleuspowered.nucleus.services.IMessageProviderService;
 import io.github.nucleuspowered.nucleus.services.IMessageTokenService;
+import io.github.nucleuspowered.nucleus.services.IModuleConfigProvider;
 import io.github.nucleuspowered.nucleus.services.INucleusServiceCollection;
 import io.github.nucleuspowered.nucleus.services.IPermissionService;
 import io.github.nucleuspowered.nucleus.services.IPlayerDisplayNameService;
@@ -50,6 +51,7 @@ public class NucleusServiceCollection implements INucleusServiceCollection {
     private final Provider<IUserPreferenceService> userPreferenceService;
     private final Provider<ICommandMetadataService> commandMetadataService;
     private final Provider<IPlayerDisplayNameService> playerDisplayNameService;
+    private final Provider<IModuleConfigProvider> moduleConfigProvider;
     private final Injector injector;
     private final PluginContainer pluginContainer;
     private final Logger logger;
@@ -68,6 +70,7 @@ public class NucleusServiceCollection implements INucleusServiceCollection {
             Provider<IStorageManager<JsonObject>> storageManager,
             Provider<ICommandMetadataService> commandMetadataService,
             Provider<IPlayerDisplayNameService> playerDisplayNameService,
+            Provider<IModuleConfigProvider> moduleConfigProvider,
             Injector injector,
             PluginContainer pluginContainer,
             Logger logger) {
@@ -83,6 +86,7 @@ public class NucleusServiceCollection implements INucleusServiceCollection {
         this.storageManager = storageManager;
         this.commandMetadataService = commandMetadataService;
         this.playerDisplayNameService = playerDisplayNameService;
+        this.moduleConfigProvider = moduleConfigProvider;
         this.injector = injector;
         this.pluginContainer = pluginContainer;
         this.logger = logger;
@@ -141,6 +145,10 @@ public class NucleusServiceCollection implements INucleusServiceCollection {
 
     @Override public IPlayerDisplayNameService playerDisplayNameService() {
         return this.playerDisplayNameService.get();
+    }
+
+    @Override public IModuleConfigProvider moduleConfigProvider() {
+        return this.moduleConfigProvider.get();
     }
 
     @Override

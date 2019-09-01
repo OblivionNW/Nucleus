@@ -9,16 +9,15 @@ import io.github.nucleuspowered.nucleus.Nucleus;
 import io.github.nucleuspowered.nucleus.api.events.NucleusFirstJoinEvent;
 import io.github.nucleuspowered.nucleus.api.text.NucleusTextTemplate;
 import io.github.nucleuspowered.nucleus.internal.interfaces.ListenerBase;
-import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
-import io.github.nucleuspowered.nucleus.services.impl.messageprovider.legacy.MessageProvider;
-import io.github.nucleuspowered.nucleus.internal.permissions.ServiceChangeListener;
+import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
 import io.github.nucleuspowered.nucleus.modules.core.CoreKeys;
 import io.github.nucleuspowered.nucleus.modules.core.config.CoreConfig;
-import io.github.nucleuspowered.nucleus.modules.core.config.CoreConfigAdapter;
 import io.github.nucleuspowered.nucleus.modules.core.events.NucleusOnLoginEvent;
 import io.github.nucleuspowered.nucleus.modules.core.events.OnFirstLoginEvent;
 import io.github.nucleuspowered.nucleus.modules.core.events.UserDataLoadedEvent;
 import io.github.nucleuspowered.nucleus.modules.core.services.UniqueUserService;
+import io.github.nucleuspowered.nucleus.services.INucleusServiceCollection;
+import io.github.nucleuspowered.nucleus.services.impl.messageprovider.legacy.MessageProvider;
 import io.github.nucleuspowered.nucleus.services.impl.storage.dataobjects.modular.IUserDataObject;
 import io.github.nucleuspowered.nucleus.util.CauseStackHelper;
 import org.spongepowered.api.Sponge;
@@ -46,14 +45,18 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
+import javax.inject.Inject;
 
-public class CoreListener implements SimpleReloadable, ListenerBase, InternalServiceManagerTrait, IDataManagerTrait {
+public class CoreListener implements Reloadable, ListenerBase {
 
+    private final INucleusServiceCollection serviceCollection;
     @Nullable private NucleusTextTemplate getKickOnStopMessage = null;
     @Nullable private final URL url;
     private boolean warnOnWildcard = true;
 
-    public CoreListener() {
+    @Inject
+    public CoreListener(INucleusServiceCollection serviceCollection) {
+        this.serviceCollection = serviceCollection;
         URL u = null;
         try {
             u = new URL("https://ore.spongepowered.org/Nucleus/Nucleus/pages/The-Permissions-Wildcard-(And-Why-You-Shouldn't-Use-It)");
@@ -72,8 +75,7 @@ public class CoreListener implements SimpleReloadable, ListenerBase, InternalSer
 
         // Create user data if required, and place into cache.
         // As this is already async, load on thread.
-        IUserDataObject dataObject
-                = Nucleus.getNucleus().getStorageManager().getUserService().getOrNewOnThread(userId);
+        IUserDataObject dataObject = this.serviceCollection.storageManager().getUserService().getOrNewOnThread(userId);
 
         // Fire the event, which will be async too, perhaps unsurprisingly.
         // The main use for this will be migrations.
@@ -84,7 +86,7 @@ public class CoreListener implements SimpleReloadable, ListenerBase, InternalSer
         );
         Sponge.getEventManager().post(eventToFire);
         if (eventToFire.shouldSave()) {
-            Nucleus.getNucleus().getStorageManager().getUserService().save(userId, dataObject);
+            this.serviceCollection.storageManager().getUserService().save(userId, dataObject);
         }
     }
 
@@ -95,7 +97,7 @@ public class CoreListener implements SimpleReloadable, ListenerBase, InternalSer
     public void onPlayerLoginLast(final ClientConnectionEvent.Login event, @Getter("getProfile") GameProfile profile,
         @Getter("getTargetUser") User user) {
 
-        IUserDataObject udo = getOrCreateUserOnThread(user.getUniqueId());
+        IUserDataObject udo = this.serviceCollection.storageManager().getUserService().getOrNewOnThread(user.getUniqueId());
 
         if (event.getFromTransform().equals(event.getToTransform())) {
             // Check this
@@ -118,7 +120,7 @@ public class CoreListener implements SimpleReloadable, ListenerBase, InternalSer
     @Listener(order = Order.FIRST)
     public void onPlayerJoinFirst(final ClientConnectionEvent.Join event, @Getter("getTargetEntity") final Player player) {
         try {
-            IUserDataObject qsu = getOrCreateUserOnThread(player.getUniqueId());
+            IUserDataObject qsu = this.serviceCollection.storageManager().getUserService().getOrNewOnThread(player.getUniqueId());
             qsu.set(CoreKeys.LAST_LOGIN, Instant.now());
             if (Nucleus.getNucleus().isServer()) {
                 qsu.set(CoreKeys.IP_ADDRESS, player.getConnection().getAddress().getAddress().toString());
@@ -135,9 +137,9 @@ public class CoreListener implements SimpleReloadable, ListenerBase, InternalSer
     @Listener
     public void onPlayerJoinLast(final ClientConnectionEvent.Join event, @Getter("getTargetEntity") final Player player) {
         // created before
-        if (!Nucleus.getNucleus().getStorageManager().getUserService().getOnThread(player.getUniqueId())
+        if (!this.serviceCollection.storageManager().getUserService().getOnThread(player.getUniqueId())
                 .map(x -> x.get(CoreKeys.FIRST_JOIN)).isPresent()) {
-            getServiceUnchecked(UniqueUserService.class).resetUniqueUserCount();
+            this.serviceCollection.getServiceUnchecked(UniqueUserService.class).resetUniqueUserCount();
 
             NucleusFirstJoinEvent firstJoinEvent = new OnFirstLoginEvent(
                 event.getCause(), player, event.getOriginalChannel(), event.getChannel().orElse(null), event.getOriginalMessage(),
@@ -146,11 +148,13 @@ public class CoreListener implements SimpleReloadable, ListenerBase, InternalSer
             Sponge.getEventManager().post(firstJoinEvent);
             event.setChannel(firstJoinEvent.getChannel().get());
             event.setMessageCancelled(firstJoinEvent.isMessageCancelled());
-            getOrCreateUser(player.getUniqueId()).thenAccept(x -> x.set(CoreKeys.FIRST_JOIN, x.get(CoreKeys.LAST_LOGIN).orElseGet(Instant::now)));
+            this.serviceCollection.storageManager().getUserService()
+                    .getOrNew(player.getUniqueId())
+                    .thenAccept(x -> x.set(CoreKeys.FIRST_JOIN, x.get(CoreKeys.LAST_LOGIN).orElseGet(Instant::now)));
         }
 
         // Warn about wildcard.
-        if (!ServiceChangeListener.isOpOnly() && player.hasPermission("nucleus")) {
+        if (!this.serviceCollection.permissionCheck().isOpOnly() && player.hasPermission("nucleus")) {
             MessageProvider provider = Nucleus.getNucleus().getMessageProvider();
             Nucleus.getNucleus().getLogger().warn("The player " + player.getName() + " has got either the nucleus wildcard or the * wildcard "
                     + "permission. This may cause unintended side effects.");
@@ -186,7 +190,7 @@ public class CoreListener implements SimpleReloadable, ListenerBase, InternalSer
             return;
         }
 
-        getUser(player.getUniqueId()).thenAccept(x -> x.ifPresent(y -> onPlayerQuit(player, y)));
+        this.serviceCollection.storageManager().getUser(player.getUniqueId()).thenAccept(x -> x.ifPresent(y -> onPlayerQuit(player, y)));
 
     }
 
@@ -196,23 +200,23 @@ public class CoreListener implements SimpleReloadable, ListenerBase, InternalSer
         try {
             udo.set(CoreKeys.IP_ADDRESS, address.toString());
             Nucleus.getNucleus().getUserCacheService().updateCacheForPlayer(player.getUniqueId(), udo);
-            saveUser(player.getUniqueId(), udo);
+            this.serviceCollection.storageManager().saveUser(player.getUniqueId(), udo);
         } catch (Exception e) {
             Nucleus.getNucleus().printStackTraceIfDebugMode(e);
         }
     }
 
-    @Override public void onReload() {
-        CoreConfig c = Nucleus.getNucleus().getInternalServiceManager().getServiceUnchecked(CoreConfigAdapter.class)
-                .getNodeOrDefault();
+    @Override public void onReload(INucleusServiceCollection serviceCollection) {
+        CoreConfig c = this.serviceCollection.moduleConfigProvider().getModuleConfig(CoreConfig.class);
         this.getKickOnStopMessage = c.isKickOnStop() ? c.getKickOnStopMessage() : null;
         this.warnOnWildcard = c.isCheckForWildcard();
     }
 
     @Listener
     public void onServerAboutToStop(final GameStoppingServerEvent event) {
-        Sponge.getServer().getOnlinePlayers()
-                .forEach(x -> getUser(x.getUniqueId()).join().ifPresent(y -> onPlayerQuit(x, y)));
+        for (Player player : Sponge.getServer().getOnlinePlayers()) {
+            this.serviceCollection.storageManager().getUserOnThread(player.getUniqueId()).ifPresent(x -> onPlayerQuit(player, x));
+        }
 
         if (this.getKickOnStopMessage != null) {
             for (Player p : Sponge.getServer().getOnlinePlayers()) {
