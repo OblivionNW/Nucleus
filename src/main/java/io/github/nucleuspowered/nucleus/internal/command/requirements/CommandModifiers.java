@@ -7,11 +7,14 @@ package io.github.nucleuspowered.nucleus.internal.command.requirements;
 import io.github.nucleuspowered.nucleus.Util;
 import io.github.nucleuspowered.nucleus.internal.command.ICommandContext;
 import io.github.nucleuspowered.nucleus.internal.command.ICommandResult;
+import io.github.nucleuspowered.nucleus.internal.command.config.CommandModifiersConfig;
 import io.github.nucleuspowered.nucleus.internal.command.control.CommandControl;
+import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
 import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.services.IEconomyServiceProvider;
 import io.github.nucleuspowered.nucleus.services.INucleusServiceCollection;
 import io.github.nucleuspowered.nucleus.services.IWarmupService;
+import ninja.leaping.configurate.ConfigurationNode;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
@@ -21,7 +24,7 @@ import org.spongepowered.api.util.Identifiable;
 import java.time.Duration;
 import java.util.Optional;
 
-public enum CommandModifiers implements ICommandModifier, SimpleReloadable {
+public enum CommandModifiers implements ICommandModifier, Reloadable {
 
     /**
      * Command requires an economy plugin
@@ -45,7 +48,7 @@ public enum CommandModifiers implements ICommandModifier, SimpleReloadable {
         }
 
         @Override
-        public void onReload() {
+        public void onReload(INucleusServiceCollection serviceCollection) {
             this.lazyLoad = null;
         }
     },
@@ -54,9 +57,15 @@ public enum CommandModifiers implements ICommandModifier, SimpleReloadable {
      * Command has a cost
      */
     HAS_COST {
+        private static final String COST = "cost";
 
-        @Override public void setupCommand(CommandControl control) {
-            control.getCommandModifiersConfig().setCostEnable(true);
+        @Override public void setupConfig(CommandModifiersConfig config, ConfigurationNode node) {
+            ConfigurationNode n = node.getNode(COST);
+            if (n.isVirtual()) {
+                n.setValue(0.0);
+            }
+
+            config.setCost(n.getDouble(0.0));
         }
 
         @Override public boolean canExecuteModifier(INucleusServiceCollection serviceCollection, ICommandContext<? extends CommandSource> source) throws CommandException {
@@ -79,8 +88,15 @@ public enum CommandModifiers implements ICommandModifier, SimpleReloadable {
      * Command has a cooldown
      */
     HAS_COOLDOWN {
-        @Override public void setupCommand(CommandControl control) {
-            control.getCommandModifiersConfig().setCooldownEnable(true);
+        private static final String COOLDOWN = "cooldown";
+
+        @Override public void setupConfig(CommandModifiersConfig config, ConfigurationNode node) {
+            ConfigurationNode n = node.getNode(COOLDOWN);
+            if (n.isVirtual()) {
+                n.setValue(0);
+            }
+
+            config.setCooldown(n.getInt(0));
         }
 
         @Override public boolean canExecuteModifier(INucleusServiceCollection serviceCollection, ICommandContext<? extends CommandSource> source) throws CommandException {
@@ -101,8 +117,15 @@ public enum CommandModifiers implements ICommandModifier, SimpleReloadable {
      * Command has a warmup
      */
     HAS_WARMUP {
-        @Override public void setupCommand(CommandControl control) {
-            control.getCommandModifiersConfig().setWarmupEnable(true);
+        private static final String WARMUP = "warmup";
+
+        @Override public void setupConfig(CommandModifiersConfig config, ConfigurationNode node) {
+            ConfigurationNode n = node.getNode(WARMUP);
+            if (n.isVirtual()) {
+                n.setValue(0);
+            }
+
+            config.setWarmup(n.getInt(0));
         }
 
         @Override public boolean canExecuteModifier(INucleusServiceCollection serviceCollection, ICommandContext<? extends CommandSource> source) throws CommandException {

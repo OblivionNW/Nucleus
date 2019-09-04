@@ -350,7 +350,9 @@ public class NucleusPlugin extends Nucleus {
                         .createEnablePhase("pre-tasks", (module, holder) -> module.performPreTasks())
                         .createEnablePhase("commandinterceptors", (module, holder) -> module.registerCommandInterceptors())
                         .createPreEnablePhase("enable", holder -> Sponge.getEventManager().post(new BaseModuleEvent.PreEnable(this)))
-                        .createEnablePhase("commands", (module, holder) -> module.loadCommands())
+                        .createEnablePhase("command-discovery", (module, holder) -> module.loadCommands())
+                        .createPreEnablePhase("command-registration",
+                                holder -> this.serviceCollection.commandMetadataService().completeRegistrationPhase(this.serviceCollection))
                         .createEnablePhase("events", (module, holder) -> module.loadEvents())
                         .createEnablePhase("runnables", (module, holder) -> module.loadRunnables())
                         .createEnablePhase("prefKeys", (module, holder) -> module.loadUserPrefKeys())

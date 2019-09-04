@@ -5,6 +5,7 @@
 package io.github.nucleuspowered.nucleus.services;
 
 import com.google.inject.ImplementedBy;
+import com.google.inject.Injector;
 import io.github.nucleuspowered.nucleus.internal.command.control.CommandControl;
 import io.github.nucleuspowered.nucleus.internal.command.control.CommandMetadata;
 import io.github.nucleuspowered.nucleus.services.impl.command.CommandMetadataService;
@@ -16,9 +17,9 @@ import java.util.OptionalInt;
 @ImplementedBy(CommandMetadataService.class)
 public interface ICommandMetadataService {
 
-    void registerCommand(CommandControl control);
+    void registerCommand(CommandMetadata metadata);
 
-    void completeRegistrationPhase();
+    void completeRegistrationPhase(INucleusServiceCollection serviceCollection);
 
     void addMapping(String newCommand, String remapped);
 
@@ -26,11 +27,6 @@ public interface ICommandMetadataService {
 
     void deactivate();
 
-    OptionalInt getCommandWarmup(String... command);
+    Map<String, Boolean> getAliasMap(String command);
 
-    OptionalInt getCommandCooldown(String... command);
-
-    OptionalDouble getCommandCost(String... command);
-
-    Map<String, Boolean> getAliasMap(String... command);
 }

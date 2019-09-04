@@ -6,18 +6,21 @@ package io.github.nucleuspowered.nucleus.internal.command.requirements;
 
 import io.github.nucleuspowered.nucleus.internal.command.ICommandContext;
 import io.github.nucleuspowered.nucleus.internal.command.ICommandResult;
+import io.github.nucleuspowered.nucleus.internal.command.config.CommandModifiersConfig;
 import io.github.nucleuspowered.nucleus.internal.command.control.CommandControl;
+import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
 import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.services.INucleusServiceCollection;
+import ninja.leaping.configurate.ConfigurationNode;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
 
 import java.util.Optional;
 
-public interface ICommandModifier extends SimpleReloadable {
+public interface ICommandModifier extends Reloadable {
 
-    default void setupCommand(CommandControl control) { }
+    default void setupConfig(CommandModifiersConfig config, ConfigurationNode node) { }
 
     /**
      * Returns whether this can execute and therefore modify the command.
@@ -54,11 +57,12 @@ public interface ICommandModifier extends SimpleReloadable {
         return Optional.empty();
     }
 
-    @Override
-    default void onReload() throws Exception { }
-
     default void onCompletion(ICommandContext<? extends CommandSource> source,
             CommandControl control,
             INucleusServiceCollection serviceCollection) {
     }
+
+    @Override
+    default void onReload(INucleusServiceCollection serviceCollection) { }
+
 }

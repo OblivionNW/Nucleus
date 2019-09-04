@@ -21,33 +21,31 @@ import io.github.nucleuspowered.nucleus.internal.annotations.command.RegisterCom
 import io.github.nucleuspowered.nucleus.internal.annotations.command.Scan;
 import io.github.nucleuspowered.nucleus.internal.command.AbstractCommand;
 import io.github.nucleuspowered.nucleus.internal.command.CommandBuilder;
+import io.github.nucleuspowered.nucleus.internal.command.ICommandExecutor;
 import io.github.nucleuspowered.nucleus.internal.command.ICommandInterceptor;
+import io.github.nucleuspowered.nucleus.internal.command.annotation.NucleusCommand;
+import io.github.nucleuspowered.nucleus.internal.command.control.CommandControl;
+import io.github.nucleuspowered.nucleus.internal.command.control.CommandMetadata;
 import io.github.nucleuspowered.nucleus.internal.docgen.DocGenCache;
 import io.github.nucleuspowered.nucleus.internal.interfaces.ListenerBase;
 import io.github.nucleuspowered.nucleus.internal.interfaces.Reloadable;
 import io.github.nucleuspowered.nucleus.internal.interfaces.ServiceBase;
-import io.github.nucleuspowered.nucleus.internal.interfaces.SimpleReloadable;
 import io.github.nucleuspowered.nucleus.internal.interfaces.TaskBase;
 import io.github.nucleuspowered.nucleus.internal.registry.NucleusRegistryModule;
-import io.github.nucleuspowered.nucleus.modules.playerinfo.misc.BasicSeenInformationProvider;
-import io.github.nucleuspowered.nucleus.modules.playerinfo.services.SeenHandler;
 import io.github.nucleuspowered.nucleus.services.INucleusServiceCollection;
 import io.github.nucleuspowered.nucleus.services.IUserPreferenceService;
-import io.github.nucleuspowered.nucleus.services.impl.command.CommandMetadataService;
 import io.github.nucleuspowered.nucleus.services.impl.messagetoken.Tokens;
 import io.github.nucleuspowered.nucleus.services.impl.userprefs.PreferenceKeyImpl;
 import io.github.nucleuspowered.nucleus.services.impl.userprefs.UserPrefKeys;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.commented.SimpleCommentedConfigurationNode;
+import org.slf4j.Logger;
 import org.spongepowered.api.Platform;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.service.context.Context;
 import org.spongepowered.api.service.context.ContextCalculator;
 import org.spongepowered.api.service.permission.Subject;
-import org.spongepowered.api.text.Text;
 import uk.co.drnaylor.quickstart.Module;
 import uk.co.drnaylor.quickstart.annotations.ModuleData;
 import uk.co.drnaylor.quickstart.config.AbstractConfigAdapter;
@@ -57,7 +55,7 @@ import uk.co.drnaylor.quickstart.holders.DiscoveryModuleHolder;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -65,7 +63,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.function.BiFunction;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -80,6 +77,7 @@ public abstract class StandardModule implements Module {
     private final String moduleName;
     private final INucleusServiceCollection serviceCollection;
     private final Supplier<DiscoveryModuleHolder<?, ?>> moduleHolderSupplier;
+    private final Logger logger;
     private String packageName;
     @Nullable private Map<String, List<String>> objectTypesToClassListMap;
     private final String message = NucleusPlugin.getNucleus().getMessageProvider().getMessageWithFormat("config.enabled");
@@ -91,6 +89,7 @@ public abstract class StandardModule implements Module {
         this.moduleName = md.name();
         this.serviceCollection = collection;
         this.moduleHolderSupplier = moduleHolder;
+        this.logger = collection.logger();
     }
 
     protected final INucleusServiceCollection getServiceCollection() {
@@ -163,7 +162,7 @@ public abstract class StandardModule implements Module {
                     register((Class) apiInterface, serviceClass, serviceImpl, true);
                 } else {
                     String error = "ERROR: " + apiInterface.getName() + " does not inherit from " + serviceClass.getName();
-                    Nucleus.getNucleus().getLogger().error(error);
+                    this.logger.error(error);
                     throw new IllegalStateException(error);
                 }
             } else {
@@ -171,10 +170,10 @@ public abstract class StandardModule implements Module {
             }
         }
 
-        if (serviceImpl instanceof SimpleReloadable) {
-            SimpleReloadable reloadable = (SimpleReloadable) serviceImpl;
-            Nucleus.getNucleus().registerReloadable(reloadable);
-            reloadable.onReload();
+        if (serviceImpl instanceof Reloadable) {
+            Reloadable reloadable = (Reloadable) serviceImpl;
+            this.serviceCollection.reloadableService().registerReloadable(reloadable);
+            reloadable.onReload(this.serviceCollection);
         }
 
         if (serviceImpl instanceof ContextCalculator) {
@@ -228,11 +227,13 @@ public abstract class StandardModule implements Module {
     @SuppressWarnings("unchecked")
     public final void loadCommands() {
 
-        Set<Class<? extends AbstractCommand<?>>> cmds;
+        HashMap<CommandMetadata, Class<? extends ICommandExecutor<?>>> commandExecutorHashMap = new HashMap<>();
+        Set<Class<? extends ICommandExecutor<?>>> cmds;
         if (this.objectTypesToClassListMap != null) {
             cmds = getClassesFromList(Constants.COMMAND);
         } else {
-            cmds = performFilter(getStreamForModule(AbstractCommand.class).map(x -> (Class<? extends AbstractCommand<?>>) x))
+            cmds = performFilter(getStreamForModule(ICommandExecutor.class)
+                    .map(x -> (Class<? extends ICommandExecutor<?>>) x))
                     .collect(Collectors.toSet());
 
             // Find all commands that are also scannable.
@@ -240,27 +241,27 @@ public abstract class StandardModule implements Module {
                     .filter(x -> x.getPackage().getName().startsWith(this.packageName))
                     .filter(x -> x.isAnnotationPresent(Scan.class))
                     .flatMap(x -> Arrays.stream(x.getDeclaredClasses()))
-                    .filter(AbstractCommand.class::isAssignableFrom)
-                    .map(x -> (Class<? extends AbstractCommand<?>>) x))
+                    .filter(ICommandExecutor.class::isAssignableFrom)
+                    .map(x -> (Class<? extends ICommandExecutor<?>>) x))
                     .forEach(cmds::add);
         }
 
-        // We all love the special injector. We just want to provide the module with more commands, in case it needs a child.
-        Set<Class<? extends AbstractCommand>> commandBases =  cmds.stream().filter(x -> {
-            RegisterCommand rc = x.getAnnotation(RegisterCommand.class);
-            return (rc != null && rc.subcommandOf().equals(AbstractCommand.class));
-        }).collect(Collectors.toSet());
-
-        CommandBuilder builder = new CommandBuilder(this.plugin, cmds, this.moduleId, this.moduleName);
-        commandBases.forEach(builder::buildCommand);
-
-        try {
-            this.commandsConfig.mergeDefaults(builder.getNodeToMerge());
-            this.commandsConfig.save();
-        } catch (Exception e) {
-            this.serviceCollection.logger().error("Could not save defaults.");
-            e.printStackTrace();
+        for (Class<? extends ICommandExecutor<?>> command : cmds) {
+            NucleusCommand rc = command.getAnnotation(NucleusCommand.class);
+            if (rc != null) {
+                // then we should add it.
+                this.serviceCollection.commandMetadataService().registerCommand(
+                        new CommandMetadata(
+                                this.moduleId,
+                                this.moduleName,
+                                rc,
+                                command
+                        )
+                );
+            }
         }
+
+        // Construction happens later in a pre step in QSML
     }
 
     public final void prepareAliasedCommands() {
@@ -278,7 +279,7 @@ public abstract class StandardModule implements Module {
         }
     }
 
-    private Stream<Class<? extends AbstractCommand<?>>> performFilter(Stream<Class<? extends AbstractCommand<?>>> stream) {
+    private Stream<Class<? extends ICommandExecutor<?>>> performFilter(Stream<Class<? extends ICommandExecutor<?>>> stream) {
         return stream.filter(x -> x.isAnnotationPresent(RegisterCommand.class));
     }
 

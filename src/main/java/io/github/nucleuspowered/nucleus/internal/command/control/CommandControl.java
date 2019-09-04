@@ -64,20 +64,21 @@ public class CommandControl implements CommandCallable {
 
     private final SortedMap<String, CommandCallable> subcommands = new TreeMap<>();
     private final CommandElement element;
+    private final String commandKey;
     private final List<String> aliases;
     private final ImmutableList<CommandModifier> flags;
     private final CommandModifiersConfig commandModifiersConfig = new CommandModifiersConfig();
 
     private final String command;
+    private boolean acceptingRegistration = true;
 
     public CommandControl(
             @Nullable ICommandExecutor<? extends CommandSource> executor,
             CommandMetadata meta,
-            String command,
-            INucleusServiceCollection serviceCollection,
-            List<String> aliasesToRegister) {
+            INucleusServiceCollection serviceCollection) {
         this.executor = executor;
         this.metadata = meta;
+        this.commandKey = meta.getCommandKey();
         this.basicPermission = ImmutableList.copyOf(meta.getCommandAnnotation().basePermission());
         this.serviceCollection = serviceCollection;
         if (executor == null || executor.parameters().length == 0) {
@@ -88,7 +89,7 @@ public class CommandControl implements CommandCallable {
             this.element = GenericArguments.seq(executor.parameters());
         }
 
-        this.aliases = aliasesToRegister;
+        this.aliases = ImmutableList.copyOf(meta.getAliases());
         this.flags = ImmutableList.copyOf(meta.getCommandAnnotation().modifiers());
         Class<? extends CommandSource> c = CommandSource.class;
         if (this.executor != null) {
@@ -103,7 +104,17 @@ public class CommandControl implements CommandCallable {
 
         this.sourceType = c;
         this.usageCommand = new UsageCommand(this, this.serviceCollection);
-        this.command = command;
+        this.command = meta.getAliases()[0];
+    }
+
+    public void attach(String alias, CommandControl commandControl) {
+        Preconditions.checkState(this.acceptingRegistration, "Registration is complete.");
+        this.subcommands.putIfAbsent(alias, commandControl);
+    }
+
+    public void completeRegistration() {
+        Preconditions.checkState(this.acceptingRegistration, "Registration is complete.");
+        this.acceptingRegistration = false;
     }
 
     @Override
@@ -420,4 +431,11 @@ public class CommandControl implements CommandCallable {
         }
     }
 
+    public String getCommandKey() {
+        return this.commandKey;
+    }
+
+    public List<CommandModifier> getCommandModifiers() {
+        return this.flags;
+    }
 }

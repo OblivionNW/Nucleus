@@ -4,12 +4,16 @@
  */
 package io.github.nucleuspowered.nucleus.internal.command.annotation;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+@Retention(RetentionPolicy.RUNTIME)
 public @interface NucleusCommand {
 
     /**
-     * The command root
+     * The command strings.
      *
-     * @return The command
+     * @return The command.
      */
     String[] value();
 
